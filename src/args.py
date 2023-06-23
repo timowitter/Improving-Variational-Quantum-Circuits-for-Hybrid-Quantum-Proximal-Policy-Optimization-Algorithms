@@ -10,14 +10,6 @@ def save_args(args):
     with open(args_chkpt_file, 'w') as f:
         json.dump(args.__dict__, f, indent=2)
 
-"""
-def load_args(args):
-    t=args.total_timesteps    
-    args_chkpt_file = os.path.join(args.chkpt_dir, 'commandline_args.txt')
-    with open(args_chkpt_file, 'r') as f:
-        args.__dict__ = json.load(f)
-    args.load_chkpt = True
-    args.total_timesteps = t"""
 
 
 def parse_args():

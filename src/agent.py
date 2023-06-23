@@ -2,7 +2,6 @@ import numpy as np
 import os
 import torch
 import torch.nn as nn
-import torch.optim as optim
 from torch.distributions.categorical import Categorical
 
 from transform_funks import trans_obs
@@ -72,22 +71,22 @@ class Agent(nn.Module):
 
     def get_value(self, observation, obs_dim, critic_circuit, critic_layer_params):
         if args.quantum_critic:                 #quantum critic
-            crit_i = critic_circuit(critic_layer_params, observation)
+            crit_tmp = critic_circuit(critic_layer_params, observation)
 
             if (args.hybrid):                   #hybrid output rescaleing
-                crit = self.hybrid_critic(crit_i.float())
+                crit = self.hybrid_critic(crit_tmp.float())
             else:                               #manual output rescaleing
                 if (args.gym_id == "FrozenLake-v0" or args.gym_id == "FrozenLake-v1"):
-                    crit = (crit_i + 1) / 2     #rescaleing from [-1,1] to [0,1]
+                    crit = (crit_tmp + 1) / 2     #rescaleing from [-1,1] to [0,1]
                 elif(args.gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0"):
-                    crit = crit_i               #intervall [-1,1]
+                    crit = crit_tmp               #intervall [-1,1]
                 elif(args.gym_id == "CartPole-v0"):
-                    crit = (crit_i + 1) * 100   #rescaleing from [-1,1] to [0,200]
+                    crit = (crit_tmp + 1) * 100   #rescaleing from [-1,1] to [0,200]
                 elif(args.gym_id == "CartPole-v1"):
-                    crit = (crit_i + 1) * 250   #rescaleing from [-1,1] to [0,500]
+                    crit = (crit_tmp + 1) * 250   #rescaleing from [-1,1] to [0,500]
                 else:
                     print("output rescaleing ERROR")
-                    crit = crit_i
+                    crit = crit_tmp
         else:                                   #classical critic
             crit = self.critic(trans_obs(observation, args.gym_id, obs_dim))
 

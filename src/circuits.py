@@ -81,7 +81,7 @@ def alt_simple_actor_circuit(layer_params, observation, act_dim):
         return [qml.expval(qml.PauliZ(ind)) for ind in range(act_dim)]
 
 
-#data reuploading circuit:
+#data reuploading circuit:             (by Jerbi et al. in: Parametrized Quantum Policies for Reinforcement Learning)
 
 def variational_layer(layer_params, layer_nr):
     for i in range(args.n_qubits):
@@ -105,15 +105,13 @@ def Jerbi_reuploading_actor_circuit(layer_params, observation, act_dim):
         qml.Hadamard(wires=i)
 
     variational_layer(layer_params, 0)
-
-    if (args.gym_id == "FrozenLake-v0" or args.gym_id == "FrozenLake-v1" or args.gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0"):
-        for layer_nr in range(1, 2*args.n_enc_layers+1, 2):
+    
+    for layer_nr in range(1, 2*args.n_enc_layers+1, 2):
+        if (args.gym_id == "FrozenLake-v0" or args.gym_id == "FrozenLake-v1" or args.gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0"):
             encodeing_layer(layer_params, layer_nr, transform_obs_to_binary(observation, args.n_qubits))
-            variational_layer(layer_params, layer_nr+1)
-    else:
-        for layer_nr in range(1, 2*args.n_enc_layers+1, 2):
+        else:
             encodeing_layer(layer_params, layer_nr, observation)
-            variational_layer(layer_params, layer_nr+1)
+        variational_layer(layer_params, layer_nr+1)
 
     if(args.hybrid):
         return [qml.expval(qml.PauliY(ind)) for ind in range(args.n_qubits)]
@@ -168,7 +166,7 @@ def Jerbi_reuploading_actor_circuit_without_input_scaleing(layer_params, observa
 
 
 @qml.qnode(dev, interface='torch', diff_method="backprop")
-def empty_circuit(layer_params, observation):
+def empty_circuit(layer_params, observation, act_dim=None):
     return
 ##                                                                                                                                                   ##
 ##                                              quantum actor circuits                                                                               ##

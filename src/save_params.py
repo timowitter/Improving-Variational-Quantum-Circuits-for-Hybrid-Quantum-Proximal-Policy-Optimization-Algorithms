@@ -1,6 +1,5 @@
 import os
 import torch
-from torch.utils.tensorboard import SummaryWriter
 
 def save_actor_circuit_params(chkpt_dir, actor_params):
         actor_checkpoint_file = os.path.join(chkpt_dir, 'actor_circuit_params')

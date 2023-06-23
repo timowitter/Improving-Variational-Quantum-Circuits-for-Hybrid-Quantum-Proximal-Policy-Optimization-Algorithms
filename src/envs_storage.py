@@ -1,6 +1,5 @@
 import os
 import numpy as np
-import torch
 import torch.nn as nn
 
 class Store_envs(nn.Module):
@@ -11,11 +10,7 @@ class Store_envs(nn.Module):
         self.storage_2 = np.array([])
         self.storage_3 = np.array([])
         self.restore_envs = np.array([True, True, True, True])
-        #self.storage = np.array([storage_0, storage_1, storage_2, storage_3], dtype=object)
-        #for i in range (num_envs-1):
-        #    np.append(storage, [])
-        print("storage_0",self.storage_0)
-        #self.storage = np.array(storage, dtype=object)
+        
 
     def get_storage(self, i):
         if i == 0:
@@ -52,7 +47,7 @@ class Store_envs(nn.Module):
             return os.path.join(chkpt_dir, 'envs_3.txt')
         else:
             print("Storage ERROR")
-            
+
     def append_storage(self, i, x):
         self.set_storage(i, np.append(self.get_storage(i), x))  
 

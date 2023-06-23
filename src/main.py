@@ -1,5 +1,4 @@
 #ppo based on https://github.com/vwxyzjn/ppo-implementation-details/blob/main/ppo.py
-import argparse
 import os
 import random
 import numpy as np
@@ -11,7 +10,7 @@ import gym
 import time
 from torch.utils.tensorboard import SummaryWriter
 
-from env_setup import make_env #, save_envs, load_envs
+from env_setup import make_env
 from circuits import actor_circuit_selection, critic_circuit_selection
 from agent import Agent
 from layer_params import make_actor_layer_params, make_critic_layer_params
@@ -102,7 +101,6 @@ if __name__ == "__main__":
     start_time = time.time()
     num_updates = args.total_timesteps // args.batch_size
     warmup_updates = args.warmup_timesteps // args.batch_size
-    #print(f"Number of Updates planned: {num_updates}")
 
     if (args.load_chkpt):
         global_step, next_obs, next_done = save_params.load_state(args.chkpt_dir)
@@ -118,8 +116,8 @@ if __name__ == "__main__":
     for update in range (done_updates + 1, num_updates + 1):
         # Annealing the rate if instructed to do so
         if args.anneal_lr:
-            frac_lin = 1.0 - (update - 1.0) / warmup_updates #1 at start, linearly decreasing over time -> lr will decrease over time
-            frac_exp = (warmup_updates - update + 1.0)**2 / warmup_updates**2 #1 at start, exponentially decreasing over time -> greedyness will decrease over time
+            frac_lin = 1.0 - (update - 1.0) / warmup_updates                        #1 at start, linearly decreasing over time -> lr will decrease over time
+            frac_exp = (warmup_updates - update + 1.0)**2 / warmup_updates**2       #1 at start, exponentially decreasing over time -> greedyness will decrease over time
             lrnow1 = frac_lin * args.warmup_learning_rate_bonus + args.learning_rate 
             lrnow2 = frac_exp * args.warmup_qlearning_rate_bonus + args.qlearning_rate
             optimizer1.param_groups[0]["lr"] = lrnow1
@@ -288,7 +286,7 @@ if __name__ == "__main__":
         explained_var = np.nan if var_y == 0 else 1 - np.var(y_true - y_pred) / var_y           # is the value function a good indicator for the returns
 
 
-        # TRY NOT TO MODIFY: record rewards for plotting purposes
+        # record rewards for plotting purposes
         writer.add_scalar("charts/learning_rate", optimizer1.param_groups[0]["lr"], global_step)
         if (args.quantum_actor):
             writer.add_scalar("charts/qlearning_rate", optimizer2.param_groups[0]["lr"], global_step)
@@ -304,9 +302,7 @@ if __name__ == "__main__":
         writer.add_scalar("losses/explained_variance", explained_var, global_step)
         print("SPS:", int(global_step / (time.time() - start_time)))
         writer.add_scalar("charts/SPS", int(global_step / (time.time() - start_time)), global_step)
-        #if (args.quantum_actor and args.hybrid==False):
-        #    #print("actor_layer_params", actor_layer_params)
-        #    print("observable_rescaleing_params:", output_scaleing_params)
+
         
         if (args.hybrid==False and args.epsylon_greedy==False and args.quantum_actor):
             writer.add_scalar("greedyness/output_scaleing", output_scaleing_params.mean()**2, global_step)
@@ -325,14 +321,7 @@ if __name__ == "__main__":
             if (args.quantum_critic):
                 save_params.save_critic_circuit_params(args.chkpt_dir, critic_layer_params)
             save_params.save_state(args.chkpt_dir, global_step, next_obs, next_done)
-            #save_envs(args.chkpt_dir, envs)
             store_envs.save_envs(args.chkpt_dir, args.num_envs)
-            #store_envs.load_envs(args.chkpt_dir, args.num_envs)
-            #print("store_envs.get_storage(0)", store_envs.get_storage(0))
-            #print("store_envs.get_storage(1)", store_envs.get_storage(1))
-            #print("store_envs.get_storage(2)", store_envs.get_storage(2))
-            #print("store_envs.get_storage(3)", store_envs.get_storage(3))
-
 
 
     envs.close()

@@ -6,7 +6,7 @@
 # Use sinfo to see all availiable partitions
 # For LMU Cip SLURM, use --partition=NvidiaAll if you need nodes with a gpu
 
-#SBATCH --mail-user=<INSERT YOUR EMAIL HERE>
+#SBATCH --mail-user=timowitter@campus.lmu.de
 #SBATCH --mail-type=FAIL
 #SBATCH --partition=All
 #SBATCH --export=NONE

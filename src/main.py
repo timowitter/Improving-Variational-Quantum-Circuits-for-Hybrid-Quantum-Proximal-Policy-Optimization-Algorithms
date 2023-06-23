@@ -11,23 +11,32 @@ import gym
 import time
 from torch.utils.tensorboard import SummaryWriter
 
-from env_setup import make_env
+from env_setup import make_env #, save_envs, load_envs
 from circuits import actor_circuit_selection, critic_circuit_selection
 from agent import Agent
 from layer_params import make_actor_layer_params, make_critic_layer_params
 from calc_num_params import calc_num_actor_params, calc_num_critic_params
-from args import parse_args
+import save_params
+from envs_storage import Store_envs
+from args import parse_args, save_args
 
 args = parse_args()
+pathExists = os.path.exists(args.chkpt_dir)
+if not pathExists:
+    os.makedirs(args.chkpt_dir)
+
+save_args(args)
 
 if __name__ == "__main__":
     #initialise epsylon
     epsylon=1   #100% random until first update
     
-    actor_par_count = calc_num_actor_params
-    critic_par_count = calc_num_critic_params
+    actor_par_count = calc_num_actor_params()
+    critic_par_count = calc_num_critic_params()
+    print("calculated number of actor parameters: ",actor_par_count)
+    print("calculated number of critic parameters: ",critic_par_count)
 
-    run_name = f"{args.gym_id}__{args.exp_name}__{actor_par_count}__{critic_par_count}__{args.seed}__{int(time.time())}"
+    run_name = f"{args.gym_id}__{args.exp_name}__{actor_par_count}__{critic_par_count}__{args.seed}"    #__{int(time.time())}
 
     writer = SummaryWriter(f"runs/{run_name}")
     writer.add_text(
@@ -43,34 +52,41 @@ if __name__ == "__main__":
 
 
     # Setup env
-    envs = gym.vector.SyncVectorEnv([make_env(args.gym_id, args.seed + i, i, args.capture_video, run_name) for i in range(args.num_envs)])
+    store_envs = Store_envs()
+    envs = gym.vector.SyncVectorEnv([make_env(args.gym_id, args.seed + i, i, args.capture_video, run_name, args.num_envs, args.chkpt_dir, args.load_chkpt, store_envs) for i in range(args.num_envs)])
     assert isinstance(envs.single_action_space, gym.spaces.Discrete), "onely discrete action spaces supported"
     
-
-    #Declare Quantum Circuit and Parameters
-    #layer_params = np.random.normal(0, np.tan(0.5), (args.n_qubits, (2 * args.n_var_layers) + 2, 2))
     
-    output_scaleing_params = np.ones(envs.single_action_space.n)*args.output_scaleing_start
-    output_scaleing_params = Variable(torch.tensor(output_scaleing_params), requires_grad=True)
-
-    actor_layer_params = make_actor_layer_params()
-    actor_layer_params = Variable(torch.tensor(actor_layer_params), requires_grad=True)             #alternative: Variable(torch.DoubleTensor(np.random.rand(args.n_qubits, args.n_var_layers, 3)),requires_grad=True)
-    
-    critic_layer_params = make_critic_layer_params()
-    critic_layer_params = Variable(torch.tensor(critic_layer_params), requires_grad=True)
-
+    #Declare Quantum Circuit Parameters and agent
     agent = Agent(envs) 
+    actor_layer_params = make_actor_layer_params()                                                  #alternative: layer_params = np.random.normal(0, np.tan(0.5), (args.n_qubits, (2 * args.n_var_layers) + 2, 2))
+    output_scaleing_params = np.ones(envs.single_action_space.n)*args.output_scaleing_start
+    critic_layer_params = make_critic_layer_params()
+
+    if (args.load_chkpt):                       #load Parameters from checkpoint
+        if (args.quantum_actor==False or args.quantum_critic==False):
+            agent.load_classical_network_params()
+        if (args.quantum_actor):
+            actor_layer_params = save_params.load_actor_circuit_params(args.chkpt_dir)
+        if (args.quantum_actor and args.hybrid==False and args.epsylon_greedy==False):
+            output_scaleing_params = save_params.load_output_scaleing_params(args.chkpt_dir)
+        if (args.quantum_critic):
+            critic_layer_params = save_params.load_critic_circuit_params(args.chkpt_dir)
+    else:                                       #make existing Parameters trainable
+        actor_layer_params = Variable(torch.tensor(actor_layer_params), requires_grad=True) 
+        output_scaleing_params = Variable(torch.tensor(output_scaleing_params), requires_grad=True)
+        critic_layer_params = Variable(torch.tensor(critic_layer_params), requires_grad=True)
+
 
     actor_circuit = actor_circuit_selection()
     critic_circuit = critic_circuit_selection()
-
 
     optimizer1 = optim.Adam(agent.parameters(), lr=args.learning_rate, eps=1e-5)
     if (args.quantum_actor):                                                                            #3 Different Adams epsylon
         optimizer2 = optim.Adam([actor_layer_params], lr=args.qlearning_rate, eps=1e-5)
     if (args.quantum_actor and args.hybrid==False and args.epsylon_greedy==False):                                                                            
         optimizer3 = optim.Adam([output_scaleing_params], lr=args.output_scaleing_learning_rate, eps=1e-5)
-    if (args.quantum_critic):                                                                            
+    if (args.quantum_critic):
         optimizer4 = optim.Adam([critic_layer_params], lr=args.qlearning_rate, eps=1e-5)
 
     # Storage setup
@@ -83,20 +99,27 @@ if __name__ == "__main__":
 
 
     # Game start
-    global_step = 0
     start_time = time.time()
-    next_obs = torch.Tensor(envs.reset()) 
-    next_done = torch.zeros(args.num_envs) 
     num_updates = args.total_timesteps // args.batch_size
     warmup_updates = args.warmup_timesteps // args.batch_size
     #print(f"Number of Updates planned: {num_updates}")
 
+    if (args.load_chkpt):
+        global_step, next_obs, next_done = save_params.load_state(args.chkpt_dir)
+        #updates_remaining = (args.total_timesteps - global_step) // args.batch_size
+        done_updates = (global_step) // args.batch_size
+    else:
+        global_step = 0
+        next_obs = torch.Tensor(envs.reset()) 
+        next_done = torch.zeros(args.num_envs) 
+        done_updates = 0
+
     # Training loop
-    for update in range (1, num_updates + 1):
+    for update in range (done_updates + 1, num_updates + 1):
         # Annealing the rate if instructed to do so
         if args.anneal_lr:
             frac_lin = 1.0 - (update - 1.0) / warmup_updates #1 at start, linearly decreasing over time -> lr will decrease over time
-            frac_exp = (warmup_updates-update)**2 / warmup_updates**2 #1 at start, exponentially decreasing over time -> greedyness will decrease over time
+            frac_exp = (warmup_updates - update + 1.0)**2 / warmup_updates**2 #1 at start, exponentially decreasing over time -> greedyness will decrease over time
             lrnow1 = frac_lin * args.warmup_learning_rate_bonus + args.learning_rate 
             lrnow2 = frac_exp * args.warmup_qlearning_rate_bonus + args.qlearning_rate
             optimizer1.param_groups[0]["lr"] = lrnow1
@@ -139,7 +162,7 @@ if __name__ == "__main__":
         with torch.no_grad():
             next_value_i = torch.zeros(args.num_envs) 
             for i in range(args.num_envs):
-                next_value_i[i] = agent.get_value(next_obs[i], envs.single_observation_space.n)
+                next_value_i[i] = agent.get_value(next_obs[i], envs.single_observation_space.n, critic_circuit, critic_layer_params)
             next_value = next_value_i.reshape(1, -1)
             if args.gae:
                 advantages = torch.zeros_like(rewards) 
@@ -190,7 +213,7 @@ if __name__ == "__main__":
 
                 for i in range(args.minibatch_size):         # Make minibatches        #problem 4 size
                     # Get values, ratio               
-                    _, newlogprob_i, entropy_i, newvalue_i = agent.get_action_and_value(b_obs[mb_inds[i]], actor_circuit, actor_layer_params, output_scaleing_params, epsylon, envs.single_observation_space.n, envs.single_action_space.n, b_actions.long()[mb_inds[i]])
+                    _, newlogprob_i, entropy_i, newvalue_i = agent.get_action_and_value(b_obs[mb_inds[i]], actor_circuit, actor_layer_params, critic_circuit, critic_layer_params, output_scaleing_params, epsylon, envs.single_observation_space.n, envs.single_action_space.n, b_actions.long()[mb_inds[i]])
                     
                     newlogprob[i] = newlogprob_i
                     entropy[i] = entropy_i
@@ -290,6 +313,27 @@ if __name__ == "__main__":
             #writer.add_scalar("greedyness/output_scaleing_var", np.var(output_scaleing_params), global_step)
         if (args.epsylon_greedy):
             writer.add_scalar("greedyness/epsylon", epsylon, global_step)
+
+        store_envs.store_envs(actions, dones, args.num_steps, args.num_envs)
+        if(update % args.save_intervall == 0):
+            if (args.quantum_actor==False or args.quantum_critic==False):
+                agent.save_classical_network_params()
+            if (args.quantum_actor):
+                save_params.save_actor_circuit_params(args.chkpt_dir, actor_layer_params)
+            if (args.quantum_actor and args.hybrid==False):    
+                save_params.save_output_scaleing_params(args.chkpt_dir, output_scaleing_params)
+            if (args.quantum_critic):
+                save_params.save_critic_circuit_params(args.chkpt_dir, critic_layer_params)
+            save_params.save_state(args.chkpt_dir, global_step, next_obs, next_done)
+            #save_envs(args.chkpt_dir, envs)
+            store_envs.save_envs(args.chkpt_dir, args.num_envs)
+            #store_envs.load_envs(args.chkpt_dir, args.num_envs)
+            #print("store_envs.get_storage(0)", store_envs.get_storage(0))
+            #print("store_envs.get_storage(1)", store_envs.get_storage(1))
+            #print("store_envs.get_storage(2)", store_envs.get_storage(2))
+            #print("store_envs.get_storage(3)", store_envs.get_storage(3))
+
+
 
     envs.close()
     writer.close()

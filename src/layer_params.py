@@ -26,8 +26,7 @@ def make_actor_layer_params():
                         layer_params[i, layer_nr, k] = 1
     else:
         layer_params = np.random.rand(0)
-        print("no layer_params needed")
-
+        print("no actor_layer_params needed")
     return layer_params
 
 def make_critic_layer_params():
@@ -49,5 +48,6 @@ def make_critic_layer_params():
                         layer_params[i, layer_nr, k] = 1
     else:
         layer_params = np.random.rand(0)
-        print("no layer_params needed")
+        print("no critic_layer_params needed")
+    return layer_params
 

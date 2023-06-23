@@ -1,4 +1,5 @@
 import numpy as np
+import os
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -61,9 +62,17 @@ class Agent(nn.Module):
                 layer_init(nn.Linear(args.n_qubits, 1))
             )
 
-    def get_value(self, observation, obs_dim, critic_circuit, layer_params):
+        self.checkpoint_file = os.path.join(args.chkpt_dir, 'classical_network_params')
+
+    def save_classical_network_params(self):
+        torch.save(self.state_dict(), self.checkpoint_file)
+
+    def load_classical_network_params(self):
+        self.load_state_dict(torch.load(self.checkpoint_file))
+
+    def get_value(self, observation, obs_dim, critic_circuit, critic_layer_params):
         if args.quantum_critic:                 #quantum critic
-            crit_i = critic_circuit(layer_params, observation)
+            crit_i = critic_circuit(critic_layer_params, observation)
 
             if (args.hybrid):                   #hybrid output rescaleing
                 crit = self.hybrid_critic(crit_i.float())
@@ -80,7 +89,7 @@ class Agent(nn.Module):
                     print("output rescaleing ERROR")
                     crit = crit_i
         else:                                   #classical critic
-            crit = self.critic(trans_obs(observation))
+            crit = self.critic(trans_obs(observation, args.gym_id, obs_dim))
 
         return crit
     

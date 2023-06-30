@@ -52,7 +52,7 @@ def simple_actor_circuit(layer_params, observation, act_dim):
 #alternative simple circuit:            (by Mohamad Hgog in: Quantum-Enhanced Policy Gradient Methods for Reinforcement Learning)
 
 #Parameterized Rotation & Entanglement Layers
-def alt_simple_layer(layer_params, layer_nr):
+def Hgog_layer(layer_params, layer_nr):
     for i in range(args.n_qubits):
         qml.RZ(layer_params[i, layer_nr, 0], wires=i)
         qml.RY(layer_params[i, layer_nr, 1], wires=i)
@@ -64,7 +64,7 @@ def alt_simple_layer(layer_params, layer_nr):
 
 #Variational Quantum Policy Circuit (Actor)
 @qml.qnode(dev, interface='torch', diff_method="backprop")
-def alt_simple_actor_circuit(layer_params, observation, act_dim):
+def Hgog_actor_circuit(layer_params, observation, act_dim):
     # layer_params: Variable Layer Parameters, observation: State Variable
     norm_obs = normalize_obs(observation, args.gym_id, args.n_qubits)
     # Input Encoding
@@ -73,7 +73,7 @@ def alt_simple_actor_circuit(layer_params, observation, act_dim):
 
     # Variational Quantum Circuit
     for layer_nr in range(args.n_var_layers):
-            alt_simple_layer(np.pi*torch.tanh(layer_params), layer_nr)
+            Hgog_layer(np.pi*torch.tanh(layer_params), layer_nr)
 
     if(args.hybrid):
         return [qml.expval(qml.PauliZ(ind)) for ind in range(args.n_qubits)]
@@ -175,19 +175,19 @@ def empty_circuit(layer_params, observation, act_dim=None):
 
 def actor_circuit_selection():
     #circuit selection
-    if (args.quantum_actor and args.data_re_uploading==False and args.alt_circuit==False and args.Jerbi_circuit==False):
+    if (args.quantum_actor and args.circuit=="simple"):
         actor_circuit = simple_actor_circuit
         print("useing simple Quantum Circuit as actor")
-    elif (args.quantum_actor and args.data_re_uploading==False and args.alt_circuit):
-        actor_circuit = alt_simple_actor_circuit
+    elif (args.quantum_actor and args.circuit=="Hgog"):
+        actor_circuit = Hgog_actor_circuit
         print("useing alternative simple Quantum Circuit as actor")
-    elif (args.quantum_actor and args.data_re_uploading==False and args.Jerbi_circuit and args.input_scaleing==False):
+    elif (args.quantum_actor and args.circuit=="Jerbi-no-reuploading-no-input-scaleing"):
         actor_circuit = Jerbi_actor_circuit_no_reuploading_no_input_scaleing
         print("useing Jerbi simple Quantum Circuit as actor")
-    elif (args.quantum_actor and args.data_re_uploading and args.Jerbi_circuit and args.input_scaleing):
+    elif (args.quantum_actor and args.circuit=="Jerbi-reuploading"):
         actor_circuit = Jerbi_reuploading_actor_circuit
         print("useing Jerbi data reuploading Quantum Circuit as actor")
-    elif (args.quantum_actor and args.data_re_uploading and args.Jerbi_circuit):
+    elif (args.quantum_actor and args.circuit=="Jerbi-reuploading-no-input-scaleing"):
         actor_circuit = Jerbi_reuploading_actor_circuit_without_input_scaleing
         print("useing Jerbi reuploading Quantum Circuit without output scaleing as actor")
     elif (args.quantum_actor==False):
@@ -237,7 +237,7 @@ def simple_critic_circuit(layer_params, observation):
 
 #Variational Quantum Policy Circuit (Actor)
 @qml.qnode(dev, interface='torch', diff_method="backprop")
-def alt_simple_critic_circuit(layer_params, observation):
+def Hgog_critic_circuit(layer_params, observation):
     # layer_params: Variable Layer Parameters, observation: State Variable
     norm_obs = normalize_obs(observation)
     # Input Encoding
@@ -246,7 +246,7 @@ def alt_simple_critic_circuit(layer_params, observation):
 
     # Variational Quantum Circuit
     for layer_nr in range(args.n_var_layers):
-            alt_simple_layer(np.pi*torch.tanh(layer_params), layer_nr)
+            Hgog_layer(np.pi*torch.tanh(layer_params), layer_nr)
 
     if(args.hybrid):
         return [qml.expval(qml.PauliZ(ind)) for ind in range(args.n_qubits)]
@@ -328,19 +328,19 @@ def Jerbi_reuploading_critic_circuit_without_input_scaleing(layer_params, observ
 
 
 def critic_circuit_selection():
-    if (args.quantum_critic and args.data_re_uploading==False and args.alt_circuit==False and args.Jerbi_circuit==False):
+    if (args.quantum_critic and args.circuit=="simple"):
         critic_circuit = simple_critic_circuit
         print("useing simple Quantum Circuit as actor")
-    elif (args.quantum_critic and args.data_re_uploading==False and args.alt_circuit):
-        critic_circuit = alt_simple_critic_circuit
+    elif (args.quantum_critic and args.circuit=="Hgog"):
+        critic_circuit = Hgog_critic_circuit
         print("useing alternative simple Quantum Circuit as actor")
-    elif (args.quantum_critic and args.data_re_uploading==False and args.Jerbi_circuit and args.input_scaleing==False):
+    elif (args.quantum_critic and args.circuit=="Jerbi-no-reuploading-no-input-scaleing"):
         critic_circuit = Jerbi_critic_circuit_no_reuploading_no_input_scaleing
         print("useing Jerbi simple Quantum Circuit as actor")
-    elif (args.quantum_critic and args.data_re_uploading and args.Jerbi_circuit and args.input_scaleing):
+    elif (args.quantum_critic and args.circuit=="Jerbi-reuploading"):
         critic_circuit = Jerbi_reuploading_critic_circuit
         print("useing Jerbi data reuploading Quantum Circuit as actor")
-    elif (args.quantum_critic and args.data_re_uploading and args.Jerbi_circuit):
+    elif (args.quantum_critic and args.circuit=="Jerbi-reuploading-no-input-scaleing"):
         critic_circuit = Jerbi_reuploading_critic_circuit_without_input_scaleing
         print("useing Jerbi reuploading Quantum Circuit without output scaleing as actor")
     elif (args.quantum_critic==False):

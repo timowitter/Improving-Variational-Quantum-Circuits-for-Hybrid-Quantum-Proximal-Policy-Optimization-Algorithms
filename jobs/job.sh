@@ -1,19 +1,13 @@
 #!/bin/bash
 
-# SLURM configuration
-# Use #SBATCH <option>=<value> to configure. Do not uncomment lines with #SBATCH
-# Ref: https://doku.lrz.de/slurm-workload-manager-10745909.html
-# Use sinfo to see all availiable partitions
-# For LMU Cip SLURM, use --partition=NvidiaAll if you need nodes with a gpu
-
 #SBATCH --mail-user=timowitter@campus.lmu.de
 #SBATCH --mail-type=FAIL
 #SBATCH --partition=All
 #SBATCH --export=NONE
 
 # Environment Variables
-# export WANDB_MODE="disabled" # Use if you want to disable wandb logging
-export WANDB_SILENT="true"
+# export WANDB_SILENT="true" # Use if you want to not disable wandb logging
+export WANDB_MODE="disabled"
 
 # Check if pyenv is installed
 if command -v pyenv 1>/dev/null 2>&1; then

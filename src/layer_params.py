@@ -4,19 +4,15 @@ from args import parse_args
 args = parse_args()
 
 def make_actor_layer_params():
-    if (args.quantum_actor and args.data_re_uploading==False and (args.Jerbi_circuit==False or args.alt_circuit)):
+    if (args.quantum_actor and (args.circuit=="simple" or args.circuit=="Hgog")):
         layer_params = np.random.rand(args.n_qubits, args.n_var_layers, 3)
         layer_params = layer_params*2 - 1                  #kann eventuell zu 0 werden
         layer_params = np.arctanh(layer_params)
-    elif (args.quantum_actor and args.Jerbi_circuit and args.input_scaleing==False):
+    elif (args.quantum_actor and (args.circuit=="Jerbi-no-reuploading-no-input-scaleing" or args.circuit=="Jerbi-reuploading-no-input-scaleing")):
         layer_params = np.random.rand(args.n_qubits, args.n_var_layers, 2)
         layer_params = layer_params*2 - 1
         layer_params = np.arctanh(layer_params)
-    #elif (args.quantum_actor and args.Jerbi_circuit and args.data_re_uploading==False):
-    #    layer_params = np.random.rand(args.n_qubits, args.n_var_layers + 1, 2)
-    #    layer_params = layer_params*2 - 1
-    #    layer_params = np.arctanh(layer_params)
-    elif (args.quantum_actor and args.Jerbi_circuit and args.data_re_uploading):
+    elif (args.quantum_actor and args.circuit=="Jerbi-reuploading"):
         layer_params = np.random.rand(args.n_qubits, (2 * args.n_enc_layers) + 1, 2)
         layer_params = layer_params*2 - 1
         layer_params = np.arctanh(layer_params)
@@ -30,15 +26,15 @@ def make_actor_layer_params():
     return layer_params
 
 def make_critic_layer_params():
-    if (args.quantum_critic and args.data_re_uploading==False and (args.Jerbi_circuit==False or args.alt_circuit)):
+    if (args.quantum_critic and (args.circuit=="simple" or args.circuit=="Hgog")):
         layer_params = np.random.rand(args.n_qubits, args.n_var_layers, 3)
         layer_params = layer_params*2 - 1                  #kann eventuell zu 0 werden
         layer_params = np.arctanh(layer_params)
-    elif (args.quantum_critic and args.Jerbi_circuit and args.input_scaleing==False):
+    elif (args.quantum_critic and (args.circuit=="Jerbi-no-reuploading-no-input-scaleing" or args.circuit=="Jerbi-reuploading-no-input-scaleing")):
         layer_params = np.random.rand(args.n_qubits, args.n_var_layers, 2)
         layer_params = layer_params*2 - 1
         layer_params = np.arctanh(layer_params)
-    elif (args.quantum_critic and args.data_re_uploading==True and args.Jerbi_circuit):
+    elif (args.quantum_critic and args.circuit=="Jerbi-reuploading"):
         layer_params = np.random.rand(args.n_qubits, (2 * args.n_enc_layers) + 1, 2)
         layer_params = layer_params*2 - 1
         layer_params = np.arctanh(layer_params)

@@ -16,8 +16,8 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--exp-name', type=str, default=os.path.basename(__file__).rstrip(".py"), help='the name of this experiment')
     parser.add_argument('--gym-id', type=str, default="CartPole-v1", help='id of the OpenAi Gym Environment /default: CartPole-v1')
-    parser.add_argument('--warmup-learning-rate-bonus', type=float, default=2.5e-4, help='optimizer warmup learning rate')                                             
-    parser.add_argument('--warmup-qlearning-rate-bonus', type=float, default=5e-3, help='quantum optimizer warmup learning rate')
+    parser.add_argument('--warmup-learning-rate-bonus', type=float, default=0, help='optimizer warmup learning rate')                                             
+    parser.add_argument('--warmup-qlearning-rate-bonus', type=float, default=4e-3, help='quantum optimizer warmup learning rate')
     parser.add_argument('--learning-rate', type=float, default=2.5e-4, help='optimizer learning rate')                                                                 #2.5e-4
     parser.add_argument('--qlearning-rate', type=float, default=1e-3, help='quantum optimizer learning rate')
     parser.add_argument('--output-scaleing-learning-rate', type=float, default=1.5e-4, help='output scaleing learning rate')
@@ -30,7 +30,7 @@ def parse_args():
     parser.add_argument('--capture-video', type=lambda x:bool(strtobool(x)), default=False, nargs='?', const=True, help='wether to record videos to `videos` folder')   #not working
 
     #Algorith specific
-    parser.add_argument('--num-envs', type=int, default=1, help='number of environments run in parrallel in the SyncVectorEnv')                                         #1 Vector environment #4
+    parser.add_argument('--num-envs', type=int, default=4, help='number of environments run in parrallel in the SyncVectorEnv')                                         #1 Vector environment
     parser.add_argument('--num-steps', type=int, default=128, help='the number of steps in each environments per policy rollout phase of the multy vector env')
     parser.add_argument('--anneal-lr', type=lambda x:bool(strtobool(x)), default=False, nargs='?', const=True, help='leaning rate annealing for ploicy and value networks')  #4 lr Annealing
     parser.add_argument('--gae', type=lambda x:bool(strtobool(x)), default=True, nargs='?', const=True, help='GAE for Advantage computation')                           #5 general advantage estimation
@@ -41,7 +41,7 @@ def parse_args():
     parser.add_argument('--norm-adv', type=lambda x:bool(strtobool(x)), default=True, nargs='?', const=True, help='toggle Advantage normalisation')                     #7 Advatage Normalisation
     parser.add_argument('--clip-coef', type=float, default=0.2, help='clipping coefficient')                                                                            #8 clipped Objektive
     parser.add_argument('--clip-vloss', type=lambda x:bool(strtobool(x)), default=True, nargs='?', const=True, help='toggle the use of clipped value loss')             #9 Value loss clipping
-    parser.add_argument('--ent-coef', type=float, default=0.00, help='coefficient for the entropy (loss), 0 = disabled')                                                #10 entropy loss #0.01
+    parser.add_argument('--ent-coef', type=float, default=0.01, help='coefficient for the entropy (loss), 0 = disabled')                                                #10 entropy loss
     parser.add_argument('--vf-coef', type=float, default=0.5, help='coefficient for the value function')
     parser.add_argument('--max-grad-norm', type=float, default=0.5, help='maximum norm for the gradient clipping')                                                      #11 global gradient clipping
     parser.add_argument('--target-kl', type=float, default=None, help='the target KL divergence threshhold (0.015)')                                                    #target KL early stopping
@@ -54,23 +54,20 @@ def parse_args():
     parser.add_argument('--n-qubits', type=int, default=4, help='number of qubits of the circuit')
     parser.add_argument('--n-var-layers', type=int, default=2, help='gives the number of variational layers in case of the simple circuit')
     parser.add_argument('--n-enc-layers', type=int, default=1, help='gives the the number of encodeing layers in case of data reuploading (then the number of variational layers equals the number of encodeing layers + 1)')
-    parser.add_argument('--alt-circuit', type=lambda x:bool(strtobool(x)), default=False, nargs='?', const=True, help='toggle alternate simple circuit by Mohamad Hgog')
-    parser.add_argument('--Jerbi-circuit', type=lambda x:bool(strtobool(x)), default=True, nargs='?', const=True, help='toggle alternate simple circuit by Jerbi et al.')  
-    parser.add_argument('--data-re-uploading', type=lambda x:bool(strtobool(x)), default=True, nargs='?', const=True, help='toggle data-re-uploading') 
-    parser.add_argument('--input-scaleing', type=lambda x:bool(strtobool(x)), default=True, nargs='?', const=True, help='toggle input scaleing') 
+    parser.add_argument('--circuit', type=str, default="simple", help='the circuit that is to be used, can be one of:  simple / Hgog / Jerbi-no-reuploading-no-input-scaleing / Jerbi-reuploading / Jerbi-reuploading-no-input-scaleing')
+    parser.add_argument('--output-scaleing', type=lambda x:bool(strtobool(x)), default=True, nargs='?', const=True, help='toggle output scaleing')
     parser.add_argument('--hybrid', type=lambda x:bool(strtobool(x)), default=False, nargs='?', const=True, help='toggle hybrid output postprocessing') 
-    parser.add_argument('--epsylon-greedy', type=lambda x:bool(strtobool(x)), default=False, nargs='?', const=False, help='epsylon greedy action selection instead of sampling')
-    parser.add_argument('--epsylon', type=float, default=1.0, help='random action selection chance at start')   
     parser.add_argument('--load-chkpt', type=lambda x:bool(strtobool(x)), default=False, nargs='?', const=False, help='continue learning from checkpoint')
-    parser.add_argument('--save-location', type=str, default='tmp/qppo', help='save-location/gym-id/exp-name/seed make the save location of the experiment (chkpt-dir)')
-    parser.add_argument('--save-intervall', type=int, default=4, help='gives the the save-intervall in number of update epochs')
+    parser.add_argument('--save-location', type=str, default='qppo-slurm', help='save-location/gym-id/exp-name/seed/ make the save location of the experiment (chkpt-dir)')
+    parser.add_argument('--save-intervall', type=int, default=20, help='gives the the save-intervall in number of update epochs')
 
 
     args=parser.parse_args()
     args.batch_size=int(args.num_steps * args.num_envs)
     args.minibatch_size=int(args.batch_size // args.num_minibatches)
-    args.chkpt_dir = f"{args.save_location}/{args.gym_id}/{args.exp_name}/{args.seed}"
-
+    args.chkpt_dir = f"{args.save_location}/checkpoints/{args.gym_id}/{args.exp_name}/{args.seed}"
+    args.results_dir = f"{args.save_location}/results/{args.gym_id}/{args.exp_name}/{args.seed}"
+    args.plot_dir = f"{args.save_location}/plots/{args.gym_id}/{args.exp_name}/{args.seed}"
     
 
     if (args.load_chkpt):                   # load args exept total_timesteps and continue learning if new total_timesteps > global_timesteps

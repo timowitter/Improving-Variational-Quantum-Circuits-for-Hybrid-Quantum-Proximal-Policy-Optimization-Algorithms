@@ -1,7 +1,7 @@
-import gym
+import gymnasium as gym
 
 #Chen's shortest path frozen lake (from https://github.com/ycchen1989/Var-QuantumCircuits-DeepRL/tree/master/Code)
-from gym.envs.registration import register
+from gymnasium.envs.registration import register
 register(
     id='Deterministic-ShortestPath-4x4-FrozenLake-v0', # name given to this new environment
     entry_point='ShortestPathFrozenLake:ShortestPathFrozenLake', # env entry point
@@ -27,11 +27,12 @@ def make_env(gym_id, seed, env_num, capture_video, run_name, num_envs, chkpt_dir
             env = gym.wrappers.TimeLimit(env, max_episode_steps=100)
         else:
             env = gym.make(gym_id)
-        env = gym.wrappers.RecordEpisodeStatistics(env)
+        env = gym.wrappers.RecordEpisodeStatistics(env)  # VectorListInfo
         if capture_video:
             if env_num==0:
                 env = gym.wrappers.RecordVideo(env, f"videos/{run_name}", record_video_trigger=lambda t: t % 1000 == 0)
-        env.seed(seed)
+        if not (gym_id == "FrozenLake-v1" or gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0"):
+            env.seed(seed)
         env.action_space.seed(seed)
         env.observation_space.seed(seed)
 

@@ -92,7 +92,7 @@ class Agent(nn.Module):
 
         return crit
     
-    def get_action_and_value(self, observation, actor_circuit, actor_layer_params, critic_circuit, critic_layer_params, output_scaleing_params, epsylon, obs_dim, acts_dim, action=None):  #, envs.single_observation_space.n, envs.single_action_space.n
+    def get_action_and_value(self, observation, actor_circuit, actor_layer_params, critic_circuit, critic_layer_params, output_scaleing_params, obs_dim, acts_dim, action=None):  #, envs.single_observation_space.n, envs.single_action_space.n
         
         if args.quantum_actor:
             logits_i = actor_circuit(actor_layer_params, observation, acts_dim)
@@ -100,26 +100,27 @@ class Agent(nn.Module):
             logits_i = self.actor(trans_obs(observation, args.gym_id, obs_dim)) 
 
         #output scaleing
-        if (args.quantum_actor and args.hybrid==False and args.epsylon_greedy==False):
+        if (args.quantum_actor and args.hybrid==False and args.output_scaleing):
             # trainable output parameters for trainable greedyness
             logits=torch.zeros(acts_dim) 
             for i in range(acts_dim):
                 logits[i]=logits_i[i]*(output_scaleing_params[i]*output_scaleing_params.mean())
-        elif (args.quantum_actor and args.hybrid==True):
+        elif (args.quantum_actor and args.hybrid):
             logits = self.hybrid_actor(logits_i.float())
         else:
             logits = logits_i
 
         probs = Categorical(logits=logits)      #softMaxOutPut = np.exp(logits) / np.exp(logits).sum()
         if action is None:
+            """
             if args.epsylon_greedy:
                 if (np.random.random(1) <= epsylon):
                     action=torch.tensor(np.random.randint(0, acts_dim)) 
                 else: 
                     action=torch.argmax(logits)
-            else:
-                action = probs.sample() 
-            action = action.view(1)             #one sample for each environment: dim action = num_envs
+            else:"""
+            action = probs.sample()
+            action = action.view(1)
 
         return action , probs.log_prob(action), probs.entropy(), self.get_value(observation, obs_dim, critic_circuit, critic_layer_params)
 ##                                                                                                                                                   ##

@@ -6,7 +6,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.autograd import Variable
-import gym
+import gymnasium as gym
 import time
 from torch.utils.tensorboard import SummaryWriter
 
@@ -17,25 +17,28 @@ from layer_params import make_actor_layer_params, make_critic_layer_params
 from calc_num_params import calc_num_actor_params, calc_num_critic_params
 import save_params
 from envs_storage import Store_envs
+from save_results import Save_results
+import plot
 from args import parse_args, save_args
 
+
 args = parse_args()
-pathExists = os.path.exists(args.chkpt_dir)
-if not pathExists:
+chkpt_pathExists = os.path.exists(args.chkpt_dir)
+if not chkpt_pathExists:
     os.makedirs(args.chkpt_dir)
+results_pathExists = os.path.exists(args.results_dir)
+if not results_pathExists:
+    os.makedirs(args.results_dir)
 
 save_args(args)
 
 if __name__ == "__main__":
-    #initialise epsylon
-    epsylon=1   #100% random until first update
-    
     actor_par_count = calc_num_actor_params()
     critic_par_count = calc_num_critic_params()
     print("calculated number of actor parameters: ",actor_par_count)
     print("calculated number of critic parameters: ",critic_par_count)
 
-    run_name = f"{args.gym_id}__{args.exp_name}__{actor_par_count}__{critic_par_count}__{args.seed}"    #__{int(time.time())}
+    run_name = f"{args.gym_id}__{args.exp_name}__{actor_par_count}__{critic_par_count}__{args.seed}__{int(time.time())}"    #
 
     writer = SummaryWriter(f"runs/{run_name}")
     writer.add_text(
@@ -53,7 +56,9 @@ if __name__ == "__main__":
     # Setup env
     store_envs = Store_envs()
     envs = gym.vector.SyncVectorEnv([make_env(args.gym_id, args.seed + i, i, args.capture_video, run_name, args.num_envs, args.chkpt_dir, args.load_chkpt, store_envs) for i in range(args.num_envs)])
+    envs = gym.wrappers.VectorListInfo(envs)
     assert isinstance(envs.single_action_space, gym.spaces.Discrete), "onely discrete action spaces supported"
+    save_results = Save_results(args.results_dir, args.load_chkpt)
     
     
     #Declare Quantum Circuit Parameters and agent
@@ -67,7 +72,7 @@ if __name__ == "__main__":
             agent.load_classical_network_params()
         if (args.quantum_actor):
             actor_layer_params = save_params.load_actor_circuit_params(args.chkpt_dir)
-        if (args.quantum_actor and args.hybrid==False and args.epsylon_greedy==False):
+        if (args.quantum_actor and args.hybrid==False and args.output_scaleing):
             output_scaleing_params = save_params.load_output_scaleing_params(args.chkpt_dir)
         if (args.quantum_critic):
             critic_layer_params = save_params.load_critic_circuit_params(args.chkpt_dir)
@@ -83,7 +88,7 @@ if __name__ == "__main__":
     optimizer1 = optim.Adam(agent.parameters(), lr=args.learning_rate, eps=1e-5)
     if (args.quantum_actor):                                                                            #3 Different Adams epsylon
         optimizer2 = optim.Adam([actor_layer_params], lr=args.qlearning_rate, eps=1e-5)
-    if (args.quantum_actor and args.hybrid==False and args.epsylon_greedy==False):                                                                            
+    if (args.quantum_actor and args.hybrid==False and args.output_scaleing):                                                                            
         optimizer3 = optim.Adam([output_scaleing_params], lr=args.output_scaleing_learning_rate, eps=1e-5)
     if (args.quantum_critic):
         optimizer4 = optim.Adam([critic_layer_params], lr=args.qlearning_rate, eps=1e-5)
@@ -108,7 +113,9 @@ if __name__ == "__main__":
         done_updates = (global_step) // args.batch_size
     else:
         global_step = 0
-        next_obs = torch.Tensor(envs.reset()) 
+        obs_tmp, _ = envs.reset()
+        #print(obs_tmp)
+        next_obs = torch.Tensor(obs_tmp) 
         next_done = torch.zeros(args.num_envs) 
         done_updates = 0
 
@@ -125,11 +132,6 @@ if __name__ == "__main__":
                 optimizer2.param_groups[0]["lr"] = lrnow2
             if (args.quantum_critic):
                 optimizer4.param_groups[0]["lr"] = lrnow2
-        if (args.epsylon_greedy):
-            #frac3 = 1.0 - (update - 1.0) / num_updates
-            #frac3 = (num_updates-update)**2 / num_updates**2 #1 at start, exponentially decreasing over time -> greedyness will decrease over time
-            #epsylon = frac3 * args.epsylon
-            epsylon = 0.9999**(global_step)
 
         # Environment interaction
         for step in range(0, args.num_steps):
@@ -140,21 +142,33 @@ if __name__ == "__main__":
             # Get action
             for i in range(args.num_envs):
                 with torch.no_grad():
-                    action, logprob, _, value = agent.get_action_and_value(next_obs[i], actor_circuit, actor_layer_params, critic_circuit, critic_layer_params, output_scaleing_params, epsylon, envs.single_observation_space.n, envs.single_action_space.n)
+                    action, logprob, _, value = agent.get_action_and_value(next_obs[i], actor_circuit, actor_layer_params, critic_circuit, critic_layer_params, output_scaleing_params, envs.single_observation_space.n, envs.single_action_space.n)
                     values[step, i]= value.flatten()
                 actions[step, i]=action.short()
                 logprobs[step, i]=logprob
 
             # Env step
-            next_ob, reward, done, info = envs.step(actions[step].cpu().numpy())        #np.asarray(x, dtype = 'int')
+            #print("envs.step(actions[step].cpu().numpy())", envs.step(actions[step].cpu().numpy()))
+            next_ob, reward, terminated, truncated, info = envs.step(actions[step].cpu().numpy())        #np.asarray(x, dtype = 'int')   #
             rewards[step] = torch.tensor(reward) .view(-1)
-            next_obs, next_done = torch.Tensor(next_ob) , torch.Tensor(done) 
+            done = torch.logical_or(torch.Tensor(terminated), torch.Tensor(truncated))
+            next_obs, next_done = torch.Tensor(next_ob), done
             for item in info:
+                """
                 if "episode" in item.keys():
                     print(f"global_step={global_step}, episodic return {item['episode']['r']}")
                     writer.add_scalar("charts/episodic_return", item['episode']['r'], global_step)
                     writer.add_scalar("charts/episodic_length", item['episode']['l'], global_step)
-                    break
+                    save_results.append_episode_results(item['episode']['r'], item['episode']['l'], global_step, args.gym_id, args.exp_name, args.circuit, args.seed)
+                    break"""
+
+                if 'final_info' in item.keys():
+                    print(f"global_step={global_step}, episodic return {item['final_info']['episode']['r']}")
+                    writer.add_scalar("charts/episodic_return", item['final_info']['episode']['r'], global_step)
+                    writer.add_scalar("charts/episodic_length", item['final_info']['episode']['l'], global_step)
+                    save_results.append_episode_results(item['final_info']['episode']['r'], item['final_info']['episode']['l'], global_step, args.gym_id, args.exp_name, args.circuit, args.seed)
+
+
 
         # calculate commulative discounted Returns and Advantages
         with torch.no_grad():
@@ -167,10 +181,10 @@ if __name__ == "__main__":
                 nextadvantage = 0
                 for t in reversed(range(args.num_steps)):
                     if t == args.num_steps - 1:
-                        nextnonterminal = 1.0 - next_done
+                        nextnonterminal = 1.0 - next_done.short()
                         nextvalue = next_value
                     else:
-                        nextnonterminal = 1.0 - dones[t + 1]
+                        nextnonterminal = 1.0 - dones[t + 1].short()
                         nextvalue = values[t + 1]
                     delta = rewards[t] + args.gamma * nextnonterminal * nextvalue - values[t]  #analog zu returns[t] - values[t] nur mit nextvalue anstatt next_return
                     advantages[t] = nextadvantage = delta + args.gamma * args.gae_lambda * nextnonterminal * nextadvantage  # + commulative discounted advantage
@@ -179,10 +193,10 @@ if __name__ == "__main__":
                 returns = torch.zeros_like(rewards) 
                 for t in reversed(range(args.num_steps)):
                     if t == args.num_steps - 1:
-                        nextnonterminal = 1.0 - next_done
+                        nextnonterminal = 1.0 - next_done.short()
                         next_return = next_value
                     else:
-                        nextnonterminal = 1.0 - dones[t + 1]
+                        nextnonterminal = 1.0 - dones[t + 1].short()
                         next_return = returns[t + 1]
                     returns[t] = rewards[t] + args.gamma * nextnonterminal * next_return   #commulative discounted return
                 advantages = returns - values
@@ -211,7 +225,7 @@ if __name__ == "__main__":
 
                 for i in range(args.minibatch_size):         # Make minibatches        #problem 4 size
                     # Get values, ratio               
-                    _, newlogprob_i, entropy_i, newvalue_i = agent.get_action_and_value(b_obs[mb_inds[i]], actor_circuit, actor_layer_params, critic_circuit, critic_layer_params, output_scaleing_params, epsylon, envs.single_observation_space.n, envs.single_action_space.n, b_actions.long()[mb_inds[i]])
+                    _, newlogprob_i, entropy_i, newvalue_i = agent.get_action_and_value(b_obs[mb_inds[i]], actor_circuit, actor_layer_params, critic_circuit, critic_layer_params, output_scaleing_params, envs.single_observation_space.n, envs.single_action_space.n, b_actions.long()[mb_inds[i]])
                     
                     newlogprob[i] = newlogprob_i
                     entropy[i] = entropy_i
@@ -257,20 +271,20 @@ if __name__ == "__main__":
                 optimizer1.zero_grad()
                 if (args.quantum_actor):
                     optimizer2.zero_grad()
-                    if (args.hybrid==False and args.epsylon_greedy==False):
+                    if (args.hybrid==False and args.output_scaleing):
                         optimizer3.zero_grad()
                 if (args.quantum_critic):
                     optimizer4.zero_grad()
                 loss.backward()
                 nn.utils.clip_grad_norm_(agent.parameters(), args.max_grad_norm)
-                #if (args.quantum_actor):
-                #    nn.utils.clip_grad_norm_([actor_layer_params], args.max_grad_norm)
-                #if (args.quantum_critic):
-                #    nn.utils.clip_grad_norm_([critic_layer_params], args.max_grad_norm)
+                if (args.quantum_actor):
+                    nn.utils.clip_grad_norm_([actor_layer_params], args.max_grad_norm)
+                if (args.quantum_critic):
+                    nn.utils.clip_grad_norm_([critic_layer_params], args.max_grad_norm)
                 optimizer1.step()
                 if (args.quantum_actor):
                     optimizer2.step()
-                    if (args.hybrid==False and args.epsylon_greedy==False):
+                    if (args.hybrid==False and args.output_scaleing):
                         optimizer3.step()
                 if (args.quantum_critic):
                     optimizer4.step()
@@ -288,10 +302,13 @@ if __name__ == "__main__":
 
         # record rewards for plotting purposes
         writer.add_scalar("charts/learning_rate", optimizer1.param_groups[0]["lr"], global_step)
+        qlearning_rate = 0
         if (args.quantum_actor):
             writer.add_scalar("charts/qlearning_rate", optimizer2.param_groups[0]["lr"], global_step)
+            qlearning_rate = optimizer2.param_groups[0]["lr"]
         elif (args.quantum_critic):
             writer.add_scalar("charts/qlearning_rate", optimizer4.param_groups[0]["lr"], global_step)
+            qlearning_rate = optimizer4.param_groups[0]["lr"]
         writer.add_scalar("losses/value_loss", v_loss.item(), global_step)
         writer.add_scalar("losses/policy_loss", pg_loss.item(), global_step)
         writer.add_scalar("losses/entropy", entropy_loss.item(), global_step)
@@ -303,26 +320,41 @@ if __name__ == "__main__":
         print("SPS:", int(global_step / (time.time() - start_time)))
         writer.add_scalar("charts/SPS", int(global_step / (time.time() - start_time)), global_step)
 
-        
-        if (args.hybrid==False and args.epsylon_greedy==False and args.quantum_actor):
+        output_scaleing = 1
+        if (args.quantum_actor and args.hybrid==False and args.output_scaleing):
             writer.add_scalar("greedyness/output_scaleing", output_scaleing_params.mean()**2, global_step)
-            #writer.add_scalar("greedyness/output_scaleing_var", np.var(output_scaleing_params), global_step)
-        if (args.epsylon_greedy):
-            writer.add_scalar("greedyness/epsylon", epsylon, global_step)
+            output_scaleing = output_scaleing_params.mean()**2
 
+        #store data of update
+        save_results.append_update_results(optimizer1.param_groups[0]["lr"], qlearning_rate, v_loss.item(), pg_loss.item(), entropy_loss.item(), loss.item(), old_approx_kl.item(), approx_kl.item(), np.mean(clipfracs), explained_var, int(global_step / (time.time() - start_time)), output_scaleing, global_step, args.gym_id, args.exp_name, args.circuit, args.seed)
         store_envs.store_envs(actions, dones, args.num_steps, args.num_envs)
-        if(update % args.save_intervall == 0):
+
+        #if save intervall save everything to file
+        if(update % args.save_intervall == 0):                              
+            save_results.save_results()
             if (args.quantum_actor==False or args.quantum_critic==False):
                 agent.save_classical_network_params()
             if (args.quantum_actor):
                 save_params.save_actor_circuit_params(args.chkpt_dir, actor_layer_params)
-            if (args.quantum_actor and args.hybrid==False):    
+            if (args.quantum_actor and args.hybrid==False and args.output_scaleing):    
                 save_params.save_output_scaleing_params(args.chkpt_dir, output_scaleing_params)
             if (args.quantum_critic):
                 save_params.save_critic_circuit_params(args.chkpt_dir, critic_layer_params)
             save_params.save_state(args.chkpt_dir, global_step, next_obs, next_done)
             store_envs.save_envs(args.chkpt_dir, args.num_envs)
 
-
+    #before exiting save everything and plot
+    save_results.save_results()
+    if (args.quantum_actor==False or args.quantum_critic==False):
+        agent.save_classical_network_params()
+    if (args.quantum_actor):
+        save_params.save_actor_circuit_params(args.chkpt_dir, actor_layer_params)
+    if (args.quantum_actor and args.hybrid==False and args.output_scaleing):    
+        save_params.save_output_scaleing_params(args.chkpt_dir, output_scaleing_params)
+    if (args.quantum_critic):
+        save_params.save_critic_circuit_params(args.chkpt_dir, critic_layer_params)
+    save_params.save_state(args.chkpt_dir, global_step, next_obs, next_done)
+    store_envs.save_envs(args.chkpt_dir, args.num_envs)
+    plot.plot_episode_results(args.results_dir, args.plot_dir)
     envs.close()
     writer.close()

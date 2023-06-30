@@ -18,18 +18,18 @@ def calc_num_actor_params():
         num_obs=0; num_acts=0;   debug=0
         print("number of parameter calculation error")
     
-    if (args.quantum_actor and args.data_re_uploading==False and (args.Jerbi_circuit==False or args.alt_circuit)):
+    if (args.quantum_actor and (args.circuit=="simple" or args.circuit=="Hgog")):
         actor_par_count = 3*args.n_var_layers*args.n_qubits
-    elif (args.quantum_actor and args.Jerbi_circuit and args.input_scaleing==False):
+    elif (args.quantum_actor and (args.circuit=="Jerbi-no-reuploading-no-input-scaleing" or args.circuit=="Jerbi-reuploading-no-input-scaleing")):
         actor_par_count = 2*args.n_var_layers*args.n_qubits
-    elif (args.quantum_actor and args.data_re_uploading==True and args.Jerbi_circuit):
+    elif (args.quantum_actor and args.circuit=="Jerbi-reuploading"):
         actor_par_count = 2*(2*args.n_enc_layers+1)*args.n_qubits
     elif (args.quantum_actor==False):
         actor_par_count = num_obs*args.actor_hidden_layer_nodes + args.actor_hidden_layer_nodes**2 + args.actor_hidden_layer_nodes*num_acts + 2*args.actor_hidden_layer_nodes + num_acts
 
     if (args.quantum_actor and args.hybrid):
         actor_par_count = actor_par_count + args.n_qubits*num_acts + num_acts
-    elif(args.quantum_actor and args.hybrid==False):
+    elif(args.quantum_actor and args.hybrid==False and args.output_scaleing):
         actor_par_count = actor_par_count + num_acts
     actor_par_count = actor_par_count*debug
     return actor_par_count
@@ -48,11 +48,11 @@ def calc_num_critic_params():
         num_obs=0; num_acts=0;   debug=0
         print("number of parameter calculation error")
 
-    if (args.quantum_critic and args.data_re_uploading==False and (args.Jerbi_circuit==False or args.alt_circuit)):
+    if (args.quantum_critic and (args.circuit=="simple" or args.circuit=="Hgog")):
         critic_par_count = 3*args.n_var_layers*args.n_qubits
-    elif (args.quantum_critic and args.Jerbi_circuit and args.input_scaleing==False):
+    elif (args.quantum_critic and (args.circuit=="Jerbi-no-reuploading-no-input-scaleing" or args.circuit=="Jerbi-reuploading-no-input-scaleing")):
         critic_par_count = 2*args.n_var_layers*args.n_qubits
-    elif (args.quantum_critic and args.data_re_uploading==True and args.Jerbi_circuit):
+    elif (args.quantum_critic and args.circuit=="Jerbi-reuploading"):
         critic_par_count = 2*(2*args.n_enc_layers+1)*args.n_qubits
     elif (args.quantum_critic==False):
         critic_par_count = num_obs*args.critic_hidden_layer_nodes + args.critic_hidden_layer_nodes**2 + args.critic_hidden_layer_nodes*1 + 2*args.critic_hidden_layer_nodes + 1

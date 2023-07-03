@@ -20,47 +20,6 @@ done
 
 
 
-#Popen('python main.py --exp-name ppo_default  --circuit "simple" --seed 1 --gym-id Deterministic-ShortestPath-4x4-FrozenLake-v0 --num-steps 128 --total-timesteps 300000 --learning-rate 2.5e-4 --qlearning-rate 0e-3 --n-qubits 0 --n-var-layers 0 --n-enc-layers 0 --actor-hidden-layer-nodes 4 --critic-hidden-layer-nodes 64 --quantum-actor False --load-chkpt False')
+#default settings ppo:  'python main.py --exp-name ppo_default  --circuit "simple" --seed 1 --gym-id Deterministic-ShortestPath-4x4-FrozenLake-v0 --num-steps 128 --total-timesteps 300000 --learning-rate 2.5e-4 --qlearning-rate 0e-3 --n-qubits 0 --n-var-layers 0 --n-enc-layers 0 --actor-hidden-layer-nodes 4 --critic-hidden-layer-nodes 64 --quantum-actor False --load-chkpt False')
 
-#Popen('python main.py --exp-name qppo_default --circuit "simple" --seed 1 --gym-id Deterministic-ShortestPath-4x4-FrozenLake-v0 --num-steps 128 --total-timesteps 400000 --warmup-timesteps 50000 --warmup-learning-rate-bonus 0 --learning-rate 2.5e-4 --warmup-qlearning-rate-bonus 4.5e-3 --qlearning-rate 0.5e-3 --n-qubits 4 --n-var-layers 2 --n-enc-layers 1 --hybrid False --anneal-lr True --load-chkpt False')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-"""
-# Specify hyperparameters
-runs=20
-datasets=("iris" "wine")
-approaches=("random" "OL-NN-EP" "TL-NN-EP" "OL-NN" "TL-NN")
-
-# Check if sbatch is available
-if command -v sbatch > /dev/null; then
-  sbatch_cmd="sbatch"
-else
-  echo "\033[1;31mYou are not in a slurm environment. Executing experiments sequentially!\033[0m"
-  sbatch_cmd=""
-fi
-
-for dataset in ${datasets[@]}; do
-    for approach in ${approaches[@]}; do
-        for seed in $(seq 0 $(($runs-1))); do
-            if [ -z "$sbatch_cmd" ]; then
-                echo "\033[1;32mExecuting job with environment variables:\033[0m -d $dataset -a $approach -s $seed"
-                ./jobs/job.sh -d $dataset -a $approach -s $seed -e $epoch
-            else
-                $sbatch_cmd --job-name="run-$dataset-$approach-$seed" jobs/job.sh -d $dataset -a $approach -s $seed
-            fi
-        done
-    done
-done
-"""
+#default settings qppo: 'python main.py --exp-name qppo_default --circuit "simple" --seed 1 --gym-id Deterministic-ShortestPath-4x4-FrozenLake-v0 --num-steps 128 --total-timesteps 400000 --warmup-timesteps 50000 --warmup-learning-rate-bonus 0 --learning-rate 2.5e-4 --warmup-qlearning-rate-bonus 4.5e-3 --qlearning-rate 0.5e-3 --n-qubits 4 --n-var-layers 2 --n-enc-layers 1 --hybrid False --anneal-lr True --load-chkpt False')

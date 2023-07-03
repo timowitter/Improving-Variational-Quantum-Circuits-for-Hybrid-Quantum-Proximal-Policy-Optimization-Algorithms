@@ -323,7 +323,8 @@ if __name__ == "__main__":
         output_scaleing = 1
         if (args.quantum_actor and args.hybrid==False and args.output_scaleing):
             writer.add_scalar("greedyness/output_scaleing", output_scaleing_params.mean()**2, global_step)
-            output_scaleing = output_scaleing_params.mean()**2
+            with torch.no_grad():
+                output_scaleing = output_scaleing_params.mean().item()**2
 
         #store data of update
         save_results.append_update_results(optimizer1.param_groups[0]["lr"], qlearning_rate, v_loss.item(), pg_loss.item(), entropy_loss.item(), loss.item(), old_approx_kl.item(), approx_kl.item(), np.mean(clipfracs), explained_var, int(global_step / (time.time() - start_time)), output_scaleing, global_step, args.gym_id, args.exp_name, args.circuit, args.seed)
@@ -355,6 +356,6 @@ if __name__ == "__main__":
         save_params.save_critic_circuit_params(args.chkpt_dir, critic_layer_params)
     save_params.save_state(args.chkpt_dir, global_step, next_obs, next_done)
     store_envs.save_envs(args.chkpt_dir, args.num_envs)
-    plot.plot_episode_results(args.results_dir, args.plot_dir)
+    plot.plot_training_results(args.results_dir, args.plot_dir, args.exp_name, args.seed, args.batch_size, args.total_timesteps)
     envs.close()
     writer.close()

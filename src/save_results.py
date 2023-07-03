@@ -48,8 +48,7 @@ class Save_results(nn.Module):
                 else:
                     self.dict_episode.update(pd.read_csv(self.results_dir + "/episode_results.csv").to_dict('list'))
                     self.dict_update.update(pd.read_csv(self.results_dir + "/update_results.csv").to_dict('list'))
-                    #self.dict_episode_exists = True
-                    #self.dict_update_exists = True
+                    
 
     def append_episode_results(self, episode_reward, episode_length, global_step, gym_id, exp_name, circuit, seed):
         #append episode statistics

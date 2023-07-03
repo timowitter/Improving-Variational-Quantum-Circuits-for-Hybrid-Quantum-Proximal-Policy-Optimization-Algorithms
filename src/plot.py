@@ -22,7 +22,7 @@ sns.set_theme()
 
 
 
-def plot_episode_results(results_dir, plot_dir):
+def plot_training_results(results_dir, plot_dir, exp_name, seed, stepsize, max_steps):
     pathExists = os.path.exists(plot_dir)
     if not pathExists:
         os.makedirs(plot_dir)
@@ -33,8 +33,35 @@ def plot_episode_results(results_dir, plot_dir):
     update_results_dir = os.path.join(results_dir, 'update_results.csv')
     update_results = pd.read_csv(update_results_dir)
 
-    plot_episode_reward(episode_results, plot_dir)
-    plot_episode_length(episode_results, plot_dir)
+    #make avg over update for plotting
+    avg_rewards=[]
+    avg_lengths=[]
+    avg_global_step=[]
+    avg_exp_name=[]
+    avg_seed=[]
+    
+    for i in range(stepsize, max_steps, stepsize):
+        df_tmp = episode_results[(episode_results.global_step <= i) & (episode_results.global_step > (i-stepsize))]
+        avg_rewards.append(np.mean(df_tmp['episode_reward'].mean()))
+        avg_lengths.append(np.mean(df_tmp['episode_length'].mean()))
+        avg_global_step.append(i)
+        avg_exp_name.append(exp_name)
+        avg_seed.append(seed)
+    
+    avg_results = {
+                            'avg_rewards': avg_rewards,
+                            'avg_lengths': avg_lengths,
+                            'global_step': avg_global_step,
+                            'exp_name': avg_exp_name,
+                            'seed': avg_seed
+        }
+    
+    episode_results_df = pd.DataFrame(data=avg_results)
+
+
+    #plotting over update
+    plot_episode_reward(episode_results_df, plot_dir)
+    plot_episode_length(episode_results_df, plot_dir)
 
     plot_learning_rate(update_results, plot_dir)
     plot_qlearning_rate(update_results, plot_dir)
@@ -54,9 +81,9 @@ def plot_episode_results(results_dir, plot_dir):
 
 def plot_episode_reward(episode_results, dir):
     sns.relplot(
-    data=episode_results,
+    data=episode_results, kind="line",
     x="global_step", y="episode_reward", col="exp_name",
-    hue="seed", style="seed", size="episode_length",
+    hue="seed", style="seed",
     )
     plot_dir = os.path.join(dir, 'episode_reward.png')
     plt.savefig(plot_dir)
@@ -66,7 +93,7 @@ def plot_episode_length(episode_results, dir):
     sns.relplot(
     data=episode_results,
     x="global_step", y="episode_length", col="exp_name",
-    hue="seed", style="seed", size="episode_reward",
+    hue="seed", style="seed",
     )
     plot_dir = os.path.join(dir, 'episode_lenght.png')
     plt.savefig(plot_dir)

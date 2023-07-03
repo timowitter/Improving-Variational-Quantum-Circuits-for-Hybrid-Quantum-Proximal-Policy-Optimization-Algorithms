@@ -1,7 +1,7 @@
 #!/bin/bash
 
-#SBATCH --mail-user=timowitter@campus.lmu.de
-#SBATCH --mail-type=FAIL
+#SBATCH --mail-user=t.witter@campus.lmu.de
+#SBATCH --mail-type=ALL
 #SBATCH --partition=All
 #SBATCH --export=NONE
 

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Specify hyperparameters
-name="ppo_lr2e-4_test"
+name="ppo_first_slurm_test_lr2.5e-4"
 start_seed=10
 seed_step=10
 end_seed=50

@@ -154,14 +154,6 @@ if __name__ == "__main__":
             done = torch.logical_or(torch.Tensor(terminated), torch.Tensor(truncated))
             next_obs, next_done = torch.Tensor(next_ob), done
             for item in info:
-                """
-                if "episode" in item.keys():
-                    print(f"global_step={global_step}, episodic return {item['episode']['r']}")
-                    writer.add_scalar("charts/episodic_return", item['episode']['r'], global_step)
-                    writer.add_scalar("charts/episodic_length", item['episode']['l'], global_step)
-                    save_results.append_episode_results(item['episode']['r'], item['episode']['l'], global_step, args.gym_id, args.exp_name, args.circuit, args.seed)
-                    break"""
-
                 if 'final_info' in item.keys():
                     print(f"global_step={global_step}, episodic return {item['final_info']['episode']['r']}")
                     writer.add_scalar("charts/episodic_return", item['final_info']['episode']['r'], global_step)

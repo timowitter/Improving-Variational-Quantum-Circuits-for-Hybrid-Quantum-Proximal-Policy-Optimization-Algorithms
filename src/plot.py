@@ -42,8 +42,8 @@ def plot_training_results(results_dir, plot_dir, exp_name, seed, stepsize, max_s
     
     for i in range(stepsize, max_steps, stepsize):
         df_tmp = episode_results[(episode_results.global_step <= i) & (episode_results.global_step > (i-stepsize))]
-        avg_rewards.append(np.mean(df_tmp['episode_reward'].mean()))
-        avg_lengths.append(np.mean(df_tmp['episode_length'].mean()))
+        avg_rewards.append(df_tmp['episode_reward'].mean())
+        avg_lengths.append(df_tmp['episode_length'].mean())
         avg_global_step.append(i)
         avg_exp_name.append(exp_name)
         avg_seed.append(seed)
@@ -56,12 +56,12 @@ def plot_training_results(results_dir, plot_dir, exp_name, seed, stepsize, max_s
                             'seed': avg_seed
         }
     
-    episode_results_df = pd.DataFrame(data=avg_results)
+    avg_episode_results = pd.DataFrame(data=avg_results)
 
 
     #plotting over update
-    plot_episode_reward(episode_results_df, plot_dir)
-    plot_episode_length(episode_results_df, plot_dir)
+    plot_avg_episode_reward(avg_episode_results, plot_dir)
+    plot_avg_episode_length(avg_episode_results, plot_dir)
 
     plot_learning_rate(update_results, plot_dir)
     plot_qlearning_rate(update_results, plot_dir)
@@ -79,20 +79,20 @@ def plot_training_results(results_dir, plot_dir, exp_name, seed, stepsize, max_s
 
 
 
-def plot_episode_reward(episode_results, dir):
+def plot_avg_episode_reward(episode_results, dir):
     sns.relplot(
     data=episode_results, kind="line",
-    x="global_step", y="episode_reward", col="exp_name",
+    x="global_step", y="avg_rewards", col="exp_name",
     hue="seed", style="seed",
     )
     plot_dir = os.path.join(dir, 'episode_reward.png')
     plt.savefig(plot_dir)
 
 
-def plot_episode_length(episode_results, dir):
+def plot_avg_episode_length(episode_results, dir):
     sns.relplot(
-    data=episode_results,
-    x="global_step", y="episode_length", col="exp_name",
+    data=episode_results, kind="line",
+    x="global_step", y="avg_lengths", col="exp_name",
     hue="seed", style="seed",
     )
     plot_dir = os.path.join(dir, 'episode_lenght.png')
@@ -227,6 +227,7 @@ def get_avg_of_episode(df, exp_names, seeds, stepsize, max_steps):
             seed_avg_length=[]
             for seed in seeds:
                 df_tmp = df_tmp2[(df_tmp2.seed == seed)]
+                print(df_tmp)
                 seed_avg_reward.append(df_tmp['episode_reward'].mean())
                 seed_avg_length.append(df_tmp['episode_length'].mean())
             avg_rewards.append(np.mean(seed_avg_reward))

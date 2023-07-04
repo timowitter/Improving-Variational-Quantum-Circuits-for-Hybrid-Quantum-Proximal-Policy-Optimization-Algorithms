@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Specify hyperparameters
-name="ppo_first_slurm_test_lr2.5e-4"
-start_seed=60
+name="ppo_default_lr2.5e-4"
+start_seed=10
 seed_step=10
-end_seed=60
+end_seed=50
 envs=("Deterministic-ShortestPath-4x4-FrozenLake-v0") #"CartPole-v1"
 circuits=("no_q_circuit")               #"simple" / "Hgog" / "Jerbi-no-reuploading-no-input-scaleing" /" Jerbi-reuploading" / "Jerbi-reuploading-no-input-scaleing"
 

@@ -348,6 +348,6 @@ if __name__ == "__main__":
         save_params.save_critic_circuit_params(args.chkpt_dir, critic_layer_params)
     save_params.save_state(args.chkpt_dir, global_step, next_obs, next_done)
     store_envs.save_envs(args.chkpt_dir, args.num_envs)
-    plot.plot_training_results(args.results_dir, args.plot_dir, args.exp_name, args.seed, args.batch_size, args.total_timesteps)
+    plot.plot_training_results(args.results_dir, args.plot_dir, args.gym_id, args.exp_name, args.circuit, args.seed, args.batch_size, args.total_timesteps)
     envs.close()
     writer.close()

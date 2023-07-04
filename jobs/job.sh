@@ -9,9 +9,16 @@
 # export WANDB_SILENT="true" # Use if you want to not disable wandb logging
 export WANDB_MODE="disabled"
 
-export PYENV_ROOT="$HOME/.pyenv"
+#export PYENV_ROOT="$HOME/.pyenv"
 #command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
 #eval "$(pyenv init -)"
+
+# pyenv setup
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+export PATH="$PYENV_ROOT/shims:${PATH}"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
 
 # Check if pyenv is installed
 if command -v pyenv 1>/dev/null 2>&1; then

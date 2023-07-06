@@ -32,6 +32,10 @@ exp_names = [
     "ppo_default_lr8.0e-4",
     "ppo_default_lr10.0e-4",
     "ppo_default_lr15.0e-4",
+    "ppo_default_lr25.0e-4",
+    "ppo_default_lr50.0e-4",
+    "ppo_default_lr100.0e-4",
+    "ppo_default_lr250.0e-4",
 ]
 seeds = [10, 20, 30, 40, 50]
 stepsize = 4 * 128 * 4

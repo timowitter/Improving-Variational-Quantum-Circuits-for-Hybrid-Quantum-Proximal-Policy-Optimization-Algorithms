@@ -6,7 +6,7 @@ start_seed=10
 seed_step=10
 end_seed=10
 envs=("Deterministic-ShortestPath-4x4-FrozenLake-v0") #"CartPole-v1"
-circuits=("no_q_circuit")               #"simple" / "Hgog" / "Jerbi-no-reuploading-no-input-scaleing" /" Jerbi-reuploading" / "Jerbi-reuploading-no-input-scaleing"
+circuits=("Jerbi-no-reuploading-no-input-scaleing")               #"no_q_circuit" / "simple" / "Hgog" / "Jerbi-no-reuploading-no-input-scaleing" /" Jerbi-reuploading" / "Jerbi-reuploading-no-input-scaleing"
 
 for env in ${envs[@]}; do
     for circuit in ${circuits[@]}; do

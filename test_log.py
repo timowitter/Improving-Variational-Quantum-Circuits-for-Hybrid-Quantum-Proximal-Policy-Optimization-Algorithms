@@ -30,7 +30,7 @@ exp_names = [
     "ppo_default_lr4.5e-4",
 ]
 seeds = [10, 20, 30, 40, 50]
-stepsize = 4 * 128
+stepsize = 4 * 128 * 4
 max_steps = 300000
 
 plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)

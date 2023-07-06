@@ -17,11 +17,18 @@ plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_ste
 """
 
 
-# Hyperparameter Test 1: find optimal learning rate for ppo:
+# Hyperparameter Test 1: find optimal learning rate for ppo with 4-4-NN:
 
 plot_dir = plots_dir + "/Hyperparameter-Test-1_PPO-LR"
 gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
-exp_names = ["ppo_default_lr2.0e-4", "ppo_default_lr2.5e-4", "ppo_default_lr3.0e-4"]
+exp_names = [
+    "ppo_default_lr2.0e-4",
+    "ppo_default_lr2.5e-4",
+    "ppo_default_lr3.0e-4",
+    "ppo_default_lr3.5e-4",
+    "ppo_default_lr4.0e-4",
+    "ppo_default_lr4.5e-4",
+]
 seeds = [10, 20, 30, 40, 50]
 stepsize = 4 * 128
 max_steps = 300000

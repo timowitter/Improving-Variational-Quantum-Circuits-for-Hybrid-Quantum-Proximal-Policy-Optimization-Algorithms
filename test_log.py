@@ -23,13 +23,13 @@ plot_dir = plots_dir + "/Hyperparameter-Test-1_PPO-LR"
 gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
 exp_names = [
     "ppo_default_lr2.0e-4",
-    "ppo_default_lr2.5e-4",
-    "ppo_default_lr3.0e-4",
-    "ppo_default_lr3.5e-4",
+    # "ppo_default_lr2.5e-4",
+    # "ppo_default_lr3.0e-4",
+    # "ppo_default_lr3.5e-4",
     "ppo_default_lr4.0e-4",
-    "ppo_default_lr4.5e-4",
+    # "ppo_default_lr4.5e-4",
     "ppo_default_lr6.0e-4",
-    "ppo_default_lr8.0e-4",
+    # "ppo_default_lr8.0e-4",
     "ppo_default_lr10.0e-4",
     "ppo_default_lr15.0e-4",
     "ppo_default_lr25.0e-4",

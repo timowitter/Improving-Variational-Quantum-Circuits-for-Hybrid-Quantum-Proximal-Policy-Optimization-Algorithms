@@ -54,7 +54,7 @@ exp_names = [
     "qppo_Jerbi-no-reuploading-no-input-scaleing_lr-sceduling_qlr0.5e-3",
 ]
 seeds = [10, 20, 30]
-stepsize = 4 * 128 * 8
-max_steps = 300000
+stepsize = 4 * 128 * 1
+max_steps = 500000
 
 plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)

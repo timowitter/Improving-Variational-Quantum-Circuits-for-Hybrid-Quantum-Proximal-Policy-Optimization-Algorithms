@@ -66,7 +66,7 @@ for env in ${envs[@]}; do
 done
 
 
-
+#Hyperparameter Test 2b: find optimal learning rate and clip_coef for qppo: fixed output scaleing an no clip_grad_norm for circuit parameters
 
 
 

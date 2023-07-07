@@ -90,13 +90,34 @@ if __name__ == "__main__":
             agent.load_classical_network_params()
         if args.quantum_actor:
             actor_layer_params = save_params.load_actor_circuit_params(args.chkpt_dir)
-        if args.quantum_actor and not args.hybrid and args.output_scaleing:
+        if (
+            args.quantum_actor
+            and not args.hybrid
+            and args.output_scaleing
+            and not args.sceduled_output_scaleing
+        ):
             output_scaleing_params = save_params.load_output_scaleing_params(args.chkpt_dir)
+        else:
+            output_scaleing_params = Variable(
+                torch.tensor(output_scaleing_params), requires_grad=False
+            )
         if args.quantum_critic:
             critic_layer_params = save_params.load_critic_circuit_params(args.chkpt_dir)
     else:  # make existing Parameters trainable
         actor_layer_params = Variable(torch.tensor(actor_layer_params), requires_grad=True)
-        output_scaleing_params = Variable(torch.tensor(output_scaleing_params), requires_grad=True)
+        if (
+            args.quantum_actor
+            and not args.hybrid
+            and args.output_scaleing
+            and not args.sceduled_output_scaleing
+        ):
+            output_scaleing_params = Variable(
+                torch.tensor(output_scaleing_params), requires_grad=True
+            )
+        else:
+            output_scaleing_params = Variable(
+                torch.tensor(output_scaleing_params), requires_grad=False
+            )
         critic_layer_params = Variable(torch.tensor(critic_layer_params), requires_grad=True)
 
     actor_circuit = actor_circuit_selection()
@@ -105,7 +126,12 @@ if __name__ == "__main__":
     optimizer1 = optim.Adam(agent.parameters(), lr=args.learning_rate, eps=1e-5)
     if args.quantum_actor:  # 3 Different Adams epsylon
         optimizer2 = optim.Adam([actor_layer_params], lr=args.qlearning_rate, eps=1e-5)
-    if args.quantum_actor and not args.hybrid and args.output_scaleing:
+    if (
+        args.quantum_actor
+        and not args.hybrid
+        and args.output_scaleing
+        and not args.sceduled_output_scaleing
+    ):
         optimizer3 = optim.Adam(
             [output_scaleing_params], lr=args.output_scaleing_learning_rate, eps=1e-5
         )
@@ -156,6 +182,12 @@ if __name__ == "__main__":
                 optimizer2.param_groups[0]["lr"] = lrnow2
             if args.quantum_critic:
                 optimizer4.param_groups[0]["lr"] = lrnow2
+        if args.sceduled_output_scaleing:
+            fac_sced_out_scale = ((global_step) / 100000) * args.sced_out_scale_fac
+            for i in range(envs.single_action_space.n):
+                output_scaleing_params[i] = 1 + np.sqrt(
+                    fac_sced_out_scale
+                )  # sqrt is needed since it will be multiplyed with its mean
 
         # Environment interaction
         for step in range(0, args.num_steps):
@@ -340,20 +372,28 @@ if __name__ == "__main__":
                 optimizer1.zero_grad()
                 if args.quantum_actor:
                     optimizer2.zero_grad()
-                    if not args.hybrid and args.output_scaleing:
+                    if (
+                        not args.hybrid
+                        and args.output_scaleing
+                        and not args.sceduled_output_scaleing
+                    ):
                         optimizer3.zero_grad()
                 if args.quantum_critic:
                     optimizer4.zero_grad()
                 loss.backward()
                 nn.utils.clip_grad_norm_(agent.parameters(), args.max_grad_norm)
-                if args.quantum_actor:
-                    nn.utils.clip_grad_norm_([actor_layer_params], args.max_grad_norm)
-                if args.quantum_critic:
-                    nn.utils.clip_grad_norm_([critic_layer_params], args.max_grad_norm)
+                # if args.quantum_actor:
+                #    nn.utils.clip_grad_norm_([actor_layer_params], args.max_grad_norm)
+                # if args.quantum_critic:
+                #    nn.utils.clip_grad_norm_([critic_layer_params], args.max_grad_norm)
                 optimizer1.step()
                 if args.quantum_actor:
                     optimizer2.step()
-                    if not args.hybrid and args.output_scaleing:
+                    if (
+                        not args.hybrid
+                        and args.output_scaleing
+                        and not args.sceduled_output_scaleing
+                    ):
                         optimizer3.step()
                 if args.quantum_critic:
                     optimizer4.step()
@@ -431,7 +471,12 @@ if __name__ == "__main__":
                 agent.save_classical_network_params()
             if args.quantum_actor:
                 save_params.save_actor_circuit_params(args.chkpt_dir, actor_layer_params)
-            if args.quantum_actor and not args.hybrid and args.output_scaleing:
+            if (
+                args.quantum_actor
+                and not args.hybrid
+                and args.output_scaleing
+                and not args.sceduled_output_scaleing
+            ):
                 save_params.save_output_scaleing_params(args.chkpt_dir, output_scaleing_params)
             if args.quantum_critic:
                 save_params.save_critic_circuit_params(args.chkpt_dir, critic_layer_params)
@@ -444,7 +489,12 @@ if __name__ == "__main__":
         agent.save_classical_network_params()
     if args.quantum_actor:
         save_params.save_actor_circuit_params(args.chkpt_dir, actor_layer_params)
-    if args.quantum_actor and not args.hybrid and args.output_scaleing:
+    if (
+        args.quantum_actor
+        and not args.hybrid
+        and args.output_scaleing
+        and not args.sceduled_output_scaleing
+    ):
         save_params.save_output_scaleing_params(args.chkpt_dir, output_scaleing_params)
     if args.quantum_critic:
         save_params.save_critic_circuit_params(args.chkpt_dir, critic_layer_params)

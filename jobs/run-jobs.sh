@@ -6,9 +6,9 @@ name1="qppo_Jerbi-no-reuploading-no-input-scaleing_lrANDoutpScl-sceduling_no-cli
 name2="qppo_Jerbi-no-reuploading-no-input-scaleing_lrANDoutpScl-sceduling_no-clip-grad-norm_qlr0.5e-3"
 name3="qppo_Jerbi-no-reuploading-no-input-scaleing_lrANDoutpScl-sceduling_no-clip-grad-norm_qlr2.5e-3"
 
-start_seed=20
+start_seed=10
 seed_step=10
-end_seed=20
+end_seed=10
 envs=("Deterministic-ShortestPath-4x4-FrozenLake-v0") #"CartPole-v1"
 circuits=("Jerbi-no-reuploading-no-input-scaleing")               #"no_q_circuit" / "simple" / "Hgog" / "Jerbi-no-reuploading-no-input-scaleing" /" Jerbi-reuploading" / "Jerbi-reuploading-no-input-scaleing"
 

@@ -18,7 +18,7 @@ plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_ste
 
 
 # Hyperparameter Test 1: find optimal learning rate for ppo with 4-4-NN:
-
+"""
 plot_dir = plots_dir + "/Hyperparameter-Test-1_PPO-LR"
 gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
 exp_names = [
@@ -42,6 +42,19 @@ stepsize = 4 * 128 * 4
 max_steps = 300000
 
 plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
-
+"""
 
 # Hyperparameter Test 2: find optimal learning rate and clip_coef for qppo:
+
+
+plot_dir = plots_dir + "/Hyperparameter-Test-2_QPPO-LR"
+gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
+exp_names = [
+    "qppo_Jerbi-no-reuploading-no-input-scaleing_lr-sceduling_qlr0.1e-3",
+    "qppo_Jerbi-no-reuploading-no-input-scaleing_lr-sceduling_qlr0.5e-3",
+]
+seeds = [10, 20, 30]
+stepsize = 4 * 128 * 8
+max_steps = 300000
+
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)

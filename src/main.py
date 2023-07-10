@@ -169,12 +169,16 @@ if __name__ == "__main__":
     for update in range(done_updates + 1, num_updates + 1):
         # Annealing the rate if instructed to do so
         if args.anneal_lr:
-            frac_lin = (
-                1.0 - (update - 1.0) / warmup_updates
-            )  # 1 at start, linearly decreasing over time -> lr will decrease over time
-            frac_exp = (
-                warmup_updates - update + 1.0
-            ) ** 2 / warmup_updates**2  # 1 at start, exponentially decreasing over time -> greedyness will decrease over time
+            if update <= warmup_updates:
+                frac_lin = (
+                    1.0 - (update - 1.0) / warmup_updates
+                )  # 1 at start, linearly decreasing over time -> lr will decrease over time
+                frac_exp = (
+                    warmup_updates - update + 1.0
+                ) ** 2 / warmup_updates**2  # 1 at start, exponentially decreasing over time -> greedyness will decrease over time
+            else:
+                frac_lin = 0
+                frac_exp = 0
             lrnow1 = frac_lin * args.warmup_learning_rate_bonus + args.learning_rate
             lrnow2 = frac_exp * args.warmup_qlearning_rate_bonus + args.qlearning_rate
             optimizer1.param_groups[0]["lr"] = lrnow1
@@ -185,8 +189,8 @@ if __name__ == "__main__":
         if args.sceduled_output_scaleing:
             fac_sced_out_scale = ((global_step) / 100000) * args.sced_out_scale_fac
             for i in range(envs.single_action_space.n):
-                output_scaleing_params[i] = 1 + np.sqrt(
-                    fac_sced_out_scale
+                output_scaleing_params[i] = np.sqrt(
+                    1 + fac_sced_out_scale
                 )  # sqrt is needed since it will be multiplyed with its mean
 
         # Environment interaction

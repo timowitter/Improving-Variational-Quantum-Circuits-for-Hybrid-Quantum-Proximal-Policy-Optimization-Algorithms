@@ -2,15 +2,15 @@
 
 # Specify hyperparameters
 
-name1="qppo_Jerbi-no-reuploading-no-input-scaleing_default-FrozenLake_lrANDoutpScl-sceduling_no-clip-grad-norm_qlr0.1e-3"
-name2="qppo_Jerbi-no-reuploading-no-input-scaleing_default-FrozenLake_lrANDoutpScl-sceduling_no-clip-grad-norm_qlr0.5e-3"
-name3="qppo_Jerbi-no-reuploading-no-input-scaleing_default-FrozenLake_lrANDoutpScl-sceduling_no-clip-grad-norm_qlr2.5e-3"
+name1="qppo-Jerbi_1enc_layer_no_input_scaleing-lrANDoutpScl_sceduling-qlr0.1e-3"
+name2="qppo-Jerbi_1enc_layer_no_input_scaleing-lrANDoutpScl_sceduling-qlr0.5e-3"
+name3="qppo-Jerbi_1enc_layer_no_input_scaleing-lrANDoutpScl_sceduling-qlr2.5e-3"
 
 start_seed=10
 seed_step=10
 end_seed=20
-envs=("FrozenLake-v1") #"CartPole-v1"
-circuits=("Jerbi-no-reuploading-no-input-scaleing")               #"no_q_circuit" / "simple" / "Hgog" / "Jerbi-no-reuploading-no-input-scaleing" /" Jerbi-reuploading" / "Jerbi-reuploading-no-input-scaleing"
+envs=("Deterministic-ShortestPath-4x4-FrozenLake-v0") 
+circuits=("Jerbi-no-reuploading-no-input-scaleing")
 
 for env in ${envs[@]}; do
     for circuit in ${circuits[@]}; do

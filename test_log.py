@@ -43,7 +43,7 @@ max_steps = 300000
 
 plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
 
-# Hyperparameter Test 2: find optimal learning rate and clip_coef for qppo:
+# Hyperparameter Test 2: find optimal learning rate and clip_coef for qppo: (failed due to error in code)
 
 
 plot_dir = plots_dir + "/Hyperparameter-Test-2_QPPO-LR"
@@ -60,7 +60,7 @@ max_steps = 500000
 plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
 """
 
-# Hyperparameter Test 2b: find optimal learning rate and clip_coef for qppo: fixed output scaleing an no clip_grad_norm for circuit parameters
+# Hyperparameter Test 2b: find optimal learning rate and clip_coef for qppo: fixed output scaleing an no clip_grad_norm for circuit parameters (failed due to error in code)
 plot_dir = plots_dir + "/Hyperparameter-Test-2b_QPPO-LR"
 gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
 exp_names = [
@@ -75,7 +75,7 @@ max_steps = 500000
 plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
 
 
-# Hyperparameter Test 2c: 2b in default Frozen Lake
+# Hyperparameter Test 2c: 2b in default Frozen Lake (failed due to error in code)
 plot_dir = plots_dir + "/Hyperparameter-Test-2c_QPPO-LR"
 gym_id = "FrozenLake-v1"
 exp_names = [

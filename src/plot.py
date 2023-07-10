@@ -179,6 +179,7 @@ def plot_avg_episode_reward_by_seed(episode_results, dir):
     )
     plot_dir = os.path.join(dir, "episode_reward_by_seed.png")
     plt.savefig(plot_dir)
+    plt.close()
 
 
 def plot_avg_episode_reward_by_exp_name(episode_results, dir):
@@ -193,6 +194,7 @@ def plot_avg_episode_reward_by_exp_name(episode_results, dir):
     )
     plot_dir = os.path.join(dir, "episode_reward_by_exp_name.png")
     plt.savefig(plot_dir)
+    plt.close()
 
 
 def plot_avg_episode_length_by_seed(episode_results, dir):
@@ -207,6 +209,7 @@ def plot_avg_episode_length_by_seed(episode_results, dir):
     )
     plot_dir = os.path.join(dir, "episode_lenght_by_seed.png")
     plt.savefig(plot_dir)
+    plt.close()
 
 
 def plot_avg_episode_length_by_exp_name(episode_results, dir):
@@ -221,6 +224,7 @@ def plot_avg_episode_length_by_exp_name(episode_results, dir):
     )
     plot_dir = os.path.join(dir, "episode_lenght_by_exp_name.png")
     plt.savefig(plot_dir)
+    plt.close()
 
 
 def plot_learning_rate_by_seed(update_results, dir):
@@ -235,6 +239,7 @@ def plot_learning_rate_by_seed(update_results, dir):
     )
     plot_dir = os.path.join(dir, "learning_rate_by_seed.png")
     plt.savefig(plot_dir)
+    plt.close()
 
 
 def plot_learning_rate_by_exp_name(update_results, dir):
@@ -249,6 +254,7 @@ def plot_learning_rate_by_exp_name(update_results, dir):
     )
     plot_dir = os.path.join(dir, "learning_rate_by_exp_name.png")
     plt.savefig(plot_dir)
+    plt.close()
 
 
 def plot_qlearning_rate_by_seed(update_results, dir):
@@ -263,6 +269,7 @@ def plot_qlearning_rate_by_seed(update_results, dir):
     )
     plot_dir = os.path.join(dir, "qlearning_rate_by_seed.png")
     plt.savefig(plot_dir)
+    plt.close()
 
 
 def plot_qlearning_rate_by_exp_name(update_results, dir):
@@ -277,6 +284,7 @@ def plot_qlearning_rate_by_exp_name(update_results, dir):
     )
     plot_dir = os.path.join(dir, "qlearning_rate_by_exp_name.png")
     plt.savefig(plot_dir)
+    plt.close()
 
 
 def plot_value_loss_by_seed(update_results, dir):
@@ -291,6 +299,7 @@ def plot_value_loss_by_seed(update_results, dir):
     )
     plot_dir = os.path.join(dir, "value_loss_by_seed.png")
     plt.savefig(plot_dir)
+    plt.close()
 
 
 def plot_value_loss_by_exp_name(update_results, dir):
@@ -305,6 +314,7 @@ def plot_value_loss_by_exp_name(update_results, dir):
     )
     plot_dir = os.path.join(dir, "value_loss_by_exp_name.png")
     plt.savefig(plot_dir)
+    plt.close()
 
 
 def plot_policy_loss_by_seed(update_results, dir):
@@ -319,6 +329,7 @@ def plot_policy_loss_by_seed(update_results, dir):
     )
     plot_dir = os.path.join(dir, "policy_loss_by.png")
     plt.savefig(plot_dir)
+    plt.close()
 
 
 def plot_policy_loss_by_exp_name(update_results, dir):
@@ -333,6 +344,7 @@ def plot_policy_loss_by_exp_name(update_results, dir):
     )
     plot_dir = os.path.join(dir, "policy_loss_by_exp_name.png")
     plt.savefig(plot_dir)
+    plt.close()
 
 
 def plot_entropy_by_seed(update_results, dir):
@@ -347,6 +359,7 @@ def plot_entropy_by_seed(update_results, dir):
     )
     plot_dir = os.path.join(dir, "entropy_by_seed.png")
     plt.savefig(plot_dir)
+    plt.close()
 
 
 def plot_entropy_by_exp_name(update_results, dir):
@@ -361,6 +374,7 @@ def plot_entropy_by_exp_name(update_results, dir):
     )
     plot_dir = os.path.join(dir, "entropy_by_exp_name.png")
     plt.savefig(plot_dir)
+    plt.close()
 
 
 def plot_loss_by_seed(update_results, dir):
@@ -375,6 +389,7 @@ def plot_loss_by_seed(update_results, dir):
     )
     plot_dir = os.path.join(dir, "loss_by_seed.png")
     plt.savefig(plot_dir)
+    plt.close()
 
 
 def plot_loss_by_exp_name(update_results, dir):
@@ -389,6 +404,7 @@ def plot_loss_by_exp_name(update_results, dir):
     )
     plot_dir = os.path.join(dir, "loss_by_exp_name.png")
     plt.savefig(plot_dir)
+    plt.close()
 
 
 def plot_old_approx_kl_by_seed(update_results, dir):
@@ -403,6 +419,7 @@ def plot_old_approx_kl_by_seed(update_results, dir):
     )
     plot_dir = os.path.join(dir, "old_approx_kl_by_seed.png")
     plt.savefig(plot_dir)
+    plt.close()
 
 
 def plot_approx_kl_by_seed(update_results, dir):
@@ -417,6 +434,7 @@ def plot_approx_kl_by_seed(update_results, dir):
     )
     plot_dir = os.path.join(dir, "approx_kl_by_seed.png")
     plt.savefig(plot_dir)
+    plt.close()
 
 
 def plot_clipfrac_by_seed(update_results, dir):
@@ -431,6 +449,7 @@ def plot_clipfrac_by_seed(update_results, dir):
     )
     plot_dir = os.path.join(dir, "clipfrac_by_seed.png")
     plt.savefig(plot_dir)
+    plt.close()
 
 
 def plot_explained_variance_by_seed(update_results, dir):
@@ -445,6 +464,7 @@ def plot_explained_variance_by_seed(update_results, dir):
     )
     plot_dir = os.path.join(dir, "explained_variance_by_seed.png")
     plt.savefig(plot_dir)
+    plt.close()
 
 
 def plot_SPS_by_seed(update_results, dir):
@@ -459,6 +479,7 @@ def plot_SPS_by_seed(update_results, dir):
     )
     plot_dir = os.path.join(dir, "SPS_by_seed.png")
     plt.savefig(plot_dir)
+    plt.close()
 
 
 def plot_SPS_by_exp_name(update_results, dir):
@@ -473,6 +494,7 @@ def plot_SPS_by_exp_name(update_results, dir):
     )
     plot_dir = os.path.join(dir, "SPS_by_exp_name.png")
     plt.savefig(plot_dir)
+    plt.close()
 
 
 def plot_output_scaleing_by_seed(update_results, dir):
@@ -487,6 +509,7 @@ def plot_output_scaleing_by_seed(update_results, dir):
     )
     plot_dir = os.path.join(dir, "output_scaleing_by_seed.png")
     plt.savefig(plot_dir)
+    plt.close()
 
 
 def plot_output_scaleing_by_exp_name(update_results, dir):
@@ -501,11 +524,7 @@ def plot_output_scaleing_by_exp_name(update_results, dir):
     )
     plot_dir = os.path.join(dir, "output_scaleing_by_exp_name.png")
     plt.savefig(plot_dir)
-
-
-def extract_from_df_by_exp_name(df, exp_name):
-    df_extract = df[df["exp_name"] == exp_name]
-    return df_extract
+    plt.close()
 
 
 def plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps):

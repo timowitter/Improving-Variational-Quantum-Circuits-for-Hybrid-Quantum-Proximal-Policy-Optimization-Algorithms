@@ -14,11 +14,11 @@ stepsize = 4*128
 max_steps = 300000
 
 plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
-"""
+
 
 
 # Hyperparameter Test 1: find optimal learning rate for ppo with 4-4-NN:
-"""
+
 plot_dir = plots_dir + "/Hyperparameter-Test-1_PPO-LR"
 gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
 exp_names = [

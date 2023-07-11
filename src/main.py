@@ -186,7 +186,7 @@ if __name__ == "__main__":
                 optimizer2.param_groups[0]["lr"] = lrnow2
             if args.quantum_critic:
                 optimizer4.param_groups[0]["lr"] = lrnow2
-        if args.sceduled_output_scaleing:
+        if args.output_scaleing and args.sceduled_output_scaleing:
             sced_out_scale_bonus = ((global_step) / 100000) * args.sced_out_scale_fac
             for i in range(envs.single_action_space.n):
                 output_scaleing_params[i] = np.sqrt(
@@ -202,16 +202,21 @@ if __name__ == "__main__":
             # Get action
             for i in range(args.num_envs):
                 with torch.no_grad():
-                    action, logprob, _, value = agent.get_action_and_value(
-                        next_obs[i],
-                        actor_circuit,
-                        actor_layer_params,
-                        critic_circuit,
-                        critic_layer_params,
-                        output_scaleing_params,
-                        envs.single_observation_space.n,
-                        envs.single_action_space.n,
-                    )
+                    if args.random_baseline:
+                        action, logprob, _, value = agent.get_random_action_and_value(
+                            envs.single_action_space.n
+                        )
+                    else:
+                        action, logprob, _, value = agent.get_action_and_value(
+                            next_obs[i],
+                            actor_circuit,
+                            actor_layer_params,
+                            critic_circuit,
+                            critic_layer_params,
+                            output_scaleing_params,
+                            envs.single_observation_space.n,
+                            envs.single_action_space.n,
+                        )
                     values[step, i] = value.flatten()
                 actions[step, i] = action.short()
                 logprobs[step, i] = logprob
@@ -245,274 +250,302 @@ if __name__ == "__main__":
                         args.seed,
                     )
 
-        # calculate commulative discounted Returns and Advantages
-        with torch.no_grad():
-            next_value_i = torch.zeros(args.num_envs)
-            for i in range(args.num_envs):
-                next_value_i[i] = agent.get_value(
-                    next_obs[i],
-                    envs.single_observation_space.n,
-                    critic_circuit,
-                    critic_layer_params,
-                )
-            next_value = next_value_i.reshape(1, -1)
-            if args.gae:
-                advantages = torch.zeros_like(rewards)
-                nextadvantage = 0
-                for t in reversed(range(args.num_steps)):
-                    if t == args.num_steps - 1:
-                        nextnonterminal = 1.0 - next_done.short()
-                        nextvalue = next_value
-                    else:
-                        nextnonterminal = 1.0 - dones[t + 1].short()
-                        nextvalue = values[t + 1]
-                    delta = (
-                        rewards[t] + args.gamma * nextnonterminal * nextvalue - values[t]
-                    )  # analog zu returns[t] - values[t] nur mit nextvalue anstatt next_return
-                    advantages[t] = nextadvantage = (
-                        delta + args.gamma * args.gae_lambda * nextnonterminal * nextadvantage
-                    )  # + commulative discounted advantage
-                returns = advantages + values
-            else:
-                returns = torch.zeros_like(rewards)
-                for t in reversed(range(args.num_steps)):
-                    if t == args.num_steps - 1:
-                        nextnonterminal = 1.0 - next_done.short()
-                        next_return = next_value
-                    else:
-                        nextnonterminal = 1.0 - dones[t + 1].short()
-                        next_return = returns[t + 1]
-                    returns[t] = (
-                        rewards[t] + args.gamma * nextnonterminal * next_return
-                    )  # commulative discounted return
-                advantages = returns - values
-
-        # flatten the batch
-        b_obs = obs.reshape((-1,) + envs.single_observation_space.shape)
-        b_logprobs = logprobs.reshape(-1)
-        b_actions = actions.reshape((-1,) + envs.single_action_space.shape)
-        b_advantages = advantages.reshape(-1)
-        b_returns = returns.reshape(-1)
-        b_values = values.reshape(-1)
-
-        # Start optimizing the policy and value network
-        b_inds = np.arange(args.batch_size)  # Make batches
-        clipfracs = []
-        for epoch in range(args.update_epochs):
-            np.random.shuffle(b_inds)  # Shuffle batches
-            for start in range(0, args.batch_size, args.minibatch_size):
-                end = start + args.minibatch_size
-                mb_inds = b_inds[start:end]  # Make minibatches
-                # Start training,
-                newlogprob = torch.zeros(args.minibatch_size)
-                entropy = torch.zeros(args.minibatch_size)
-                newvalue = torch.zeros(args.minibatch_size)
-
-                for i in range(args.minibatch_size):  # Make minibatches        #problem 4 size
-                    # Get values, ratio
-                    _, newlogprob_i, entropy_i, newvalue_i = agent.get_action_and_value(
-                        b_obs[mb_inds[i]],
-                        actor_circuit,
-                        actor_layer_params,
+        if not args.random_baseline:
+            # calculate commulative discounted Returns and Advantages
+            with torch.no_grad():
+                next_value_i = torch.zeros(args.num_envs)
+                for i in range(args.num_envs):
+                    next_value_i[i] = agent.get_value(
+                        next_obs[i],
+                        envs.single_observation_space.n,
                         critic_circuit,
                         critic_layer_params,
-                        output_scaleing_params,
-                        envs.single_observation_space.n,
-                        envs.single_action_space.n,
-                        b_actions.long()[mb_inds[i]],
                     )
-
-                    newlogprob[i] = newlogprob_i
-                    entropy[i] = entropy_i
-                    newvalue[i] = newvalue_i
-
-                logratio = newlogprob - b_logprobs[mb_inds]
-                ratio = logratio.exp()
-
-                # Advantage normalisation
-                mb_advantages = b_advantages[mb_inds]
-                if args.norm_adv:
-                    mb_advantages = (mb_advantages - mb_advantages.mean()) / (
-                        mb_advantages.std() + 1e-8
-                    )
-
-                # debug variables (info)
-                with torch.no_grad():
-                    old_approx_kl = (-logratio).mean()
-                    approx_kl = (
-                        (ratio - 1) - logratio
-                    ).mean()  # the approximate Kullback–Leibler divergence: how agressice does the policy update
-                    clipfracs += [
-                        ((ratio - 1.0).abs() > args.clip_coef).float().mean().item()
-                    ]  # the fraction of the training data that triggered the clipped objective
-
-                # Start loss calcualtion
-                # Policy loss
-                pg_loss1 = -mb_advantages * ratio
-                pg_loss2 = -mb_advantages * torch.clamp(
-                    ratio, 1 - args.clip_coef, 1 + args.clip_coef
-                )
-                pg_loss = torch.max(pg_loss1, pg_loss2).mean()
-
-                # Value loss
-                newvalue = newvalue.view(-1)
-                if args.clip_vloss:
-                    v_loss_unclipped = (newvalue - b_returns[mb_inds]) ** 2
-                    v_clipped = b_values[mb_inds] + torch.clamp(
-                        newvalue - b_values[mb_inds], -args.clip_coef, args.clip_coef
-                    )
-                    v_loss_clipped = (v_clipped - b_returns[mb_inds]) ** 2
-                    v_loss_max = torch.max(v_loss_unclipped, v_loss_clipped)
-                    v_loss = 0.5 * v_loss_max.mean()
+                next_value = next_value_i.reshape(1, -1)
+                if args.gae:
+                    advantages = torch.zeros_like(rewards)
+                    nextadvantage = 0
+                    for t in reversed(range(args.num_steps)):
+                        if t == args.num_steps - 1:
+                            nextnonterminal = 1.0 - next_done.short()
+                            nextvalue = next_value
+                        else:
+                            nextnonterminal = 1.0 - dones[t + 1].short()
+                            nextvalue = values[t + 1]
+                        delta = (
+                            rewards[t] + args.gamma * nextnonterminal * nextvalue - values[t]
+                        )  # analog zu returns[t] - values[t] nur mit nextvalue anstatt next_return
+                        advantages[t] = nextadvantage = (
+                            delta + args.gamma * args.gae_lambda * nextnonterminal * nextadvantage
+                        )  # + commulative discounted advantage
+                    returns = advantages + values
                 else:
-                    v_loss = 0.5 * ((newvalue - b_returns[mb_inds]) ** 2).mean()
+                    returns = torch.zeros_like(rewards)
+                    for t in reversed(range(args.num_steps)):
+                        if t == args.num_steps - 1:
+                            nextnonterminal = 1.0 - next_done.short()
+                            next_return = next_value
+                        else:
+                            nextnonterminal = 1.0 - dones[t + 1].short()
+                            next_return = returns[t + 1]
+                        returns[t] = (
+                            rewards[t] + args.gamma * nextnonterminal * next_return
+                        )  # commulative discounted return
+                    advantages = returns - values
 
-                # Entropy loss
-                entropy_loss = entropy.mean()
+            # flatten the batch
+            b_obs = obs.reshape((-1,) + envs.single_observation_space.shape)
+            b_logprobs = logprobs.reshape(-1)
+            b_actions = actions.reshape((-1,) + envs.single_action_space.shape)
+            b_advantages = advantages.reshape(-1)
+            b_returns = returns.reshape(-1)
+            b_values = values.reshape(-1)
 
-                # Overall loss
-                loss = pg_loss - args.ent_coef * entropy_loss + args.vf_coef * v_loss
+            # Start optimizing the policy and value network
+            b_inds = np.arange(args.batch_size)  # Make batches
+            clipfracs = []
+            for epoch in range(args.update_epochs):
+                np.random.shuffle(b_inds)  # Shuffle batches
+                for start in range(0, args.batch_size, args.minibatch_size):
+                    end = start + args.minibatch_size
+                    mb_inds = b_inds[start:end]  # Make minibatches
+                    # Start training,
+                    newlogprob = torch.zeros(args.minibatch_size)
+                    entropy = torch.zeros(args.minibatch_size)
+                    newvalue = torch.zeros(args.minibatch_size)
 
-                optimizer1.zero_grad()
+                    for i in range(args.minibatch_size):  # Make minibatches        #problem 4 size
+                        # Get values, ratio
+                        _, newlogprob_i, entropy_i, newvalue_i = agent.get_action_and_value(
+                            b_obs[mb_inds[i]],
+                            actor_circuit,
+                            actor_layer_params,
+                            critic_circuit,
+                            critic_layer_params,
+                            output_scaleing_params,
+                            envs.single_observation_space.n,
+                            envs.single_action_space.n,
+                            b_actions.long()[mb_inds[i]],
+                        )
+
+                        newlogprob[i] = newlogprob_i
+                        entropy[i] = entropy_i
+                        newvalue[i] = newvalue_i
+
+                    logratio = newlogprob - b_logprobs[mb_inds]
+                    ratio = logratio.exp()
+
+                    # Advantage normalisation
+                    mb_advantages = b_advantages[mb_inds]
+                    if args.norm_adv:
+                        mb_advantages = (mb_advantages - mb_advantages.mean()) / (
+                            mb_advantages.std() + 1e-8
+                        )
+
+                    # debug variables (info)
+                    with torch.no_grad():
+                        old_approx_kl = (-logratio).mean()
+                        approx_kl = (
+                            (ratio - 1) - logratio
+                        ).mean()  # the approximate Kullback–Leibler divergence: how agressice does the policy update
+                        clipfracs += [
+                            ((ratio - 1.0).abs() > args.clip_coef).float().mean().item()
+                        ]  # the fraction of the training data that triggered the clipped objective
+
+                    # Start loss calcualtion
+                    # Policy loss
+                    pg_loss1 = -mb_advantages * ratio
+                    pg_loss2 = -mb_advantages * torch.clamp(
+                        ratio, 1 - args.clip_coef, 1 + args.clip_coef
+                    )
+                    pg_loss = torch.max(pg_loss1, pg_loss2).mean()
+
+                    # Value loss
+                    newvalue = newvalue.view(-1)
+                    if args.clip_vloss:
+                        v_loss_unclipped = (newvalue - b_returns[mb_inds]) ** 2
+                        v_clipped = b_values[mb_inds] + torch.clamp(
+                            newvalue - b_values[mb_inds], -args.clip_coef, args.clip_coef
+                        )
+                        v_loss_clipped = (v_clipped - b_returns[mb_inds]) ** 2
+                        v_loss_max = torch.max(v_loss_unclipped, v_loss_clipped)
+                        v_loss = 0.5 * v_loss_max.mean()
+                    else:
+                        v_loss = 0.5 * ((newvalue - b_returns[mb_inds]) ** 2).mean()
+
+                    # Entropy loss
+                    entropy_loss = entropy.mean()
+
+                    # Overall loss
+                    loss = pg_loss - args.ent_coef * entropy_loss + args.vf_coef * v_loss
+
+                    optimizer1.zero_grad()
+                    if args.quantum_actor:
+                        optimizer2.zero_grad()
+                        if (
+                            not args.hybrid
+                            and args.output_scaleing
+                            and not args.sceduled_output_scaleing
+                        ):
+                            optimizer3.zero_grad()
+                    if args.quantum_critic:
+                        optimizer4.zero_grad()
+                    loss.backward()
+                    nn.utils.clip_grad_norm_(agent.parameters(), args.max_grad_norm)
+                    # if args.quantum_actor:
+                    #    nn.utils.clip_grad_norm_([actor_layer_params], args.max_grad_norm)
+                    # if args.quantum_critic:
+                    #    nn.utils.clip_grad_norm_([critic_layer_params], args.max_grad_norm)
+                    optimizer1.step()
+                    if args.quantum_actor:
+                        optimizer2.step()
+                        if (
+                            not args.hybrid
+                            and args.output_scaleing
+                            and not args.sceduled_output_scaleing
+                        ):
+                            optimizer3.step()
+                    if args.quantum_critic:
+                        optimizer4.step()
+
+                # Early stopping on to high target kl
+                if args.target_kl is not None:
+                    if approx_kl > args.target_kl:
+                        break
+
+            # debug variables (info)
+            y_pred, y_true = b_values.cpu().numpy(), b_returns.cpu().numpy()
+            var_y = np.var(y_true)
+            explained_var = (
+                np.nan if var_y == 0 else 1 - np.var(y_true - y_pred) / var_y
+            )  # is the value function a good indicator for the returns
+
+            # record rewards for plotting purposes
+            writer.add_scalar(
+                "charts/learning_rate", optimizer1.param_groups[0]["lr"], global_step
+            )
+            qlearning_rate = 0
+            if args.quantum_actor:
+                writer.add_scalar(
+                    "charts/qlearning_rate", optimizer2.param_groups[0]["lr"], global_step
+                )
+                qlearning_rate = optimizer2.param_groups[0]["lr"]
+            elif args.quantum_critic:
+                writer.add_scalar(
+                    "charts/qlearning_rate", optimizer4.param_groups[0]["lr"], global_step
+                )
+                qlearning_rate = optimizer4.param_groups[0]["lr"]
+            writer.add_scalar("losses/value_loss", v_loss.item(), global_step)
+            writer.add_scalar("losses/policy_loss", pg_loss.item(), global_step)
+            writer.add_scalar("losses/entropy", entropy_loss.item(), global_step)
+            writer.add_scalar("losses/loss", loss.item(), global_step)
+            writer.add_scalar("losses/old_approx_kl", old_approx_kl.item(), global_step)
+            writer.add_scalar("losses/approx_kl", approx_kl.item(), global_step)
+            writer.add_scalar("losses/clipfrac", np.mean(clipfracs), global_step)
+            writer.add_scalar("losses/explained_variance", explained_var, global_step)
+            print("SPS:", int(global_step / (time.time() - start_time)))
+            writer.add_scalar(
+                "charts/SPS", int(global_step / (time.time() - start_time)), global_step
+            )
+
+            output_scaleing = 1
+            if args.quantum_actor and not args.hybrid and args.output_scaleing:
+                writer.add_scalar(
+                    "greedyness/output_scaleing", output_scaleing_params.mean() ** 2, global_step
+                )
+                with torch.no_grad():
+                    output_scaleing = output_scaleing_params.mean().item() ** 2
+
+            # store data of update
+            save_results.append_update_results(
+                optimizer1.param_groups[0]["lr"],
+                qlearning_rate,
+                v_loss.item(),
+                pg_loss.item(),
+                entropy_loss.item(),
+                loss.item(),
+                old_approx_kl.item(),
+                approx_kl.item(),
+                np.mean(clipfracs),
+                explained_var,
+                int(global_step / (time.time() - start_time)),
+                output_scaleing,
+                global_step,
+                args.gym_id,
+                args.exp_name,
+                args.circuit,
+                args.seed,
+            )
+            store_envs.store_envs(actions, dones, args.num_steps, args.num_envs)
+
+            # if save intervall save everything to file
+            if update % args.save_intervall == 0:
+                save_results.save_results()
+                if not args.quantum_actor or not args.quantum_critic:
+                    agent.save_classical_network_params()
                 if args.quantum_actor:
-                    optimizer2.zero_grad()
-                    if (
-                        not args.hybrid
-                        and args.output_scaleing
-                        and not args.sceduled_output_scaleing
-                    ):
-                        optimizer3.zero_grad()
+                    save_params.save_actor_circuit_params(args.chkpt_dir, actor_layer_params)
+                if (
+                    args.quantum_actor
+                    and not args.hybrid
+                    and args.output_scaleing
+                    and not args.sceduled_output_scaleing
+                ):
+                    save_params.save_output_scaleing_params(args.chkpt_dir, output_scaleing_params)
                 if args.quantum_critic:
-                    optimizer4.zero_grad()
-                loss.backward()
-                nn.utils.clip_grad_norm_(agent.parameters(), args.max_grad_norm)
-                # if args.quantum_actor:
-                #    nn.utils.clip_grad_norm_([actor_layer_params], args.max_grad_norm)
-                # if args.quantum_critic:
-                #    nn.utils.clip_grad_norm_([critic_layer_params], args.max_grad_norm)
-                optimizer1.step()
-                if args.quantum_actor:
-                    optimizer2.step()
-                    if (
-                        not args.hybrid
-                        and args.output_scaleing
-                        and not args.sceduled_output_scaleing
-                    ):
-                        optimizer3.step()
-                if args.quantum_critic:
-                    optimizer4.step()
+                    save_params.save_critic_circuit_params(args.chkpt_dir, critic_layer_params)
+                save_params.save_state(args.chkpt_dir, global_step, next_obs, next_done)
+                store_envs.save_envs(args.chkpt_dir, args.num_envs)
 
-            # Early stopping on to high target kl
-            if args.target_kl is not None:
-                if approx_kl > args.target_kl:
-                    break
+        else:  # if random baseline
+            _, _, entropy_, _ = agent.get_random_action_and_value(envs.single_action_space.n)
+            save_results.append_update_results(
+                0,
+                0,
+                0,
+                0,
+                entropy_.item(),
+                0,
+                0,
+                0,
+                0,
+                0,
+                int(global_step / (time.time() - start_time)),
+                0,
+                global_step,
+                args.gym_id,
+                args.exp_name,
+                args.circuit,
+                args.seed,
+            )
 
-        # debug variables (info)
-        y_pred, y_true = b_values.cpu().numpy(), b_returns.cpu().numpy()
-        var_y = np.var(y_true)
-        explained_var = (
-            np.nan if var_y == 0 else 1 - np.var(y_true - y_pred) / var_y
-        )  # is the value function a good indicator for the returns
-
-        # record rewards for plotting purposes
-        writer.add_scalar("charts/learning_rate", optimizer1.param_groups[0]["lr"], global_step)
-        qlearning_rate = 0
+    # before exiting save everything and plot
+    save_results.save_results()
+    if not args.random_baseline:
+        if not args.quantum_actor or not args.quantum_critic:
+            agent.save_classical_network_params()
         if args.quantum_actor:
-            writer.add_scalar(
-                "charts/qlearning_rate", optimizer2.param_groups[0]["lr"], global_step
-            )
-            qlearning_rate = optimizer2.param_groups[0]["lr"]
-        elif args.quantum_critic:
-            writer.add_scalar(
-                "charts/qlearning_rate", optimizer4.param_groups[0]["lr"], global_step
-            )
-            qlearning_rate = optimizer4.param_groups[0]["lr"]
-        writer.add_scalar("losses/value_loss", v_loss.item(), global_step)
-        writer.add_scalar("losses/policy_loss", pg_loss.item(), global_step)
-        writer.add_scalar("losses/entropy", entropy_loss.item(), global_step)
-        writer.add_scalar("losses/loss", loss.item(), global_step)
-        writer.add_scalar("losses/old_approx_kl", old_approx_kl.item(), global_step)
-        writer.add_scalar("losses/approx_kl", approx_kl.item(), global_step)
-        writer.add_scalar("losses/clipfrac", np.mean(clipfracs), global_step)
-        writer.add_scalar("losses/explained_variance", explained_var, global_step)
-        print("SPS:", int(global_step / (time.time() - start_time)))
-        writer.add_scalar("charts/SPS", int(global_step / (time.time() - start_time)), global_step)
-
-        output_scaleing = 1
-        if args.quantum_actor and not args.hybrid and args.output_scaleing:
-            writer.add_scalar(
-                "greedyness/output_scaleing", output_scaleing_params.mean() ** 2, global_step
-            )
-            with torch.no_grad():
-                output_scaleing = output_scaleing_params.mean().item() ** 2
-
-        # store data of update
-        save_results.append_update_results(
-            optimizer1.param_groups[0]["lr"],
-            qlearning_rate,
-            v_loss.item(),
-            pg_loss.item(),
-            entropy_loss.item(),
-            loss.item(),
-            old_approx_kl.item(),
-            approx_kl.item(),
-            np.mean(clipfracs),
-            explained_var,
-            int(global_step / (time.time() - start_time)),
-            output_scaleing,
-            global_step,
+            save_params.save_actor_circuit_params(args.chkpt_dir, actor_layer_params)
+        if (
+            args.quantum_actor
+            and not args.hybrid
+            and args.output_scaleing
+            and not args.sceduled_output_scaleing
+        ):
+            save_params.save_output_scaleing_params(args.chkpt_dir, output_scaleing_params)
+        if args.quantum_critic:
+            save_params.save_critic_circuit_params(args.chkpt_dir, critic_layer_params)
+        save_params.save_state(args.chkpt_dir, global_step, next_obs, next_done)
+        store_envs.save_envs(args.chkpt_dir, args.num_envs)
+        plot.plot_training_results(
+            args.results_dir,
+            args.plot_dir,
             args.gym_id,
             args.exp_name,
             args.circuit,
             args.seed,
+            args.batch_size,
+            args.total_timesteps,
         )
-        store_envs.store_envs(actions, dones, args.num_steps, args.num_envs)
-
-        # if save intervall save everything to file
-        if update % args.save_intervall == 0:
-            save_results.save_results()
-            if not args.quantum_actor or not args.quantum_critic:
-                agent.save_classical_network_params()
-            if args.quantum_actor:
-                save_params.save_actor_circuit_params(args.chkpt_dir, actor_layer_params)
-            if (
-                args.quantum_actor
-                and not args.hybrid
-                and args.output_scaleing
-                and not args.sceduled_output_scaleing
-            ):
-                save_params.save_output_scaleing_params(args.chkpt_dir, output_scaleing_params)
-            if args.quantum_critic:
-                save_params.save_critic_circuit_params(args.chkpt_dir, critic_layer_params)
-            save_params.save_state(args.chkpt_dir, global_step, next_obs, next_done)
-            store_envs.save_envs(args.chkpt_dir, args.num_envs)
-
-    # before exiting save everything and plot
-    save_results.save_results()
-    if not args.quantum_actor or not args.quantum_critic:
-        agent.save_classical_network_params()
-    if args.quantum_actor:
-        save_params.save_actor_circuit_params(args.chkpt_dir, actor_layer_params)
-    if (
-        args.quantum_actor
-        and not args.hybrid
-        and args.output_scaleing
-        and not args.sceduled_output_scaleing
-    ):
-        save_params.save_output_scaleing_params(args.chkpt_dir, output_scaleing_params)
-    if args.quantum_critic:
-        save_params.save_critic_circuit_params(args.chkpt_dir, critic_layer_params)
-    save_params.save_state(args.chkpt_dir, global_step, next_obs, next_done)
-    store_envs.save_envs(args.chkpt_dir, args.num_envs)
-    plot.plot_training_results(
-        args.results_dir,
-        args.plot_dir,
-        args.gym_id,
-        args.exp_name,
-        args.circuit,
-        args.seed,
-        args.batch_size,
-        args.total_timesteps,
-    )
     envs.close()
     writer.close()

@@ -204,6 +204,22 @@ class Agent(nn.Module):
             self.get_value(observation, obs_dim, critic_circuit, critic_layer_params),
         )
 
+    def get_random_action_and_value(self, acts_dim, action=None):
+        logits = torch.ones(acts_dim)
+        probs = Categorical(logits=logits)  # softMaxOutPut = np.exp(logits) / np.exp(logits).sum()
+        if action is None:
+            action = probs.sample()
+            action = action.view(1)
+
+        value = torch.zeros(1)
+
+        return (
+            action,
+            probs.log_prob(action),
+            probs.entropy(),
+            value,
+        )
+
 
 ##                                                                                                                                                   ##
 ##                                                  agent:                                                                                           ##

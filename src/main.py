@@ -187,10 +187,10 @@ if __name__ == "__main__":
             if args.quantum_critic:
                 optimizer4.param_groups[0]["lr"] = lrnow2
         if args.sceduled_output_scaleing:
-            fac_sced_out_scale = ((global_step) / 100000) * args.sced_out_scale_fac
+            sced_out_scale_bonus = ((global_step) / 100000) * args.sced_out_scale_fac
             for i in range(envs.single_action_space.n):
                 output_scaleing_params[i] = np.sqrt(
-                    1 + fac_sced_out_scale
+                    1 + sced_out_scale_bonus
                 )  # sqrt is needed since it will be multiplyed with its mean
 
         # Environment interaction

@@ -249,6 +249,14 @@ def parse_args():
         default=2.0,
         help="value output scaleing is increased with ever/over 100000 steps",
     )
+    parser.add_argument(
+        "--random-baseline",
+        type=lambda x: bool(strtobool(x)),
+        default=False,
+        nargs="?",
+        const=True,
+        help="toggle completely random action selection",
+    )
 
     args = parser.parse_args()
     args.batch_size = int(args.num_steps * args.num_envs)

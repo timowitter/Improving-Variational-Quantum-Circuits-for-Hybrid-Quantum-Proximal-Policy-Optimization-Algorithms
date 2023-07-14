@@ -258,10 +258,10 @@ for env in ${envs[@]}; do
 done
 
 
-# Hyperparameter Test 3: find optimal learning rate and clip_coef and output scaleing for qppo with simple circuit:
+# Hyperparameter Test 3: find optimal learning rate and clip_coef and output scaleing for qppo:
 
-# Hyperparameter Test 3a: learning rate
-goal:       
+# Hyperparameter Test 3a: 
+goal:    find optimal learning rate with simple circuit
 results:
 
 name1="qppo-simple-qlr0.1e-3"
@@ -293,8 +293,8 @@ done
 
 
 
-# Hyperparameter Test 4a: learning rate
-goal:       
+# Hyperparameter Test 3b:
+goal:    find optimal learning rate with Hgog circuit
 results:
 
 name1="qppo-Hgog-qlr0.1e-3"
@@ -322,3 +322,33 @@ for env in ${envs[@]}; do
         done
     done
 done
+
+
+
+
+
+
+
+
+
+
+for env in ${envs[@]}; do
+    for circuit in ${circuits[@]}; do
+        for seed in $(seq $start_seed $seed_step $end_seed); do
+            sbatch --job-name="run-$env-$name4-$seed" jobs/job.sh --exp-name $name4 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 1.0e-3 --n-qubits 4 --n-var-layers 2 --n-enc-layers 1 --anneal-lr False --output-scaleing False --load-chkpt False
+        done
+    done
+done
+
+for env in ${envs[@]}; do
+    for circuit in ${circuits[@]}; do
+        for seed in $(seq $start_seed $seed_step $end_seed); do
+            sbatch --job-name="run-$env-$name2-$seed" jobs/job.sh --exp-name $name2 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 0.25e-3 --n-qubits 4 --n-var-layers 2 --n-enc-layers 1 --anneal-lr False --output-scaleing False --load-chkpt False
+        done
+    done
+done
+
+
+
+            sbatch --job-name="run-$env-$name7-$seed" jobs/job.sh --exp-name $name7 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 0.25e-3 --n-qubits 4 --n-var-layers 2 --n-enc-layers 1 --anneal-lr False --output-scaleing False --load-chkpt False
+            sbatch --job-name="run-$env-$name9-$seed" jobs/job.sh --exp-name $name9 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 1.0e-3 --n-qubits 4 --n-var-layers 2 --n-enc-layers 1 --anneal-lr False --output-scaleing False --load-chkpt False

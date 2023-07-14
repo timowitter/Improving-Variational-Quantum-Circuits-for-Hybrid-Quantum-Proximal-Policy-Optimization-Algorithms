@@ -20,9 +20,8 @@ timesteps=1000000
 for env in ${envs[@]}; do
     for circuit in ${circuits[@]}; do
         for seed in $(seq $start_seed $seed_step $end_seed); do
-            sbatch --job-name="run-$env-$name1-$seed" jobs/job.sh --exp-name $name1 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 0.1e-3 --n-qubits 4 --n-var-layers 2 --n-enc-layers 1 --anneal-lr False --output-scaleing False --load-chkpt False
-            sbatch --job-name="run-$env-$name3-$seed" jobs/job.sh --exp-name $name3 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 0.5e-3 --n-qubits 4 --n-var-layers 2 --n-enc-layers 1 --anneal-lr False --output-scaleing False --load-chkpt False
-            sbatch --job-name="run-$env-$name5-$seed" jobs/job.sh --exp-name $name5 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 2.5e-3 --n-qubits 4 --n-var-layers 2 --n-enc-layers 1 --anneal-lr False --output-scaleing False --load-chkpt False
+            sbatch --job-name="run-$env-$name2-$seed" jobs/job.sh --exp-name $name2 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 0.25e-3 --n-qubits 4 --n-var-layers 2 --n-enc-layers 1 --anneal-lr False --output-scaleing False --load-chkpt False
+            sbatch --job-name="run-$env-$name4-$seed" jobs/job.sh --exp-name $name4 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 1.0e-3 --n-qubits 4 --n-var-layers 2 --n-enc-layers 1 --anneal-lr False --output-scaleing False --load-chkpt False
         done
     done
 done
@@ -51,9 +50,8 @@ timesteps=1000000
 for env in ${envs[@]}; do
     for circuit in ${circuits[@]}; do
         for seed in $(seq $start_seed $seed_step $end_seed); do
-            sbatch --job-name="run-$env-$name6-$seed" jobs/job.sh --exp-name $name6 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 0.1e-3 --n-qubits 4 --n-var-layers 2 --n-enc-layers 1 --anneal-lr False --output-scaleing False --load-chkpt False
-            sbatch --job-name="run-$env-$name8-$seed" jobs/job.sh --exp-name $name8 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 0.5e-3 --n-qubits 4 --n-var-layers 2 --n-enc-layers 1 --anneal-lr False --output-scaleing False --load-chkpt False
-            sbatch --job-name="run-$env-$name10-$seed" jobs/job.sh --exp-name $name10 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 2.5e-3 --n-qubits 4 --n-var-layers 2 --n-enc-layers 1 --anneal-lr False --output-scaleing False --load-chkpt False
+            sbatch --job-name="run-$env-$name7-$seed" jobs/job.sh --exp-name $name7 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 0.25e-3 --n-qubits 4 --n-var-layers 2 --n-enc-layers 1 --anneal-lr False --output-scaleing False --load-chkpt False
+            sbatch --job-name="run-$env-$name9-$seed" jobs/job.sh --exp-name $name9 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 1.0e-3 --n-qubits 4 --n-var-layers 2 --n-enc-layers 1 --anneal-lr False --output-scaleing False --load-chkpt False
         done
     done
 done

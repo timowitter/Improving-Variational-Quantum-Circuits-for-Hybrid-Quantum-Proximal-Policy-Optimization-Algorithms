@@ -150,7 +150,6 @@ class Agent(nn.Module):
     ):
         if args.quantum_actor:
             logits_uncat = actor_circuit(actor_layer_params, observation, acts_dim)
-            print("logits_uncat", logits_uncat)
 
             if args.hybrid:  # hybrid output postprocessing
                 logits = self.hybrid_actor(logits_uncat.float())

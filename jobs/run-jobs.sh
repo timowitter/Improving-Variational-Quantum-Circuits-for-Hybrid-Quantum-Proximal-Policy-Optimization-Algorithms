@@ -9,6 +9,19 @@ name3="qppo-simple-qlr0.5e-3"
 name4="qppo-simple-qlr1.0e-3"
 name5="qppo-simple-qlr2.5e-3"
 
+start_seed=30
+seed_step=10
+end_seed=30
+envs=("Deterministic-ShortestPath-4x4-FrozenLake-v0") 
+circuits=("simple")
+timesteps=1000000
+
+for env in ${envs[@]}; do
+    for circuit in ${circuits[@]}; do
+        for seed in $(seq $start_seed $seed_step $end_seed); do
+            sbatch --job-name="run-$env-$name5-$seed" jobs/job.sh --exp-name $name5 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 2.5e-3 --n-qubits 4 --n-var-layers 2 --n-enc-layers 1 --anneal-lr False --output-scaleing False --load-chkpt False
+    done
+done
 
 start_seed=10
 seed_step=10
@@ -46,6 +59,7 @@ end_seed=30
 envs=("Deterministic-ShortestPath-4x4-FrozenLake-v0") 
 circuits=("Hgog")
 timesteps=1000000
+
 
 for env in ${envs[@]}; do
     for circuit in ${circuits[@]}; do

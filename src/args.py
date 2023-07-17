@@ -47,7 +47,7 @@ def parse_args():
     parser.add_argument(
         "--output-scaleing-learning-rate",
         type=float,
-        default=1.5e-4,
+        default=5e-4,
         help="output scaleing learning rate",
     )
     parser.add_argument(

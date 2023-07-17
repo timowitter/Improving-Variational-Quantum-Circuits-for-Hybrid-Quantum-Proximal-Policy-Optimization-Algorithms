@@ -262,7 +262,7 @@ done
 
 # Hyperparameter Test 3a: 
 goal:    find optimal learning rate with simple circuit
-results:
+results: very weak learning performance with all learning rates
 
 name1="qppo-simple-qlr0.1e-3"
 name2="qppo-simple-qlr0.25e-3"
@@ -295,7 +295,7 @@ done
 
 # Hyperparameter Test 3b:
 goal:    find optimal learning rate with Hgog circuit
-results:
+results: very weak learning performance with all learning rates
 
 name1="qppo-Hgog-qlr0.1e-3"
 name2="qppo-Hgog-qlr0.25e-3"
@@ -324,6 +324,69 @@ for env in ${envs[@]}; do
 done
 
 
+
+# Hyperparameter Test 3a-outscale: 
+goal:    find optimal learning rate with simple circuit with use of output scaleing
+results:
+
+name1="qppo-simple-outscale-qlr0.1e-3"
+name2="qppo-simple-outscale-qlr0.25e-3"
+name3="qppo-simple-outscale-qlr0.5e-3"
+name4="qppo-simple-outscale-qlr1.0e-3"
+name5="qppo-simple-outscale-qlr2.5e-3"
+
+
+start_seed=10
+seed_step=10
+end_seed=30
+envs=("Deterministic-ShortestPath-4x4-FrozenLake-v0") 
+circuits=("simple")
+timesteps=1000000
+
+for env in ${envs[@]}; do
+    for circuit in ${circuits[@]}; do
+        for seed in $(seq $start_seed $seed_step $end_seed); do
+            sbatch --job-name="run-$env-$name1-$seed" jobs/job.sh --exp-name $name1 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 0.1e-3 --n-qubits 4 --n-var-layers 2 --n-enc-layers 1 --anneal-lr False --output-scaleing True --load-chkpt False --output-scaleing-learning-rate 5e-4
+            sbatch --job-name="run-$env-$name2-$seed" jobs/job.sh --exp-name $name2 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 0.25e-3 --n-qubits 4 --n-var-layers 2 --n-enc-layers 1 --anneal-lr False --output-scaleing True --load-chkpt False --output-scaleing-learning-rate 5e-4
+            sbatch --job-name="run-$env-$name3-$seed" jobs/job.sh --exp-name $name3 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 0.5e-3 --n-qubits 4 --n-var-layers 2 --n-enc-layers 1 --anneal-lr False --output-scaleing True --load-chkpt False --output-scaleing-learning-rate 5e-4
+            sbatch --job-name="run-$env-$name4-$seed" jobs/job.sh --exp-name $name4 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 1.0e-3 --n-qubits 4 --n-var-layers 2 --n-enc-layers 1 --anneal-lr False --output-scaleing True --load-chkpt False --output-scaleing-learning-rate 5e-4
+            sbatch --job-name="run-$env-$name5-$seed" jobs/job.sh --exp-name $name5 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 2.5e-3 --n-qubits 4 --n-var-layers 2 --n-enc-layers 1 --anneal-lr False --output-scaleing True --load-chkpt False --output-scaleing-learning-rate 5e-4
+        done
+    done
+done
+
+
+
+
+# Hyperparameter Test 3b-outscale:
+goal:    find optimal learning rate with Hgog circuit with use of output scaleing
+results:
+
+name1="qppo-Hgog-outscale-qlr0.1e-3"
+name2="qppo-Hgog-outscale-qlr0.25e-3"
+name3="qppo-Hgog-outscale-qlr0.5e-3"
+name4="qppo-Hgog-outscale-qlr1.0e-3"
+name5="qppo-Hgog-outscale-qlr2.5e-3"
+
+
+start_seed=10
+seed_step=10
+end_seed=30
+envs=("Deterministic-ShortestPath-4x4-FrozenLake-v0") 
+circuits=("Hgog")
+timesteps=1000000
+
+for env in ${envs[@]}; do
+    for circuit in ${circuits[@]}; do
+        for seed in $(seq $start_seed $seed_step $end_seed); do
+            sbatch --job-name="run-$env-$name1-$seed" jobs/job.sh --exp-name $name1 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 0.1e-3 --n-qubits 4 --n-var-layers 2 --n-enc-layers 1 --anneal-lr False --output-scaleing True --load-chkpt False --output-scaleing-learning-rate 5e-4
+            sbatch --job-name="run-$env-$name2-$seed" jobs/job.sh --exp-name $name2 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 0.25e-3 --n-qubits 4 --n-var-layers 2 --n-enc-layers 1 --anneal-lr False --output-scaleing True --load-chkpt False --output-scaleing-learning-rate 5e-4
+            sbatch --job-name="run-$env-$name3-$seed" jobs/job.sh --exp-name $name3 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 0.5e-3 --n-qubits 4 --n-var-layers 2 --n-enc-layers 1 --anneal-lr False --output-scaleing True --load-chkpt False --output-scaleing-learning-rate 5e-4
+            sbatch --job-name="run-$env-$name4-$seed" jobs/job.sh --exp-name $name4 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 1.0e-3 --n-qubits 4 --n-var-layers 2 --n-enc-layers 1 --anneal-lr False --output-scaleing True --load-chkpt False --output-scaleing-learning-rate 5e-4
+            sbatch --job-name="run-$env-$name5-$seed" jobs/job.sh --exp-name $name5 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 2.5e-3 --n-qubits 4 --n-var-layers 2 --n-enc-layers 1 --anneal-lr False --output-scaleing True --load-chkpt False --output-scaleing-learning-rate 5e-4
+        done
+    done
+done
 
 
 

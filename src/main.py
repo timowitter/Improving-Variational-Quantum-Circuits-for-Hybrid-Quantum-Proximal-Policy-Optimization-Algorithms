@@ -189,9 +189,8 @@ if __name__ == "__main__":
         if args.output_scaleing and args.sceduled_output_scaleing:
             sced_out_scale_bonus = ((global_step) / 100000) * args.sced_out_scale_fac
             for i in range(envs.single_action_space.n):
-                output_scaleing_params[i] = np.sqrt(
-                    1 + sced_out_scale_bonus
-                )  # sqrt is needed since it will be multiplyed with its mean
+                output_scaleing_params[i] = 1 + sced_out_scale_bonus
+                # np.sqrt()  # sqrt is NOT needed since it will NOT be multiplyed with its mean in this version of the code
 
         # Environment interaction
         for step in range(0, args.num_steps):
@@ -451,10 +450,12 @@ if __name__ == "__main__":
             output_scaleing = 1
             if args.quantum_actor and not args.hybrid and args.output_scaleing:
                 writer.add_scalar(
-                    "greedyness/output_scaleing", output_scaleing_params.mean() ** 2, global_step
+                    "greedyness/output_scaleing",
+                    output_scaleing_params.mean().item(),
+                    global_step,  # ** 2
                 )
                 with torch.no_grad():
-                    output_scaleing = output_scaleing_params.mean().item() ** 2
+                    output_scaleing = output_scaleing_params.mean().item()  # ** 2
 
             # store data of update
             save_results.append_update_results(

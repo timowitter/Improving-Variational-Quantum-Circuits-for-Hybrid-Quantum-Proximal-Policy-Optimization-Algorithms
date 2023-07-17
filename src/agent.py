@@ -24,7 +24,7 @@ class Agent(nn.Module):
     def __init__(self, envs):
         super(Agent, self).__init__()
         if (
-            args.quantum_critic == False
+            not args.quantum_critic
             and args.gym_id == "FrozenLake-v0"
             or args.gym_id == "FrozenLake-v1"
             or args.gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0"
@@ -43,7 +43,7 @@ class Agent(nn.Module):
                 nn.Tanh(),
                 layer_init(nn.Linear(args.critic_hidden_layer_nodes, 1), std=1.0),
             )
-        elif args.quantum_critic == False:
+        elif not args.quantum_critic:
             self.critic = nn.Sequential(
                 layer_init(
                     nn.Linear(
@@ -60,7 +60,7 @@ class Agent(nn.Module):
             )
 
         if (
-            args.quantum_actor == False
+            not args.quantum_actor
             and args.gym_id == "FrozenLake-v0"
             or args.gym_id == "FrozenLake-v1"
             or args.gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0"
@@ -81,7 +81,7 @@ class Agent(nn.Module):
                     nn.Linear(args.actor_hidden_layer_nodes, envs.single_action_space.n), std=0.01
                 ),
             )
-        elif args.quantum_actor == False:
+        elif not args.quantum_actor:
             self.actor = nn.Sequential(
                 layer_init(
                     nn.Linear(
@@ -159,7 +159,7 @@ class Agent(nn.Module):
                 logits = torch.zeros(acts_dim)
                 for i in range(acts_dim):
                     logits[i] = logits_uncat[i] * (
-                        output_scaleing_params[i] * output_scaleing_params.mean()
+                        output_scaleing_params[i]  # * output_scaleing_params.mean()
                     )
             else:
                 # merge list of tensors to tensor

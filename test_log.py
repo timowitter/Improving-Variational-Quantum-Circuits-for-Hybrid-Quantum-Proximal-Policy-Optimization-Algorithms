@@ -104,7 +104,7 @@ stepsize = 4 * 128 * 8
 max_steps = 500000
 
 plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
-"""
+
 
 
 # Hyperparameter Test 2e: find optimal learning rate and clip_coef for qppo: fixed sceduling
@@ -134,5 +134,28 @@ exp_names = [
 seeds = [10, 20]
 stepsize = 4 * 128 * 8
 max_steps = 500000
+
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+"""
+
+
+# Hyperparameter Test 3a: find optimal learning rate for qppo
+plot_dir = plots_dir + "/Hyperparameter-Test-3a_QPPO-LR"
+gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
+exp_names = [
+    "qppo-simple-qlr0.1e-3"
+    "qppo-simple-qlr0.25e-3"
+    "qppo-simple-qlr0.5e-3"
+    "qppo-simple-qlr1.0e-3"
+    "qppo-simple-qlr2.5e-3"
+    "qppo-Hgog-qlr0.1e-3"
+    "qppo-Hgog-qlr0.25e-3"
+    "qppo-Hgog-qlr0.5e-3"
+    "qppo-Hgog-qlr1.0e-3"
+    "qppo-Hgog-qlr2.5e-3"
+]
+seeds = [10, 20, 30]
+stepsize = 4 * 128 * 8
+max_steps = 1000000
 
 plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)

@@ -136,7 +136,7 @@ stepsize = 4 * 128 * 8
 max_steps = 500000
 
 plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
-"""
+
 
 
 # Hyperparameter Test 3a: find optimal learning rate for qppo
@@ -161,15 +161,13 @@ max_steps = 1000000
 
 plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
 
-"""
+
 # Hyperparameter Test 3a-outscale:
 plot_dir = plots_dir + "/Hyperparameter-Test-3a-outscale_QPPO-LR"
 gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
 exp_names = [
     "qppo-simple-outscale-qlr0.1e-3",
-    # "qppo-simple-outscale-qlr0.25e-3",
     "qppo-simple-outscale-qlr0.5e-3",
-    # "qppo-simple-outscale-qlr1.0e-3",
     "qppo-simple-outscale-qlr2.5e-3",
     "random-baseline",
 ]
@@ -179,3 +177,21 @@ max_steps = 1000000
 
 plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
 """
+
+
+# Hyperparameter Test 3b: find minimum number of layers needed for simple circuit to have a good learning performance (without output scaleing)
+plot_dir = plots_dir + "/Hyperparameter-Test-3b_QPPO-num-varlayers"
+gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
+exp_names = [
+    "qppo-simple-qlr0.5e-3",  # (24-params)
+    "qppo-simple-qlr0.5e-3-4varlayers-(48-params)",
+    "qppo-simple-qlr0.5e-3-6varlayers-(72-params)",
+    "qppo-simple-qlr0.5e-3-8varlayers-(96-params)",
+    "qppo-simple-qlr0.5e-3-10varlayers-(120-params)",
+    "random-baseline",
+]
+seeds = [10, 20, 30]
+stepsize = 4 * 128 * 8
+max_steps = 500000
+
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)

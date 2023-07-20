@@ -5,7 +5,7 @@
   "warmup_qlearning_rate_bonus": 0.004,
   "learning_rate": 0.00025,
   "qlearning_rate": 0.001,
-  "output_scaleing_learning_rate": 0.00015,
+  "output_scaleing_learning_rate": 0.0005,
   "output_scaleing_start": 1.0,
   "seed": 30,
   "total_timesteps": 1000000,

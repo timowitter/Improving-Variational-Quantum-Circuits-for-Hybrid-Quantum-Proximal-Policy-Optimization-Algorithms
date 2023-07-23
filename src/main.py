@@ -151,7 +151,8 @@ if __name__ == "__main__":
     # Game start
     start_time = time.time()
     num_updates = args.total_timesteps // args.batch_size
-    warmup_updates = args.warmup_timesteps // args.batch_size
+    exp_sceduling_updates = args.exp_sceduling_timesteps // args.batch_size
+    lin_sceduling_updates = args.lin_sceduling_timesteps // args.batch_size
 
     if args.load_chkpt:
         global_step, next_obs, next_done = save_params.load_state(args.chkpt_dir)
@@ -168,24 +169,67 @@ if __name__ == "__main__":
     # Training loop
     for update in range(done_updates + 1, num_updates + 1):
         # Annealing the rate if instructed to do so
-        if args.anneal_lr:
-            if update <= warmup_updates:
-                frac_lin = (
-                    1.0 - (update - 1.0) / warmup_updates
-                )  # 1 at start, linearly decreasing over time -> lr will decrease over time
+        if args.exp_qlr_sceduling and args.lin_qlr_sceduling:
+            if update <= exp_sceduling_updates:
+                # phase 1 exp_sceduling: exponential annealing
                 frac_exp = (
-                    warmup_updates - update + 1.0
-                ) ** 2 / warmup_updates**2  # 1 at start, exponentially decreasing over time -> greedyness will decrease over time
+                    exp_sceduling_updates - update + 1.0
+                ) ** 2 / exp_sceduling_updates**2  # 1 at start, exponentially decreasing over time -> greedyness will decrease over time
+
+                lrnow_circuit = (
+                    frac_exp * (args.exp_sceduling_qlearning_rate - 2 * args.qlearning_rate)
+                    + 2 * args.qlearning_rate
+                )
+            elif update <= lin_sceduling_updates:
+                # phase 2 main learning: linear annealing
+                frac_lin = 1.0 - (update - exp_sceduling_updates - 1.0) / (
+                    lin_sceduling_updates - exp_sceduling_updates
+                )  # 1 at start, linearly decreasing over time -> lr will decrease over time
+                lrnow_circuit = np.clip(
+                    frac_lin * 2 * args.qlearning_rate,
+                    args.lin_sceduling_qlearning_rate,
+                    2 * args.qlearning_rate,
+                )
             else:
-                frac_lin = 0
-                frac_exp = 0
-            lrnow1 = frac_lin * args.warmup_learning_rate_bonus + args.learning_rate
-            lrnow2 = frac_exp * args.warmup_qlearning_rate_bonus + args.qlearning_rate
-            optimizer1.param_groups[0]["lr"] = lrnow1
+                # phase 3 lin_sceduling: constant small lr
+                lrnow_circuit = args.lin_sceduling_qlearning_rate
+
+        elif args.exp_qlr_sceduling:
+            if update <= exp_sceduling_updates:
+                # phase 1 exp_sceduling: exponential annealing
+                frac_exp = (
+                    exp_sceduling_updates - update + 1.0
+                ) ** 2 / exp_sceduling_updates**2  # 1 at start, exponentially decreasing over time -> greedyness will decrease over time
+
+                lrnow_circuit = (
+                    frac_exp * (args.exp_sceduling_qlearning_rate - args.qlearning_rate)
+                    + args.qlearning_rate
+                )
+            else:
+                # phase 3 lin_sceduling: constant small lr
+                lrnow_circuit = args.qlearning_rate
+
+        elif args.lin_qlr_sceduling:
+            if update <= lin_sceduling_updates:
+                # phase 2 main learning: linear annealing
+                frac_lin = 1.0 - (update - 1.0) / (
+                    lin_sceduling_updates
+                )  # 1 at start, linearly decreasing over time -> lr will decrease over time
+                lrnow_circuit = np.clip(
+                    frac_lin * 2 * args.qlearning_rate,
+                    args.lin_sceduling_qlearning_rate,
+                    2 * args.qlearning_rate,
+                )
+            else:
+                # phase 3 lin_sceduling: constant small lr
+                lrnow_circuit = args.lin_sceduling_qlearning_rate
+
+        if args.exp_qlr_sceduling or args.lin_qlr_sceduling:
             if args.quantum_actor:
-                optimizer2.param_groups[0]["lr"] = lrnow2
+                optimizer2.param_groups[0]["lr"] = lrnow_circuit
             if args.quantum_critic:
-                optimizer4.param_groups[0]["lr"] = lrnow2
+                optimizer4.param_groups[0]["lr"] = lrnow_circuit
+
         if args.output_scaleing and args.sceduled_output_scaleing:
             sced_out_scale_bonus = ((global_step) / 100000) * args.sced_out_scale_fac
             for i in range(envs.single_action_space.n):

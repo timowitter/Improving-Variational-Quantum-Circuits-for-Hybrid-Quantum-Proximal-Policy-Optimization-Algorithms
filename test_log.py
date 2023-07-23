@@ -178,7 +178,6 @@ max_steps = 1000000
 plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
 """
 
-
 # Hyperparameter Test 3b: find minimum number of layers needed for simple circuit to have a good learning performance (without output scaleing)
 plot_dir = plots_dir + "/Hyperparameter-Test-3b_QPPO-num-varlayers"
 gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"

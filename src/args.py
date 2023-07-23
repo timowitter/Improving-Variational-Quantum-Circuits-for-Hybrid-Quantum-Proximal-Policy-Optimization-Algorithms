@@ -27,16 +27,16 @@ def parse_args():
         help="id of the OpenAi Gym Environment /default: CartPole-v1",
     )
     parser.add_argument(
-        "--warmup-learning-rate-bonus",
+        "--exp-sceduling-qlearning-rate",
         type=float,
-        default=0,
-        help="optimizer warmup learning rate",
+        default=5e-3,
+        help="quantum optimizer learning rate at start of exp-sceduling",
     )
     parser.add_argument(
-        "--warmup-qlearning-rate-bonus",
+        "--lin-sceduling-qlearning-rate",
         type=float,
-        default=4e-3,
-        help="quantum optimizer warmup learning rate",
+        default=1e-5,
+        help="quantum optimizer learning rate after lin-sceduling",
     )
     parser.add_argument(
         "--learning-rate", type=float, default=2.5e-4, help="optimizer learning rate"
@@ -58,7 +58,16 @@ def parse_args():
         "--total-timesteps", type=int, default=50000, help="length of the Training"
     )  # 25000
     parser.add_argument(
-        "--warmup-timesteps", type=int, default=50000, help="length of the warmup Phase"
+        "--exp-sceduling-timesteps",
+        type=int,
+        default=50000,
+        help="length of the exp-sceduling Phase",
+    )
+    parser.add_argument(
+        "--lin-sceduling-timesteps",
+        type=int,
+        default=500000,
+        help="length of the lin-sceduling Phase (not executed during exp-sceduling timesteps if both are enabled)",
     )
     parser.add_argument(
         "--torch-deterministic",
@@ -92,13 +101,21 @@ def parse_args():
         help="the number of steps in each environments per policy rollout phase of the multy vector env",
     )
     parser.add_argument(
-        "--anneal-lr",
+        "--exp-qlr-sceduling",
         type=lambda x: bool(strtobool(x)),
         default=False,
         nargs="?",
         const=True,
-        help="leaning rate annealing for ploicy and value networks",
-    )  # 4 lr Annealing
+        help="exponential leaning rate sceduling for quantum circuits, executed before lin-qlr-sceduling if both are enabled",
+    )
+    parser.add_argument(
+        "--lin-qlr-sceduling",
+        type=lambda x: bool(strtobool(x)),
+        default=False,
+        nargs="?",
+        const=True,
+        help="linear leaning rate sceduling for quantum circuits, executed after exp-qlr-sceduling if both are enabled",
+    )
     parser.add_argument(
         "--gae",
         type=lambda x: bool(strtobool(x)),

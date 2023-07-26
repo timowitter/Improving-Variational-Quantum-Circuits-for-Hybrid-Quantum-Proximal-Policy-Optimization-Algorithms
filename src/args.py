@@ -214,7 +214,7 @@ def parse_args():
         "--circuit",
         type=str,
         default="simple",
-        help="the circuit that is to be used, can be one of:  simple / Hgog / Jerbi-no-reuploading-no-input-scaleing / Jerbi-reuploading / Jerbi-reuploading-no-input-scaleing",
+        help="the circuit that is to be used, can be one of:  simple / simple_reuploading / simple_reuploading_with_input_scaleing / Hgog / Hgog_reuploading / Hgog_reuploading_with_output_scaleing / Jerbi-no-reuploading-no-input-scaleing / Jerbi-reuploading-no-input-scaleing / Jerbi-reuploading",
     )
     parser.add_argument(
         "--output-scaleing",

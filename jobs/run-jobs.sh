@@ -14,7 +14,7 @@ start_seed=10
 seed_step=10
 end_seed=30
 envs=("Deterministic-ShortestPath-4x4-FrozenLake-v0") 
-timesteps=100000
+timesteps=200000
 
 circuits=("simple_reuploading")
 

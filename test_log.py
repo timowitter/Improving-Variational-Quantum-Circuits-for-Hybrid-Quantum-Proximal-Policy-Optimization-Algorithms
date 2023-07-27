@@ -217,13 +217,13 @@ plot_dir = plots_dir + "/Hyperparameter-Test-3c_QPPO-reuploading"
 gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
 exp_names = [
     "qppo-simple-qlr0.5e-3-6varlayers-(72-params)",
-    "qppo-simple_reuploading-qlr0.5e-3-6varlayers-(72-params)"
-    "qppo-Hgog-qlr0.5e-3-6varlayers-(72-params)"
-    "qppo-Hgog_reuploading-qlr0.5e-3-6varlayers-(72-params)"
+    "qppo-simple_reuploading-qlr0.5e-3-6varlayers-(72-params)",
+    "qppo-Hgog-qlr0.5e-3-6varlayers-(72-params)",
+    "qppo-Hgog_reuploading-qlr0.5e-3-6varlayers-(72-params)",
     "random-baseline",
 ]
 seeds = [10, 20, 30]
 stepsize = 4 * 128 * 8
-max_steps = 500000
+max_steps = 200000
 
 plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)

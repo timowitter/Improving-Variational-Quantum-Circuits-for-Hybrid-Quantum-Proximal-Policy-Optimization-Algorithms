@@ -224,6 +224,6 @@ exp_names = [
 ]
 seeds = [10, 20, 30]
 stepsize = 4 * 128 * 8
-max_steps = 200000
+max_steps = 500000
 
 plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)

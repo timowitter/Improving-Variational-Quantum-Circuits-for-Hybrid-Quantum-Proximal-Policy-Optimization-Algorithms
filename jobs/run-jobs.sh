@@ -7,36 +7,25 @@
 
 
 
-name1="qppo-simple_reuploading-qlr0.5e-3-6varlayers-(72-params)"
+name6="qppo-Jerbi_reuploading_no_input-scaleing-qlr0.5e-3-9varlayers-(72-params)"
 
 start_seed=10
 seed_step=10
 end_seed=30
 envs=("Deterministic-ShortestPath-4x4-FrozenLake-v0") 
-timesteps=1000000
-
-circuits=("simple_reuploading")
-
-for env in ${envs[@]}; do
-    for circuit in ${circuits[@]}; do
-        for seed in $(seq $start_seed $seed_step $end_seed); do
-            sbatch --job-name="run-$env-$name1-$seed" jobs/job.sh --exp-name $name1 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 0.5e-3 --n-qubits 4 --n-var-layers 6 --n-enc-layers 6 --exp-qlr-sceduling False --output-scaleing False --load-chkpt True
-        done
-    done
-done
-
-name4="qppo-simple_reuploading-qlr0.5e-3-10varlayers-(120-params)"
-name5="qppo-simple_reuploading-qlr0.5e-3-15varlayers-(180-params)"
 timesteps=50000
 
+circuits=("Jerbi-reuploading-no-input-scaleing")
+
 for env in ${envs[@]}; do
     for circuit in ${circuits[@]}; do
         for seed in $(seq $start_seed $seed_step $end_seed); do
-            sbatch --job-name="run-$env-$name4-$seed" jobs/job.sh --exp-name $name4 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 0.5e-3 --n-qubits 4 --n-var-layers 10 --n-enc-layers 10 --exp-qlr-sceduling False --output-scaleing False --load-chkpt False
-            sbatch --job-name="run-$env-$name5-$seed" jobs/job.sh --exp-name $name5 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 0.5e-3 --n-qubits 4 --n-var-layers 15 --n-enc-layers 15 --exp-qlr-sceduling False --output-scaleing False --load-chkpt False
+            sbatch --job-name="run-$env-$name6-$seed" jobs/job.sh --exp-name $name6 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 0.5e-3 --n-qubits 4 --n-var-layers 9 --n-enc-layers 8 --exp-qlr-sceduling False --output-scaleing False --load-chkpt False
         done
     done
 done
+
+
 
 #default settings ppo:  'python main.py --exp-name ppo_default  --circuit "simple" --seed 1 --gym-id Deterministic-ShortestPath-4x4-FrozenLake-v0 --num-steps 128 --total-timesteps 300000 --learning-rate 2.5e-4 --qlearning-rate 0e-3 --n-qubits 0 --n-var-layers 0 --n-enc-layers 0 --actor-hidden-layer-nodes 4 --critic-hidden-layer-nodes 64 --quantum-actor False --load-chkpt False')
 

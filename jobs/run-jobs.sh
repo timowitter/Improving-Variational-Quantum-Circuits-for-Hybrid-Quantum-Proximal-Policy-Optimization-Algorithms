@@ -31,7 +31,7 @@ start_seed=10
 seed_step=10
 end_seed=30
 envs=("Deterministic-ShortestPath-4x4-FrozenLake-v0") 
-timesteps=200000
+timesteps=500000
 
 circuits=("Jerbi-reuploading-no-input-scaleing")
 

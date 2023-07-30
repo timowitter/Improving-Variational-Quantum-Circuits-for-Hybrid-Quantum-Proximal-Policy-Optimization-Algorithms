@@ -5,7 +5,25 @@
 #          "Hgog" / "Hgog_reuploading" / "Hgog_reuploading_with_output_scaleing" /
 #          "Jerbi-no-reuploading-no-input-scaleing" / "Jerbi-reuploading-no-input-scaleing" / "Jerbi-reuploading"
 
+name4="qppo-simple_reuploading-qlr0.5e-3-10varlayers-(120-params)"
+name5="qppo-simple_reuploading-qlr0.5e-3-15varlayers-(180-params)"
 
+start_seed=10
+seed_step=10
+end_seed=30
+envs=("Deterministic-ShortestPath-4x4-FrozenLake-v0") 
+timesteps=200000
+
+circuits=("simple_reuploading")
+
+for env in ${envs[@]}; do
+    for circuit in ${circuits[@]}; do
+        for seed in $(seq $start_seed $seed_step $end_seed); do
+            sbatch --job-name="run-$env-$name4-$seed" jobs/job.sh --exp-name $name4 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 0.5e-3 --n-qubits 4 --n-var-layers 10 --n-enc-layers 10 --exp-qlr-sceduling False --output-scaleing False --load-chkpt True
+            sbatch --job-name="run-$env-$name5-$seed" jobs/job.sh --exp-name $name5 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 0.5e-3 --n-qubits 4 --n-var-layers 15 --n-enc-layers 15 --exp-qlr-sceduling False --output-scaleing False --load-chkpt True
+        done
+    done
+done
 
 name6="qppo-Jerbi_reuploading_no_input-scaleing-qlr0.5e-3-9varlayers-(72-params)"
 
@@ -13,14 +31,14 @@ start_seed=10
 seed_step=10
 end_seed=30
 envs=("Deterministic-ShortestPath-4x4-FrozenLake-v0") 
-timesteps=50000
+timesteps=200000
 
 circuits=("Jerbi-reuploading-no-input-scaleing")
 
 for env in ${envs[@]}; do
     for circuit in ${circuits[@]}; do
         for seed in $(seq $start_seed $seed_step $end_seed); do
-            sbatch --job-name="run-$env-$name6-$seed" jobs/job.sh --exp-name $name6 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 0.5e-3 --n-qubits 4 --n-var-layers 9 --n-enc-layers 8 --exp-qlr-sceduling False --output-scaleing False --load-chkpt False
+            sbatch --job-name="run-$env-$name6-$seed" jobs/job.sh --exp-name $name6 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 0.5e-3 --n-qubits 4 --n-var-layers 9 --n-enc-layers 8 --exp-qlr-sceduling False --output-scaleing False --load-chkpt True
         done
     done
 done

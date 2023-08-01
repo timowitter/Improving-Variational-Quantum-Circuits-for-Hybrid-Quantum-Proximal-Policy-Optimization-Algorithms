@@ -62,7 +62,12 @@ def calc_num_actor_params():
 
     if args.quantum_actor and args.hybrid:
         actor_par_count = actor_par_count + args.n_qubits * num_acts + num_acts
-    elif args.quantum_actor and not args.hybrid and args.output_scaleing:
+    elif (
+        args.quantum_actor
+        and not args.hybrid
+        and args.output_scaleing
+        and not args.scheduled_output_scaleing
+    ):
         actor_par_count = actor_par_count + num_acts
     actor_par_count = actor_par_count * debug
     return actor_par_count

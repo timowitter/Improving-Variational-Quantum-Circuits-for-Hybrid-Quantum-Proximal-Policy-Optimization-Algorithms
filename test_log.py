@@ -43,7 +43,7 @@ max_steps = 300000
 
 plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
 
-# Hyperparameter Test 2: find optimal learning rate and clip_coef for qppo: (failed due to error in sceduling)
+# Hyperparameter Test 2: find optimal learning rate and clip_coef for qppo: (failed due to error in scheduling)
 
 
 plot_dir = plots_dir + "/Hyperparameter-Test-2_QPPO-LR"
@@ -60,7 +60,7 @@ max_steps = 500000
 plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
 
 
-# Hyperparameter Test 2b: find optimal learning rate and clip_coef for qppo: sceduled output scaleing and no clip_grad_norm for circuit parameters (failed due to error in sceduling)
+# Hyperparameter Test 2b: find optimal learning rate and clip_coef for qppo: scheduled output scaleing and no clip_grad_norm for circuit parameters (failed due to error in scheduling)
 plot_dir = plots_dir + "/Hyperparameter-Test-2b_QPPO-LR"
 gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
 exp_names = [
@@ -75,7 +75,7 @@ max_steps = 500000
 plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
 
 
-# Hyperparameter Test 2c: 2b in default Frozen Lake (failed due to error in sceduling)
+# Hyperparameter Test 2c: 2b in default Frozen Lake (failed due to error in scheduling)
 plot_dir = plots_dir + "/Hyperparameter-Test-2c_QPPO-LR"
 gym_id = "FrozenLake-v1"
 exp_names = [
@@ -91,7 +91,7 @@ plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_ste
 
 
 
-# Hyperparameter Test 2d: find optimal learning rate and clip_coef for qppo: fixed sceduling
+# Hyperparameter Test 2d: find optimal learning rate and clip_coef for qppo: fixed scheduling
 plot_dir = plots_dir + "/Hyperparameter-Test-2d_QPPO-LR"
 gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
 exp_names = [
@@ -107,7 +107,7 @@ plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_ste
 
 
 
-# Hyperparameter Test 2e: find optimal learning rate and clip_coef for qppo: fixed sceduling
+# Hyperparameter Test 2e: find optimal learning rate and clip_coef for qppo: fixed scheduling
 plot_dir = plots_dir + "/Hyperparameter-Test-2e_QPPO-LR-Plot2"
 gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
 exp_names = [
@@ -220,10 +220,39 @@ exp_names = [
     "qppo-simple_reuploading-qlr0.5e-3-6varlayers-(72-params)",
     "qppo-Hgog-qlr0.5e-3-6varlayers-(72-params)",
     "qppo-Hgog_reuploading-qlr0.5e-3-6varlayers-(72-params)",
+    "qppo-Jerbi_reuploading_no_input-scaleing-qlr0.5e-3-9varlayers-(72-params)",
     "random-baseline",
 ]
 seeds = [10, 20, 30]
 stepsize = 4 * 128 * 8
 max_steps = 500000
+
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+
+
+plot_dir = plots_dir + "/Hyperparameter-Test-3c_QPPO-reuploading-more-steps"
+gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
+exp_names = [
+    "qppo-simple-qlr0.5e-3-6varlayers-(72-params)",
+    "random-baseline",
+]
+seeds = [10, 20, 30]
+stepsize = 4 * 128 * 8
+max_steps = 1000000
+
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+
+# Hyperparameter Test 3d: test reuploading more layers
+plot_dir = plots_dir + "/Hyperparameter-Test-3d_QPPO-reuploading-more-layers"
+gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
+exp_names = [
+    "qppo-simple_reuploading-qlr0.5e-3-6varlayers-(72-params)",
+    "qppo-simple_reuploading-qlr0.5e-3-10varlayers-(120-params)",
+    "qppo-simple_reuploading-qlr0.5e-3-15varlayers-(180-params)",
+    "random-baseline",
+]
+seeds = [10, 20, 30]
+stepsize = 4 * 128 * 8
+max_steps = 200000
 
 plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)

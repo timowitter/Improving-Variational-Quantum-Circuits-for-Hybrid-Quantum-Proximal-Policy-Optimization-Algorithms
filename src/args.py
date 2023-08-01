@@ -27,16 +27,16 @@ def parse_args():
         help="id of the OpenAi Gym Environment /default: CartPole-v1",
     )
     parser.add_argument(
-        "--exp-sceduling-qlearning-rate",
+        "--exp-scheduling-qlearning-rate",
         type=float,
         default=5e-3,
-        help="quantum optimizer learning rate at start of exp-sceduling",
+        help="quantum optimizer learning rate at start of exp-scheduling",
     )
     parser.add_argument(
-        "--lin-sceduling-qlearning-rate",
+        "--lin-scheduling-qlearning-rate",
         type=float,
         default=1e-5,
-        help="quantum optimizer learning rate after lin-sceduling",
+        help="quantum optimizer learning rate after lin-scheduling",
     )
     parser.add_argument(
         "--learning-rate", type=float, default=2.5e-4, help="optimizer learning rate"
@@ -58,16 +58,16 @@ def parse_args():
         "--total-timesteps", type=int, default=50000, help="length of the Training"
     )  # 25000
     parser.add_argument(
-        "--exp-sceduling-timesteps",
+        "--exp-scheduling-timesteps",
         type=int,
         default=50000,
-        help="length of the exp-sceduling Phase",
+        help="length of the exp-scheduling Phase",
     )
     parser.add_argument(
-        "--lin-sceduling-timesteps",
+        "--lin-scheduling-timesteps",
         type=int,
         default=500000,
-        help="length of the lin-sceduling Phase (not executed during exp-sceduling timesteps if both are enabled)",
+        help="length of the lin-scheduling Phase (not executed during exp-scheduling timesteps if both are enabled)",
     )
     parser.add_argument(
         "--torch-deterministic",
@@ -101,20 +101,20 @@ def parse_args():
         help="the number of steps in each environments per policy rollout phase of the multy vector env",
     )
     parser.add_argument(
-        "--exp-qlr-sceduling",
+        "--exp-qlr-scheduling",
         type=lambda x: bool(strtobool(x)),
         default=False,
         nargs="?",
         const=True,
-        help="exponential leaning rate sceduling for quantum circuits, executed before lin-qlr-sceduling if both are enabled",
+        help="exponential leaning rate scheduling for quantum circuits, executed before lin-qlr-scheduling if both are enabled",
     )
     parser.add_argument(
-        "--lin-qlr-sceduling",
+        "--lin-qlr-scheduling",
         type=lambda x: bool(strtobool(x)),
         default=False,
         nargs="?",
         const=True,
-        help="linear leaning rate sceduling for quantum circuits, executed after exp-qlr-sceduling if both are enabled",
+        help="linear leaning rate scheduling for quantum circuits, executed after exp-qlr-scheduling if both are enabled",
     )
     parser.add_argument(
         "--gae",
@@ -253,18 +253,18 @@ def parse_args():
         help="gives the the save-intervall in number of update epochs",
     )
     parser.add_argument(
-        "--sceduled-output-scaleing",
+        "--scheduled-output-scaleing",
         type=lambda x: bool(strtobool(x)),
         default=False,
         nargs="?",
         const=True,
-        help="toggle sceduled output scaleing or trainable output scaleing",
+        help="toggle scheduled output scaleing or trainable output scaleing",
     )
     parser.add_argument(
         "--sced-out-scale-fac",
         type=float,
         default=2.0,
-        help="value output scaleing is increased with ever/over 100000 steps",
+        help="value output scaleing is increased with every/over 100000 steps",
     )
     parser.add_argument(
         "--random-baseline",
@@ -273,6 +273,15 @@ def parse_args():
         nargs="?",
         const=True,
         help="toggle completely random action selection",
+    )
+
+    parser.add_argument(
+        "--log-circuit-output",
+        type=lambda x: bool(strtobool(x)),
+        default=True,
+        nargs="?",
+        const=True,
+        help="if no output scaleing or hybrid active toggle if circuit output is used as logprob for softmax instead of prob",
     )
 
     args = parser.parse_args()

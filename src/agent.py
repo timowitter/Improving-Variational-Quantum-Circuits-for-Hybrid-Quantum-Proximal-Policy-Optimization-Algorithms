@@ -169,7 +169,16 @@ class Agent(nn.Module):
         else:
             logits = self.actor(trans_obs(observation, args.gym_id, obs_dim))
 
-        probs = Categorical(logits=logits)  # softMaxOutPut = np.exp(logits) / np.exp(logits).sum()
+        if (
+            args.quantum_actor
+            and not args.output_scaleing
+            and not args.hybrid
+            and not args.log_circuit_output
+        ):
+            probs = Categorical(logits + 1)  # softMaxOutPut = (logits+1) / (logits+1).sum()
+        else:
+            probs = Categorical(logits=logits)
+            # softMaxOutPut = np.exp(logits) / np.exp(logits).sum()
         if action is None:
             action = probs.sample()
             action = action.view(1)
@@ -178,7 +187,7 @@ class Agent(nn.Module):
             args.quantum_actor
             and not args.hybrid
             and args.output_scaleing
-            and args.sceduled_output_scaleing
+            and args.scheduled_output_scaleing
         ):
             # logprobs and entropy before output scaleing is used
             logits_pre_outscale = torch.Tensor(acts_dim)

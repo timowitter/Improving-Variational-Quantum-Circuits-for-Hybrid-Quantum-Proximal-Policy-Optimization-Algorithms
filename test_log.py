@@ -282,7 +282,7 @@ exp_names = [
     "qppo-simple_reuploading-qlr0.5e-3-6varlayers-(72-params)",
     "random-baseline",
 ]
-seeds = [10]
+seeds = [10, 20, 30]
 stepsize = 4 * 128
 max_steps = 200000
 

@@ -616,16 +616,17 @@ def plot_test_avg3(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, ma
     
     #up_res_avg = avg_update_results(up_res, gym_id, exp_names, stepsize, max_steps)
 
+    #.rolling(30).mean()
 
     # check if plot_dir exists
     pathExists = os.path.exists(plot_dir)
     if not pathExists:
         os.makedirs(plot_dir)
 
-    sns.lineplot(x="global_step", y="value_loss_mean",
-             hue="exp_name", errorbar='sd',
-             data=up_res)
-    """
+    #sns.lineplot(x="global_step", y="value_loss_mean",
+    #         hue="exp_name", errorbar='sd',
+    #         data=up_res)
+    
     # plotting
     sns.relplot(
         data=up_res,
@@ -637,7 +638,7 @@ def plot_test_avg3(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, ma
         errorbar="sd",
         err_style = "band",
         # style="exp_name",
-    )"""
+    )
     plot_dir2 = os.path.join(plot_dir, "value_loss_by_exp_name.png")
     plt.savefig(plot_dir2)
     plt.close()

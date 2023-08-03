@@ -473,6 +473,10 @@ for env in ${envs[@]}; do
 done
 
 
+# Hyperparameter Test 4b: 
+goal:    test clipcoef and clipgradnorm
+results: 
+
 name3="qppo-simple_reuploading-qlr0.5e-3-6varlayers-nologoutput-clipped-(72-params)"
 name4="qppo-simple_reuploading-qlr0.5e-3-6varlayers-outscale_scheduling_2.0-(72-params)"
 name5="qppo-simple_reuploading-qlr1.0e-3-6varlayers-nologoutput-clipcoef0.02-(72-params)"
@@ -496,4 +500,11 @@ for env in ${envs[@]}; do
         done
     done
 done
+
+
+
+
+
+
+
 

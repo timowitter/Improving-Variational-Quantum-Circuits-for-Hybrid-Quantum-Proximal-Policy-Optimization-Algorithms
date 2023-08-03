@@ -564,6 +564,7 @@ def plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max
         os.makedirs(plot_dir)
 
     # plotting
+    
     plot_avg_episode_reward_by_seed(ep_res, plot_dir)
     plot_avg_episode_reward_by_exp_name(ep_res_avg, plot_dir)
     plot_avg_episode_length_by_seed(ep_res, plot_dir)
@@ -584,3 +585,68 @@ def plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max
     plot_SPS_by_exp_name(up_res_avg, plot_dir)
     plot_output_scaleing_by_seed(up_res, plot_dir)
     plot_output_scaleing_by_exp_name(up_res_avg, plot_dir)
+    
+
+
+
+def plot_test_avg3(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps):
+    # get all result directories
+    results_dirs = []
+    dir_seeds = []
+    dir_exp_names = []
+    for exp_name in exp_names:
+        for seed in seeds:
+            # tmp = f"{results_dir}/{gym_id}/{exp_name}/{seed}"
+            results_dirs.append(results_dir + "/" + gym_id + "/" + exp_name + "/" + str(seed))
+            dir_seeds.append(seed)
+            dir_exp_names.append(exp_name)
+
+    # load dataframes
+    up_res_df_list = [pd.read_csv(os.path.join(loc, "update_results.csv")) for loc in results_dirs]
+    # make average of update for episode specific data
+
+    # concat dataframes
+    up_res = pd.concat(up_res_df_list, ignore_index=True)
+    #value_loss_exp_name = up_res.groupby(['exp_name', 'global_step'])['value_loss'].mean()
+    up_res['value_loss_mean'] = up_res.groupby(['exp_name', 'global_step'], sort=False)['value_loss'].transform('mean')
+    #print(value_loss_exp_name)
+    #value_loss_seed = up_res.groupby(["exp_name", "seed", "global_step"])["value_loss"].mean()
+    up_res['value_loss_seed_mean'] = up_res.groupby(['exp_name', "seed", 'global_step'], sort=False)['value_loss'].transform('mean')
+    # make average over the different seeds of one experiment
+    
+    #up_res_avg = avg_update_results(up_res, gym_id, exp_names, stepsize, max_steps)
+
+
+    # check if plot_dir exists
+    pathExists = os.path.exists(plot_dir)
+    if not pathExists:
+        os.makedirs(plot_dir)
+
+    # plotting
+    sns.relplot(
+        data=up_res,
+        kind="scatter",
+        x="global_step",
+        y="value_loss_mean",
+        col="gym_id",
+        hue="exp_name",
+        #errorbar="sd"
+        # style="exp_name",
+    )
+    plot_dir2 = os.path.join(plot_dir, "value_loss_by_exp_name.png")
+    plt.savefig(plot_dir2)
+    plt.close()
+
+    sns.relplot(
+        data=up_res,
+        kind="line",
+        x="global_step",
+        y="value_loss_seed_mean",
+        col="exp_name",
+        hue="seed",
+        #errorbar="sd"
+        # style="seed",
+    )
+    plot_dir2 = os.path.join(plot_dir, "value_loss_by_seed.png")
+    plt.savefig(plot_dir2)
+    plt.close()

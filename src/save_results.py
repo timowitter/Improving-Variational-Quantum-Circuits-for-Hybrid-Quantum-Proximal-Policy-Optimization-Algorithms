@@ -9,6 +9,7 @@ class Save_results(nn.Module):
         self.results_dir = results_dir
         self.df_episode_exists = False
         self.df_update_exists = False
+        self.df_gradient_exists = False
         file_pathExists = os.path.exists(self.results_dir)
         if not file_pathExists:
             os.makedirs(self.results_dir)
@@ -72,11 +73,37 @@ class Save_results(nn.Module):
         else:
             self.df_update = pd.concat([self.df_update, df], ignore_index=True)
 
+
+    def append_gradient_results(actor_gradients_mean, actor_gradients_var, actor_gradients_std, critic_gradients_mean, critic_gradients_var, critic_gradients_std, global_step, gym_id, exp_name, circuit, seed):
+        gradient_results={
+                            'actor_gradients_mean': actor_gradients_mean,
+                            'actor_gradients_var': actor_gradients_var,
+                            'actor_gradients_std': actor_gradients_std,
+                            'critic_gradients_mean': critic_gradients_mean,
+                            'critic_gradients_var': critic_gradients_var,
+                            'critic_gradients_std': critic_gradients_std,
+
+                            'global_step': global_step,
+                            'gym_id': gym_id,
+                            'exp_name': exp_name,
+                            'circuit': circuit,
+                            'seed': seed
+        }
+
+        df = pd.DataFrame(data=gradient_results, index=[0])
+        if (self.df_gradient_exists == False):
+            self.df_gradient = df
+            self.df_gradient_exists = True
+        else:
+            self.df_gradient = pd.concat([self.df_update, df], ignore_index=True)
+
     def save_results(self):
         if self.df_episode_exists:
             self.df_episode.to_csv(self.results_dir + "/episode_results.csv", sep=",", encoding="utf-8", index=False)
         if self.df_update_exists:
             self.df_update.to_csv(self.results_dir + "/update_results.csv", sep=",", encoding="utf-8", index=False)
+        if self.df_gradient_exists:
+            self.df_gradient.to_csv(self.results_dir + "/gradient_results.csv", sep=",", encoding="utf-8", index=False)
 
 
 

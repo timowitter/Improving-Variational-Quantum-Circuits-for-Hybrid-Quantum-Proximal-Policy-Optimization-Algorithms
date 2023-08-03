@@ -1,4 +1,4 @@
-from src.plot import plot_test_avg
+from src.plot import plot_test_avg, plot_test_avg3
 
 results_dir = "qppo-slurm/results"
 plots_dir = "final-plots"
@@ -210,7 +210,7 @@ max_steps = 500000
 
 plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
 
-"""
+
 
 # Hyperparameter Test 3c: test reuploading
 plot_dir = plots_dir + "/Hyperparameter-Test-3c_QPPO-reuploading"
@@ -272,3 +272,18 @@ stepsize = 4 * 128 * 8
 max_steps = 200000
 
 plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+"""
+
+
+# plotting test
+plot_dir = plots_dir + "/Plotting-Test-1"
+gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
+exp_names = [
+    "qppo-simple_reuploading-qlr0.5e-3-6varlayers-(72-params)",
+    "random-baseline",
+]
+seeds = [10]
+stepsize = 4 * 128
+max_steps = 200000
+
+plot_test_avg3(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)

@@ -256,3 +256,19 @@ stepsize = 4 * 128 * 8
 max_steps = 200000
 
 plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+
+
+# Hyperparameter Test 4a: test prob circuit output vs logprob output with and without output scaleing
+plot_dir = plots_dir + "/Hyperparameter-Test-4a_QPPO-prob-vs-logprob-output-vs-output-scaleing"
+gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
+exp_names = [
+    "qppo-simple_reuploading-qlr0.5e-3-6varlayers-(72-params)",
+    "qppo-simple_reuploading-qlr0.5e-3-6varlayers-nologoutput-(72-params)",
+    "qppo-simple_reuploading-qlr0.5e-3-6varlayers-outscale_scheduling_4.0-(72-params)",
+    "random-baseline",
+]
+seeds = [10, 20, 30]
+stepsize = 4 * 128 * 8
+max_steps = 200000
+
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)

@@ -435,10 +435,10 @@ if __name__ == "__main__":
                         optimizer4.zero_grad()
                     loss.backward()
                     nn.utils.clip_grad_norm_(agent.parameters(), args.max_grad_norm)
-                    # if args.quantum_actor:
-                    #    nn.utils.clip_grad_norm_([actor_layer_params], args.max_grad_norm)
-                    # if args.quantum_critic:
-                    #    nn.utils.clip_grad_norm_([critic_layer_params], args.max_grad_norm)
+                    if args.quantum_actor and args.clip_circuit_grad_norm:
+                        nn.utils.clip_grad_norm_([actor_layer_params], args.max_grad_norm)
+                    if args.quantum_critic and args.clip_circuit_grad_norm:
+                        nn.utils.clip_grad_norm_([critic_layer_params], args.max_grad_norm)
                     optimizer1.step()
                     if args.quantum_actor:
                         optimizer2.step()

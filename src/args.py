@@ -284,6 +284,24 @@ def parse_args():
         help="if no output scaleing or hybrid active toggle if circuit output is used as logprob for softmax instead of prob",
     )
 
+    parser.add_argument(
+        "--clip-circuit-output",
+        type=lambda x: bool(strtobool(x)),
+        default=False,
+        nargs="?",
+        const=True,
+        help="if no output scaleing or hybrid or log circuit output active toggle if circuit output is to be clipped to (-0.5, 0.5)",
+    )
+
+    parser.add_argument(
+        "--clip-circuit-grad-norm",
+        type=lambda x: bool(strtobool(x)),
+        default=False,
+        nargs="?",
+        const=True,
+        help="toggle clip circuit gradient norm",
+    )
+
     args = parser.parse_args()
     args.batch_size = int(args.num_steps * args.num_envs)
     args.minibatch_size = int(args.batch_size // args.num_minibatches)

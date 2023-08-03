@@ -174,8 +174,18 @@ class Agent(nn.Module):
             and not args.output_scaleing
             and not args.hybrid
             and not args.log_circuit_output
+            and not args.clip_circuit_output
         ):
             probs = Categorical(logits + 1)  # softMaxOutPut = (logits+1) / (logits+1).sum()
+
+        elif (
+            args.quantum_actor
+            and not args.output_scaleing
+            and not args.hybrid
+            and not args.log_circuit_output
+        ):
+            probs = Categorical(torch.clamp(logits, -0.5, 0.5) + 0.5)
+
         else:
             probs = Categorical(logits=logits)
             # softMaxOutPut = np.exp(logits) / np.exp(logits).sum()

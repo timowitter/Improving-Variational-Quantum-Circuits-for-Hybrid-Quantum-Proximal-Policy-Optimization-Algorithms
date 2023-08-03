@@ -630,7 +630,8 @@ def plot_test_avg3(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, ma
         y="value_loss_mean",
         col="gym_id",
         hue="exp_name",
-        errorbar="sd"
+        errorbar="sd",
+        err_style = "band",
         # style="exp_name",
     )
     plot_dir2 = os.path.join(plot_dir, "value_loss_by_exp_name.png")
@@ -644,7 +645,8 @@ def plot_test_avg3(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, ma
         y="value_loss_seed_mean",
         col="exp_name",
         hue="seed",
-        errorbar="sd"
+        errorbar="sd",
+        err_style = "band",
         # style="seed",
     )
     plot_dir2 = os.path.join(plot_dir, "value_loss_by_seed.png")

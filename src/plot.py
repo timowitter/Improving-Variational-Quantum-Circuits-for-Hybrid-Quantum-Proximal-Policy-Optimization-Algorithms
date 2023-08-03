@@ -609,6 +609,7 @@ def plot_test_avg3(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, ma
     up_res = pd.concat(up_res_df_list, ignore_index=True)
     #value_loss_exp_name = up_res.groupby(['exp_name', 'global_step'])['value_loss'].mean()
     up_res['value_loss_mean'] = up_res.groupby(['exp_name', 'global_step'], sort=False)['value_loss'].transform('mean')
+    up_res['value_loss_mean_roll'] = up_res['value_loss_mean'].rolling(10).mean()
     #print(value_loss_exp_name)
     #value_loss_seed = up_res.groupby(["exp_name", "seed", "global_step"])["value_loss"].mean()
     up_res['value_loss_seed_mean'] = up_res.groupby(['exp_name', "seed", 'global_step'], sort=False)['value_loss'].transform('mean')
@@ -616,7 +617,7 @@ def plot_test_avg3(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, ma
     
     #up_res_avg = avg_update_results(up_res, gym_id, exp_names, stepsize, max_steps)
 
-    #.rolling(30).mean()
+    #
 
     # check if plot_dir exists
     pathExists = os.path.exists(plot_dir)
@@ -632,7 +633,7 @@ def plot_test_avg3(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, ma
         data=up_res,
         kind="line",
         x="global_step",
-        y="value_loss_mean",
+        y="value_loss_mean_roll",
         col="gym_id",
         hue="exp_name",
         errorbar="sd",

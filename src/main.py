@@ -435,25 +435,37 @@ if __name__ == "__main__":
                         optimizer4.zero_grad()
                     loss.backward()
                     if False:
-                        #logging of gradients var and mean for plotting
+                        # logging of gradients var and mean for plotting
                         if args.quantum_actor:
-                            actor_gradients_mean = torch.mean(actor_layer_params.grad)
+                            actor_grads_abs_mean = torch.mean(torch.abs(actor_layer_params.grad))
                             actor_gradients_var = torch.var(actor_layer_params.grad)
-                            actor_gradients_std = torch.sqrt(actor_gradients_var)
+                            actor_gradients_std = torch.std(actor_layer_params.grad)
                         else:
-                            actor_gradients_mean = torch.tensor([0])
+                            actor_grads_abs_mean = torch.tensor([0])
                             actor_gradients_var = torch.tensor([0])
                             actor_gradients_std = torch.tensor([0])
 
                         if args.quantum_critic:
-                            critic_gradients_mean = torch.mean(critic_layer_params.grad)
+                            critic_grads_abs_mean = torch.mean(torch.abs(critic_layer_params.grad))
                             critic_gradients_var = torch.var(critic_layer_params.grad)
-                            critic_gradients_std = torch.sqrt(critic_gradients_var)
+                            critic_gradients_std = torch.std(critic_layer_params.grad)
                         else:
-                            critic_gradients_mean = torch.tensor([0])
+                            critic_grads_abs_mean = torch.tensor([0])
                             critic_gradients_var = torch.tensor([0])
                             critic_gradients_std = torch.tensor([0])
-                        save_results.append_gradient_results(actor_gradients_mean.item(), actor_gradients_var.item(), actor_gradients_std.item(), critic_gradients_mean.item(), critic_gradients_var.item(), critic_gradients_std.item(), global_step, args.gym_id, args.exp_name, args.circuit, args.seed)
+                        save_results.append_gradient_results(
+                            actor_grads_abs_mean.item(),
+                            actor_gradients_var.item(),
+                            actor_gradients_std.item(),
+                            critic_grads_abs_mean.item(),
+                            critic_gradients_var.item(),
+                            critic_gradients_std.item(),
+                            global_step,
+                            args.gym_id,
+                            args.exp_name,
+                            args.circuit,
+                            args.seed,
+                        )
 
                     nn.utils.clip_grad_norm_(agent.parameters(), args.max_grad_norm)
                     if args.quantum_actor and args.clip_circuit_grad_norm:

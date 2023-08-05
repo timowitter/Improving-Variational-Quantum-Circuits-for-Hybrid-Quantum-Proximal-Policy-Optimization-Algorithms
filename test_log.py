@@ -275,15 +275,24 @@ plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_ste
 """
 
 
-# plotting test
-plot_dir = plots_dir + "/Plotting-Test-1"
+# Hyperparameter Test 4b: test clipcoef and clipgradnorm
+plot_dir = plots_dir + "/Hyperparameter-Test-4b_QPPO-clipcoef-clipgradnorm"
 gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
 exp_names = [
     "qppo-simple_reuploading-qlr0.5e-3-6varlayers-(72-params)",
+    "qppo-simple_reuploading-qlr0.5e-3-6varlayers-nologoutput-(72-params)",
+    "qppo-simple_reuploading-qlr0.5e-3-6varlayers-outscale_scheduling_4.0-(72-params)",
+    "qppo-simple_reuploading-qlr0.5e-3-6varlayers-nologoutput-clipped-(72-params)",
+    "qppo-simple_reuploading-qlr0.5e-3-6varlayers-outscale_scheduling_2.0-(72-params)",
+    "qppo-simple_reuploading-qlr1.0e-3-6varlayers-nologoutput-clipcoef0.02-(72-params)",
+    "qppo-simple_reuploading-qlr0.5e-3-6varlayers-nologoutput-clipcircuitgradnorm-(72-params)",
     "random-baseline",
 ]
 seeds = [10, 20, 30]
-stepsize = 4 * 128
+stepsize = 4 * 128 * 8
 max_steps = 200000
 
-plot_test_avg3(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+
+
+# Hyperparameter Test 4c: test different parameter initialisation methods and record gradient mean and var

@@ -434,8 +434,9 @@ if __name__ == "__main__":
                     if args.quantum_critic:
                         optimizer4.zero_grad()
                     loss.backward()
-                    if False:
-                        # logging of gradients var and mean for plotting
+
+                    # logging of gradients var and mean for plotting
+                    if args.record_grads:
                         if args.quantum_actor:
                             actor_grads_abs_mean = torch.mean(torch.abs(actor_layer_params.grad))
                             actor_gradients_var = torch.var(actor_layer_params.grad)

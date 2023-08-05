@@ -285,21 +285,27 @@ def parse_args():
     )
 
     parser.add_argument(
-        "--clip-circuit-output",
-        type=lambda x: bool(strtobool(x)),
-        default=False,
-        nargs="?",
-        const=True,
-        help="if no output scaleing or hybrid or log circuit output active toggle if circuit output is to be clipped to (-0.5, 0.5)",
-    )
-
-    parser.add_argument(
         "--clip-circuit-grad-norm",
         type=lambda x: bool(strtobool(x)),
         default=False,
         nargs="?",
         const=True,
         help="toggle clip circuit gradient norm",
+    )
+
+    parser.add_argument(
+        "--record-grads",
+        type=lambda x: bool(strtobool(x)),
+        default=False,
+        nargs="?",
+        const=True,
+        help="toggle clip circuit gradient norm",
+    )
+    parser.add_argument(
+        "--param-init",
+        type=str,
+        default="random",
+        help="the parameter initialisation that is to be used, can be one of:  random / random_clipped / gauss_distribution",
     )
 
     args = parser.parse_args()

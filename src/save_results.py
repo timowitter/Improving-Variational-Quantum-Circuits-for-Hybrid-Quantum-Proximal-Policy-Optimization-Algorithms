@@ -39,7 +39,7 @@ class Save_results(nn.Module):
 
         df = pd.DataFrame(data=episode_results, index=[0])
 
-        if self.df_episode_exists == False:
+        if not self.df_episode_exists:
             self.df_episode = df
             self.df_episode_exists = True
         else:
@@ -86,7 +86,7 @@ class Save_results(nn.Module):
         }
 
         df = pd.DataFrame(data=update_results, index=[0])
-        if self.df_update_exists == False:
+        if not self.df_update_exists:
             self.df_update = df
             self.df_update_exists = True
         else:
@@ -121,7 +121,7 @@ class Save_results(nn.Module):
         }
 
         df = pd.DataFrame(data=gradient_results, index=[0])
-        if self.df_gradient_exists == False:
+        if not self.df_gradient_exists:
             self.df_gradient = df
             self.df_gradient_exists = True
         else:

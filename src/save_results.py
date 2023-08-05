@@ -125,7 +125,7 @@ class Save_results(nn.Module):
             self.df_gradient = df
             self.df_gradient_exists = True
         else:
-            self.df_gradient = pd.concat([self.df_update, df], ignore_index=True)
+            self.df_gradient = pd.concat([self.df_gradient, df], ignore_index=True)
 
     def save_results(self):
         if self.df_episode_exists:

@@ -673,11 +673,9 @@ def plot_gradient_avg(results_dir, plot_dir, gym_id, exp_names, seeds, max_steps
             dir_exp_names.append(exp_name)
 
     # load dataframes
-    gr_res_df_list = [pd.read_csv(os.path.join(loc, "update_results.csv")) for loc in results_dirs]
-
-    # data["value_loss_mean_emw"] = data["value_loss_mean"].ewm(alpha=0.6).mean()
-
-    # make average of update for episode specific data
+    gr_res_df_list = [
+        pd.read_csv(os.path.join(loc, "gradient_results.csv")) for loc in results_dirs
+    ]
 
     # concat dataframes
     gr_res = pd.concat(gr_res_df_list, ignore_index=True)

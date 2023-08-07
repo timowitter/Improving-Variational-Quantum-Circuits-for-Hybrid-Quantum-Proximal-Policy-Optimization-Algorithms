@@ -75,7 +75,7 @@ if __name__ == "__main__":
     assert isinstance(
         envs.single_action_space, gym.spaces.Discrete
     ), "onely discrete action spaces supported"
-    save_results = Save_results(args.results_dir, args.load_chkpt)
+    save_results = Save_results(args.results_dir, args.load_chkpt, args.record_grads)
 
     # Declare Quantum Circuit Parameters and agent
     agent = Agent(envs)

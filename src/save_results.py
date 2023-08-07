@@ -5,7 +5,7 @@ import torch.nn as nn
 
 
 class Save_results(nn.Module):
-    def __init__(self, results_dir, load_chkpt):
+    def __init__(self, results_dir, load_chkpt, record_grads):
         super(Save_results, self).__init__()
         self.results_dir = results_dir
         self.df_episode_exists = False
@@ -16,13 +16,22 @@ class Save_results(nn.Module):
             os.makedirs(self.results_dir)
         if load_chkpt:
             df_pathExists = os.path.exists(self.results_dir + "/episode_results.csv")
+            df_pathExists2 = os.path.exists(self.results_dir + "/update_results.csv")
             if not df_pathExists:
-                print("ERROR can not append results")
+                print("ERROR episode_results.csv can not be found")
+            elif not df_pathExists2:
+                print("ERROR update_results.csv can not be found")
             else:
                 self.df_episode = pd.read_csv(self.results_dir + "/episode_results.csv")
                 self.df_update = pd.read_csv(self.results_dir + "/update_results.csv")
                 self.df_episode_exists = True
                 self.df_update_exists = True
+                if record_grads:
+                    df_pathExists3 = os.path.exists(self.results_dir + "/gradient_results.csv")
+                    if not df_pathExists3:
+                        print("ERROR gradient_results.csv can not be found")
+                    self.df_gradient = pd.read_csv(self.results_dir + "/gradient_results.csv")
+                    self.df_gradient_exists = True
 
     def append_episode_results(
         self, episode_reward, episode_length, global_step, gym_id, exp_name, circuit, seed

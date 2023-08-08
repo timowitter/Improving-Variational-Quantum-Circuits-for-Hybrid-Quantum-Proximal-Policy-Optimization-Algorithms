@@ -9,7 +9,7 @@ args = parse_args()
 
 def make_random_init(n_qubits, n_layers, n_dims):
     layer_params = np.random.rand(n_qubits, n_layers, n_dims)
-    layer_params = layer_params * 2 - 1  # could be set to 0
+    layer_params = layer_params * 2 - 1  # intervall [-1, 1[
     layer_params = np.arctanh(layer_params)  # will later be inside a tanh function
     return layer_params
 
@@ -19,7 +19,7 @@ a = 0.01  # could be made a hyperparameter but is probaly uninteresting for test
 
 def make_clipped_random_init(n_qubits, n_layers, n_dims):
     layer_params = np.random.rand(n_qubits, n_layers, n_dims)
-    layer_params = layer_params * 2 - 1  # could be set to 0
+    layer_params = layer_params * 2 - 1  # intervall [-1, 1[
     # clipping to avoid vanishing gradients
     for i in range(n_qubits):
         for j in range(n_layers):
@@ -28,6 +28,55 @@ def make_clipped_random_init(n_qubits, n_layers, n_dims):
                     layer_params[i, j, k] = np.clip(layer_params[i, j, k], 0 + a, 1 - a)
                 else:
                     layer_params[i, j, k] = np.clip(layer_params[i, j, k], -1 + a, 0 - a)
+                # intervall [-0.99, -0.01] & [0.01, 0.99]
+    layer_params = np.arctanh(layer_params)  # will later be inside a tanh function
+    return layer_params
+
+
+def make_all_small_random_init(n_qubits, n_layers, n_dims):
+    layer_params = np.random.rand(n_qubits, n_layers, n_dims)
+    layer_params = layer_params * 0.2 - 0.1  # intervall [-0.1, 0.1[
+    # clipping to avoid vanishing gradients
+    for i in range(n_qubits):
+        for j in range(n_layers):
+            for k in range(n_dims):
+                if layer_params[i, j, k] >= 0:
+                    layer_params[i, j, k] = layer_params[i, j, k] + a
+                else:
+                    layer_params[i, j, k] = layer_params[i, j, k] - a
+                # intervall [-0.11, -0.01[ & [0.01, 0.11[
+    layer_params = np.arctanh(layer_params)  # will later be inside a tanh function
+    return layer_params
+
+
+def make_all_medium_random_init(n_qubits, n_layers, n_dims):
+    layer_params = np.random.rand(n_qubits, n_layers, n_dims)
+    layer_params = layer_params - 0.5  # intervall [-0.5, 0.5[
+    # clipping to avoid vanishing gradients
+    for i in range(n_qubits):
+        for j in range(n_layers):
+            for k in range(n_dims):
+                if layer_params[i, j, k] >= 0:
+                    layer_params[i, j, k] = layer_params[i, j, k] + 0.25
+                else:
+                    layer_params[i, j, k] = layer_params[i, j, k] - 0.25
+                # intervall [-0.75, -0.25[ & [0.25, 0.75[
+    layer_params = np.arctanh(layer_params)  # will later be inside a tanh function
+    return layer_params
+
+
+def make_all_big_random_init(n_qubits, n_layers, n_dims):
+    layer_params = np.random.rand(n_qubits, n_layers, n_dims)
+    layer_params = layer_params * 0.8 - 0.4  # intervall [-0.4, 0.4[
+    # clipping to avoid vanishing gradients
+    for i in range(n_qubits):
+        for j in range(n_layers):
+            for k in range(n_dims):
+                if layer_params[i, j, k] >= 0:
+                    layer_params[i, j, k] = layer_params[i, j, k] + 0.6 - a
+                else:
+                    layer_params[i, j, k] = layer_params[i, j, k] - 0.6 + a
+                # intervall [-0.99, -0.59[ & [0.59, 0.99[
     layer_params = np.arctanh(layer_params)  # will later be inside a tanh function
     return layer_params
 
@@ -61,6 +110,12 @@ def make_actor_layer_params():
             layer_params = make_clipped_random_init(args.n_qubits, args.n_var_layers, 3)
         elif args.param_init == "gauss_distribution":
             layer_params = make_gauss_init(args.n_qubits, args.n_var_layers, 3)
+        elif args.param_init == "allsmall":
+            layer_params = make_all_small_random_init(args.n_qubits, args.n_var_layers, 3)
+        elif args.param_init == "allmid":
+            layer_params = make_all_medium_random_init(args.n_qubits, args.n_var_layers, 3)
+        elif args.param_init == "allbig":
+            layer_params = make_all_big_random_init(args.n_qubits, args.n_var_layers, 3)
         else:
             layer_params = make_random_init(args.n_qubits, args.n_var_layers, 3)
 
@@ -79,6 +134,18 @@ def make_actor_layer_params():
             )
         elif args.param_init == "gauss_distribution":
             layer_params = make_gauss_init(args.n_qubits, args.n_var_layers + num_enc_dims, 3)
+        elif args.param_init == "allsmall":
+            layer_params = make_all_small_random_init(
+                args.n_qubits, args.n_var_layers + num_enc_dims, 3
+            )
+        elif args.param_init == "allmid":
+            layer_params = make_all_medium_random_init(
+                args.n_qubits, args.n_var_layers + num_enc_dims, 3
+            )
+        elif args.param_init == "allbig":
+            layer_params = make_all_big_random_init(
+                args.n_qubits, args.n_var_layers + num_enc_dims, 3
+            )
         else:
             layer_params = make_random_init(args.n_qubits, args.n_var_layers + num_enc_dims, 3)
 
@@ -97,6 +164,12 @@ def make_actor_layer_params():
             layer_params = make_clipped_random_init(args.n_qubits, args.n_var_layers, 2)
         elif args.param_init == "gauss_distribution":
             layer_params = make_gauss_init(args.n_qubits, args.n_var_layers, 2)
+        elif args.param_init == "allsmall":
+            layer_params = make_all_small_random_init(args.n_qubits, args.n_var_layers, 2)
+        elif args.param_init == "allmid":
+            layer_params = make_all_medium_random_init(args.n_qubits, args.n_var_layers, 2)
+        elif args.param_init == "allbig":
+            layer_params = make_all_big_random_init(args.n_qubits, args.n_var_layers, 2)
         else:
             layer_params = make_random_init(args.n_qubits, args.n_var_layers, 2)
 
@@ -106,6 +179,16 @@ def make_actor_layer_params():
             layer_params = make_clipped_random_init(args.n_qubits, (2 * args.n_enc_layers) + 1, 2)
         elif args.param_init == "gauss_distribution":
             layer_params = make_gauss_init(args.n_qubits, (2 * args.n_enc_layers) + 1, 2)
+        elif args.param_init == "allsmall":
+            layer_params = make_all_small_random_init(
+                args.n_qubits, (2 * args.n_enc_layers) + 1, 2
+            )
+        elif args.param_init == "allmid":
+            layer_params = make_all_medium_random_init(
+                args.n_qubits, (2 * args.n_enc_layers) + 1, 2
+            )
+        elif args.param_init == "allbig":
+            layer_params = make_all_big_random_init(args.n_qubits, (2 * args.n_enc_layers) + 1, 2)
         else:
             layer_params = make_random_init(args.n_qubits, (2 * args.n_enc_layers) + 1, 2)
 
@@ -133,6 +216,12 @@ def make_critic_layer_params():
             layer_params = make_clipped_random_init(args.n_qubits, args.n_var_layers, 3)
         elif args.param_init == "gauss_distribution":
             layer_params = make_gauss_init(args.n_qubits, args.n_var_layers, 3)
+        elif args.param_init == "allsmall":
+            layer_params = make_all_small_random_init(args.n_qubits, args.n_var_layers, 3)
+        elif args.param_init == "allmid":
+            layer_params = make_all_medium_random_init(args.n_qubits, args.n_var_layers, 3)
+        elif args.param_init == "allbig":
+            layer_params = make_all_big_random_init(args.n_qubits, args.n_var_layers, 3)
         else:
             layer_params = make_random_init(args.n_qubits, args.n_var_layers, 3)
 
@@ -151,6 +240,18 @@ def make_critic_layer_params():
             )
         elif args.param_init == "gauss_distribution":
             layer_params = make_gauss_init(args.n_qubits, args.n_var_layers + num_enc_dims, 3)
+        elif args.param_init == "allsmall":
+            layer_params = make_all_small_random_init(
+                args.n_qubits, args.n_var_layers + num_enc_dims, 3
+            )
+        elif args.param_init == "allmid":
+            layer_params = make_all_medium_random_init(
+                args.n_qubits, args.n_var_layers + num_enc_dims, 3
+            )
+        elif args.param_init == "allbig":
+            layer_params = make_all_big_random_init(
+                args.n_qubits, args.n_var_layers + num_enc_dims, 3
+            )
         else:
             layer_params = make_random_init(args.n_qubits, args.n_var_layers + num_enc_dims, 3)
 
@@ -169,6 +270,12 @@ def make_critic_layer_params():
             layer_params = make_clipped_random_init(args.n_qubits, args.n_var_layers, 2)
         elif args.param_init == "gauss_distribution":
             layer_params = make_gauss_init(args.n_qubits, args.n_var_layers, 2)
+        elif args.param_init == "allsmall":
+            layer_params = make_all_small_random_init(args.n_qubits, args.n_var_layers, 2)
+        elif args.param_init == "allmid":
+            layer_params = make_all_medium_random_init(args.n_qubits, args.n_var_layers, 2)
+        elif args.param_init == "allbig":
+            layer_params = make_all_big_random_init(args.n_qubits, args.n_var_layers, 2)
         else:
             layer_params = make_random_init(args.n_qubits, args.n_var_layers, 2)
 
@@ -178,6 +285,16 @@ def make_critic_layer_params():
             layer_params = make_clipped_random_init(args.n_qubits, (2 * args.n_enc_layers) + 1, 2)
         elif args.param_init == "gauss_distribution":
             layer_params = make_gauss_init(args.n_qubits, (2 * args.n_enc_layers) + 1, 2)
+        elif args.param_init == "allsmall":
+            layer_params = make_all_small_random_init(
+                args.n_qubits, (2 * args.n_enc_layers) + 1, 2
+            )
+        elif args.param_init == "allmid":
+            layer_params = make_all_medium_random_init(
+                args.n_qubits, (2 * args.n_enc_layers) + 1, 2
+            )
+        elif args.param_init == "allbig":
+            layer_params = make_all_big_random_init(args.n_qubits, (2 * args.n_enc_layers) + 1, 2)
         else:
             layer_params = make_random_init(args.n_qubits, (2 * args.n_enc_layers) + 1, 2)
 

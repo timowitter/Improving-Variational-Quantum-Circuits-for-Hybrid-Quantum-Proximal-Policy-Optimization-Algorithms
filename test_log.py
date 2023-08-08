@@ -19,7 +19,7 @@ plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_ste
 
 # Hyperparameter Test 1: find optimal learning rate for ppo with 4-4-NN:
 
-plot_dir = plots_dir + "/Hyperparameter-Test-1_PPO-LR"
+plot_dir = plots_dir + "/Hyperparameter-Test-1_PPO-LR_plot2"
 gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
 exp_names = [
     "ppo_default_lr2.0e-4",
@@ -31,11 +31,11 @@ exp_names = [
     "ppo_default_lr6.0e-4",
     # "ppo_default_lr8.0e-4",
     "ppo_default_lr10.0e-4",
-    "ppo_default_lr15.0e-4",
-    "ppo_default_lr25.0e-4",
+    # "ppo_default_lr15.0e-4",
+    # "ppo_default_lr25.0e-4",
     "ppo_default_lr50.0e-4",
     "ppo_default_lr100.0e-4",
-    "ppo_default_lr250.0e-4",
+    # "ppo_default_lr250.0e-4",
 ]
 seeds = [10, 20, 30, 40, 50]
 stepsize = 4 * 128 * 4
@@ -293,7 +293,7 @@ stepsize = 4 * 128 * 8
 max_steps = 200000
 
 plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
-"""
+
 
 # Hyperparameter Test 4c: test different parameter initialisation methods and record gradient mean and var
 
@@ -317,3 +317,4 @@ exp_names = [
     "qppo-simple_reuploading-qlr0.5e-3-6varlayers-nologoutput-gaussinit-recordgrads-(72-params)",
 ]
 plot_gradient_avg(results_dir, plot_dir, gym_id, exp_names, seeds, max_steps)
+"""

@@ -6,29 +6,29 @@
 #          "Jerbi-no-reuploading-no-input-scaleing" / "Jerbi-reuploading-no-input-scaleing" / "Jerbi-reuploading"
 
 
-
-name1="qppo-simple_reuploading-qlr0.5e-3-6varlayers-nologoutput-random-init-recordgrads-(72-params)"
-name2="qppo-simple_reuploading-qlr0.5e-3-6varlayers-nologoutput-clippedinit-recordgrads-(72-params)"
-name3="qppo-simple_reuploading-qlr0.5e-3-6varlayers-nologoutput-gaussinit-recordgrads-(72-params)"
+name1="qppo-simple_reuploading-qlr0.5e-3-6varlayers-nologoutput-allsmall-recordgrads-(72-params)"
+name2="qppo-simple_reuploading-qlr0.5e-3-6varlayers-nologoutput-allmid-recordgrads-(72-params)"
+name3="qppo-simple_reuploading-qlr0.5e-3-6varlayers-nologoutput-allbig-recordgrads-(72-params)"
 
 
 start_seed=10
 seed_step=10
 end_seed=30
 envs=("Deterministic-ShortestPath-4x4-FrozenLake-v0") 
-timesteps=350000
+timesteps=200000
 
 circuits=("simple_reuploading")
 
 for env in ${envs[@]}; do
     for circuit in ${circuits[@]}; do
         for seed in $(seq $start_seed $seed_step $end_seed); do
-            sbatch --job-name="run-$env-$name1-$seed" jobs/job.sh --exp-name $name1 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 0.5e-3 --n-qubits 4 --n-var-layers 6 --n-enc-layers 6 --exp-qlr-scheduling False --output-scaleing False --load-chkpt True --log-circuit-output False --record-grads True --param-init random
-            sbatch --job-name="run-$env-$name2-$seed" jobs/job.sh --exp-name $name2 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 0.5e-3 --n-qubits 4 --n-var-layers 6 --n-enc-layers 6 --exp-qlr-scheduling False --output-scaleing False --load-chkpt True --log-circuit-output False --record-grads True --param-init random_clipped
-            sbatch --job-name="run-$env-$name3-$seed" jobs/job.sh --exp-name $name3 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 0.5e-3 --n-qubits 4 --n-var-layers 6 --n-enc-layers 6 --exp-qlr-scheduling False --output-scaleing False --load-chkpt True --log-circuit-output False --record-grads True --param-init gauss_distribution
+            sbatch --job-name="run-$env-$name1-$seed" jobs/job.sh --exp-name $name1 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 0.5e-3 --n-qubits 4 --n-var-layers 6 --n-enc-layers 6 --exp-qlr-scheduling False --output-scaleing False --load-chkpt False --log-circuit-output False --record-grads True --param-init allsmall
+            sbatch --job-name="run-$env-$name2-$seed" jobs/job.sh --exp-name $name2 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 0.5e-3 --n-qubits 4 --n-var-layers 6 --n-enc-layers 6 --exp-qlr-scheduling False --output-scaleing False --load-chkpt False --log-circuit-output False --record-grads True --param-init allmid
+            sbatch --job-name="run-$env-$name3-$seed" jobs/job.sh --exp-name $name3 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 0.5e-3 --n-qubits 4 --n-var-layers 6 --n-enc-layers 6 --exp-qlr-scheduling False --output-scaleing False --load-chkpt False --log-circuit-output False --record-grads True --param-init allbig
         done
     done
 done
+
 
 
 #default settings ppo:  'python main.py --exp-name ppo_default  --circuit "simple" --seed 1 --gym-id Deterministic-ShortestPath-4x4-FrozenLake-v0 --num-steps 128 --total-timesteps 300000 --learning-rate 2.5e-4 --qlearning-rate 0e-3 --n-qubits 0 --n-var-layers 0 --n-enc-layers 0 --actor-hidden-layer-nodes 4 --critic-hidden-layer-nodes 64 --quantum-actor False --load-chkpt False')

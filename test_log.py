@@ -317,4 +317,29 @@ exp_names = [
     "qppo-simple_reuploading-qlr0.5e-3-6varlayers-nologoutput-gaussinit-recordgrads-(72-params)",
 ]
 plot_gradient_avg(results_dir, plot_dir, gym_id, exp_names, seeds, max_steps)
+
 """
+# Hyperparameter Test 4d: test different parameter initialisation methods and record gradient mean and var
+
+plot_dir = plots_dir + "/Hyperparameter-Test-4d_QPPO-param-init"
+gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
+exp_names = [
+    "qppo-simple_reuploading-qlr0.5e-3-6varlayers-nologoutput-clippedinit-recordgrads-(72-params)",
+    "qppo-simple_reuploading-qlr0.5e-3-6varlayers-nologoutput-allsmall-recordgrads-(72-params)",
+    "qppo-simple_reuploading-qlr0.5e-3-6varlayers-nologoutput-allmid-recordgrads-(72-params)",
+    "qppo-simple_reuploading-qlr0.5e-3-6varlayers-nologoutput-allbig-recordgrads-(72-params)",
+    "random-baseline",
+]
+seeds = [10, 20, 30]
+stepsize = 4 * 128 * 8
+max_steps = 350000
+
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+
+exp_names = [
+    "qppo-simple_reuploading-qlr0.5e-3-6varlayers-nologoutput-clippedinit-recordgrads-(72-params)",
+    "qppo-simple_reuploading-qlr0.5e-3-6varlayers-nologoutput-allsmall-recordgrads-(72-params)",
+    "qppo-simple_reuploading-qlr0.5e-3-6varlayers-nologoutput-allmid-recordgrads-(72-params)",
+    "qppo-simple_reuploading-qlr0.5e-3-6varlayers-nologoutput-allbig-recordgrads-(72-params)",
+]
+plot_gradient_avg(results_dir, plot_dir, gym_id, exp_names, seeds, max_steps)

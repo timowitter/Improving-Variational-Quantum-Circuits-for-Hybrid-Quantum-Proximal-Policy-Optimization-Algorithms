@@ -133,20 +133,28 @@ def make_gauss_init(n_qubits, n_layers, n_dims):
 def choose_init(n_qubits, n_layers, n_dims):
     if args.param_init == "random_clipped":
         layer_params = make_clipped_random_init(n_qubits, n_layers, n_dims)
+        print("useing clipped random init")
     elif args.param_init == "gauss_distribution":
         layer_params = make_gauss_init(n_qubits, n_layers, n_dims)
+        print("useing gauss init")
     elif args.param_init == "alltoosmall":
-        layer_params = make_all_verysmall_random_init(n_qubits, n_layers, n_dims)
+        layer_params = make_all_toosmall_random_init(n_qubits, n_layers, n_dims)
+        print("useing all toosmall random init")
     elif args.param_init == "allverysmall":
         layer_params = make_all_verysmall_random_init(n_qubits, n_layers, n_dims)
+        print("useing all verysmall random init")
     elif args.param_init == "allsmall":
         layer_params = make_all_small_random_init(n_qubits, n_layers, n_dims)
+        print("useing all small random init")
     elif args.param_init == "allmid":
         layer_params = make_all_medium_random_init(n_qubits, n_layers, n_dims)
+        print("useing all medium random init")
     elif args.param_init == "allbig":
         layer_params = make_all_big_random_init(n_qubits, n_layers, n_dims)
+        print("useing all big random init")
     else:
         layer_params = make_random_init(n_qubits, n_layers, n_dims)
+        print("useing default random init")
     return layer_params
 
 
@@ -158,18 +166,7 @@ def make_actor_layer_params():
         or args.circuit == "Hgog_reuploading"
     ):
         # choose parameter initialisation method
-        if args.param_init == "random_clipped":
-            layer_params = make_clipped_random_init(args.n_qubits, args.n_var_layers, 3)
-        elif args.param_init == "gauss_distribution":
-            layer_params = make_gauss_init(args.n_qubits, args.n_var_layers, 3)
-        elif args.param_init == "allsmall":
-            layer_params = make_all_small_random_init(args.n_qubits, args.n_var_layers, 3)
-        elif args.param_init == "allmid":
-            layer_params = make_all_medium_random_init(args.n_qubits, args.n_var_layers, 3)
-        elif args.param_init == "allbig":
-            layer_params = make_all_big_random_init(args.n_qubits, args.n_var_layers, 3)
-        else:
-            layer_params = make_random_init(args.n_qubits, args.n_var_layers, 3)
+        layer_params = choose_init(args.n_qubits, args.n_var_layers, 3)
 
     elif args.quantum_actor and (
         args.circuit == "simple_reuploading_with_input_scaleing"
@@ -180,26 +177,7 @@ def make_actor_layer_params():
         # we put them in the same array, so we dont need an additional optimizer
 
         # choose parameter initialisation method
-        if args.param_init == "random_clipped":
-            layer_params = make_clipped_random_init(
-                args.n_qubits, args.n_var_layers + num_enc_dims, 3
-            )
-        elif args.param_init == "gauss_distribution":
-            layer_params = make_gauss_init(args.n_qubits, args.n_var_layers + num_enc_dims, 3)
-        elif args.param_init == "allsmall":
-            layer_params = make_all_small_random_init(
-                args.n_qubits, args.n_var_layers + num_enc_dims, 3
-            )
-        elif args.param_init == "allmid":
-            layer_params = make_all_medium_random_init(
-                args.n_qubits, args.n_var_layers + num_enc_dims, 3
-            )
-        elif args.param_init == "allbig":
-            layer_params = make_all_big_random_init(
-                args.n_qubits, args.n_var_layers + num_enc_dims, 3
-            )
-        else:
-            layer_params = make_random_init(args.n_qubits, args.n_var_layers + num_enc_dims, 3)
+        layer_params = choose_init(args.n_qubits, args.n_var_layers + num_enc_dims, 3)
 
         # set input scaleing to 1 at start
         for i in range(args.n_qubits):
@@ -212,37 +190,11 @@ def make_actor_layer_params():
         or args.circuit == "Jerbi-reuploading-no-input-scaleing"
     ):
         # choose parameter initialisation method
-        if args.param_init == "random_clipped":
-            layer_params = make_clipped_random_init(args.n_qubits, args.n_var_layers, 2)
-        elif args.param_init == "gauss_distribution":
-            layer_params = make_gauss_init(args.n_qubits, args.n_var_layers, 2)
-        elif args.param_init == "allsmall":
-            layer_params = make_all_small_random_init(args.n_qubits, args.n_var_layers, 2)
-        elif args.param_init == "allmid":
-            layer_params = make_all_medium_random_init(args.n_qubits, args.n_var_layers, 2)
-        elif args.param_init == "allbig":
-            layer_params = make_all_big_random_init(args.n_qubits, args.n_var_layers, 2)
-        else:
-            layer_params = make_random_init(args.n_qubits, args.n_var_layers, 2)
+        layer_params = choose_init(args.n_qubits, args.n_var_layers, 2)
 
     elif args.quantum_actor and args.circuit == "Jerbi-reuploading":
         # choose parameter initialisation method
-        if args.param_init == "random_clipped":
-            layer_params = make_clipped_random_init(args.n_qubits, (2 * args.n_enc_layers) + 1, 2)
-        elif args.param_init == "gauss_distribution":
-            layer_params = make_gauss_init(args.n_qubits, (2 * args.n_enc_layers) + 1, 2)
-        elif args.param_init == "allsmall":
-            layer_params = make_all_small_random_init(
-                args.n_qubits, (2 * args.n_enc_layers) + 1, 2
-            )
-        elif args.param_init == "allmid":
-            layer_params = make_all_medium_random_init(
-                args.n_qubits, (2 * args.n_enc_layers) + 1, 2
-            )
-        elif args.param_init == "allbig":
-            layer_params = make_all_big_random_init(args.n_qubits, (2 * args.n_enc_layers) + 1, 2)
-        else:
-            layer_params = make_random_init(args.n_qubits, (2 * args.n_enc_layers) + 1, 2)
+        layer_params = choose_init(args.n_qubits, (2 * args.n_enc_layers) + 1, 2)
 
         # set input scaleing to 1 at start
         for i in range(args.n_qubits):
@@ -264,18 +216,7 @@ def make_critic_layer_params():
         or args.circuit == "Hgog_reuploading"
     ):
         # choose parameter initialisation method
-        if args.param_init == "random_clipped":
-            layer_params = make_clipped_random_init(args.n_qubits, args.n_var_layers, 3)
-        elif args.param_init == "gauss_distribution":
-            layer_params = make_gauss_init(args.n_qubits, args.n_var_layers, 3)
-        elif args.param_init == "allsmall":
-            layer_params = make_all_small_random_init(args.n_qubits, args.n_var_layers, 3)
-        elif args.param_init == "allmid":
-            layer_params = make_all_medium_random_init(args.n_qubits, args.n_var_layers, 3)
-        elif args.param_init == "allbig":
-            layer_params = make_all_big_random_init(args.n_qubits, args.n_var_layers, 3)
-        else:
-            layer_params = make_random_init(args.n_qubits, args.n_var_layers, 3)
+        layer_params = choose_init(args.n_qubits, args.n_var_layers, 3)
 
     elif args.quantum_actor and (
         args.circuit == "simple_reuploading_with_input_scaleing"
@@ -286,26 +227,7 @@ def make_critic_layer_params():
         # we put them in the same array, so we dont need an additional optimizer
 
         # choose parameter initialisation method
-        if args.param_init == "random_clipped":
-            layer_params = make_clipped_random_init(
-                args.n_qubits, args.n_var_layers + num_enc_dims, 3
-            )
-        elif args.param_init == "gauss_distribution":
-            layer_params = make_gauss_init(args.n_qubits, args.n_var_layers + num_enc_dims, 3)
-        elif args.param_init == "allsmall":
-            layer_params = make_all_small_random_init(
-                args.n_qubits, args.n_var_layers + num_enc_dims, 3
-            )
-        elif args.param_init == "allmid":
-            layer_params = make_all_medium_random_init(
-                args.n_qubits, args.n_var_layers + num_enc_dims, 3
-            )
-        elif args.param_init == "allbig":
-            layer_params = make_all_big_random_init(
-                args.n_qubits, args.n_var_layers + num_enc_dims, 3
-            )
-        else:
-            layer_params = make_random_init(args.n_qubits, args.n_var_layers + num_enc_dims, 3)
+        layer_params = choose_init(args.n_qubits, args.n_var_layers + num_enc_dims, 3)
 
         # set input scaleing to 1 at start
         for i in range(args.n_qubits):
@@ -318,37 +240,11 @@ def make_critic_layer_params():
         or args.circuit == "Jerbi-reuploading-no-input-scaleing"
     ):
         # choose parameter initialisation method
-        if args.param_init == "random_clipped":
-            layer_params = make_clipped_random_init(args.n_qubits, args.n_var_layers, 2)
-        elif args.param_init == "gauss_distribution":
-            layer_params = make_gauss_init(args.n_qubits, args.n_var_layers, 2)
-        elif args.param_init == "allsmall":
-            layer_params = make_all_small_random_init(args.n_qubits, args.n_var_layers, 2)
-        elif args.param_init == "allmid":
-            layer_params = make_all_medium_random_init(args.n_qubits, args.n_var_layers, 2)
-        elif args.param_init == "allbig":
-            layer_params = make_all_big_random_init(args.n_qubits, args.n_var_layers, 2)
-        else:
-            layer_params = make_random_init(args.n_qubits, args.n_var_layers, 2)
+        layer_params = choose_init(args.n_qubits, args.n_var_layers, 2)
 
     elif args.quantum_critic and args.circuit == "Jerbi-reuploading":
         # choose parameter initialisation method
-        if args.param_init == "random_clipped":
-            layer_params = make_clipped_random_init(args.n_qubits, (2 * args.n_enc_layers) + 1, 2)
-        elif args.param_init == "gauss_distribution":
-            layer_params = make_gauss_init(args.n_qubits, (2 * args.n_enc_layers) + 1, 2)
-        elif args.param_init == "allsmall":
-            layer_params = make_all_small_random_init(
-                args.n_qubits, (2 * args.n_enc_layers) + 1, 2
-            )
-        elif args.param_init == "allmid":
-            layer_params = make_all_medium_random_init(
-                args.n_qubits, (2 * args.n_enc_layers) + 1, 2
-            )
-        elif args.param_init == "allbig":
-            layer_params = make_all_big_random_init(args.n_qubits, (2 * args.n_enc_layers) + 1, 2)
-        else:
-            layer_params = make_random_init(args.n_qubits, (2 * args.n_enc_layers) + 1, 2)
+        layer_params = choose_init(args.n_qubits, (2 * args.n_enc_layers) + 1, 2)
 
         # set input scaleing to 1 at start
         for i in range(args.n_qubits):

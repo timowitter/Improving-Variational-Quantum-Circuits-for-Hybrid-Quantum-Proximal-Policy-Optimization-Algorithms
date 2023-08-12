@@ -8,7 +8,7 @@
   "output_scaleing_learning_rate": 0.0005,
   "output_scaleing_start": 1.0,
   "seed": 20,
-  "total_timesteps": 350000,
+  "total_timesteps": 500000,
   "exp_scheduling_timesteps": 50000,
   "lin_scheduling_timesteps": 500000,
   "torch_deterministic": true,

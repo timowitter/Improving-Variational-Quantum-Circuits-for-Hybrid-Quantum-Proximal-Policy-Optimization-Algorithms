@@ -307,6 +307,12 @@ def parse_args():
         default="random",
         help="the parameter initialisation that is to be used, can be one of:  random / random_clipped / gauss_distribution / allsmall / allmid / allbig",
     )
+    parser.add_argument(
+        "--weight-remapping",
+        type=str,
+        default="tanh",
+        help="the weight-remapping that is to be used, can be one of:  none / clipped / pos_clipped / tanh / double_tanh / pos_tanh",
+    )
 
     args = parser.parse_args()
     args.batch_size = int(args.num_steps * args.num_envs)

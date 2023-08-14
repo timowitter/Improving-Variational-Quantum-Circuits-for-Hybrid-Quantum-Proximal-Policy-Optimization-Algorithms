@@ -10,7 +10,12 @@ args = parse_args()
 def make_random_init(n_qubits, n_layers, n_dims):
     layer_params = np.random.rand(n_qubits, n_layers, n_dims)
     layer_params = layer_params * 2 - 1  # intervall [-1, 1[
-    layer_params = np.arctanh(layer_params)  # will later be inside a tanh function
+    if (
+        args.weight_remapping == "tanh"
+        or args.weight_remapping == "double_tanh"
+        or args.weight_remapping == "pos_tanh"
+    ):
+        layer_params = np.arctanh(layer_params)  # will later be inside a tanh function
     return layer_params
 
 
@@ -29,7 +34,12 @@ def make_clipped_random_init(n_qubits, n_layers, n_dims):
                 else:
                     layer_params[i, j, k] = np.clip(layer_params[i, j, k], -1 + a, 0 - a)
                 # intervall [-0.99, -0.01] & [0.01, 0.99]
-    layer_params = np.arctanh(layer_params)  # will later be inside a tanh function
+    if (
+        args.weight_remapping == "tanh"
+        or args.weight_remapping == "double_tanh"
+        or args.weight_remapping == "pos_tanh"
+    ):
+        layer_params = np.arctanh(layer_params)  # will later be inside a tanh function
     return layer_params
 
 
@@ -45,7 +55,12 @@ def make_all_toosmall_random_init(n_qubits, n_layers, n_dims):
                 else:
                     layer_params[i, j, k] = layer_params[i, j, k] - 0.0001
                 # intervall [-0.0011, -0.0001[ & [0.0001, 0.0011[
-    layer_params = np.arctanh(layer_params)  # will later be inside a tanh function
+    if (
+        args.weight_remapping == "tanh"
+        or args.weight_remapping == "double_tanh"
+        or args.weight_remapping == "pos_tanh"
+    ):
+        layer_params = np.arctanh(layer_params)  # will later be inside a tanh function
     return layer_params
 
 
@@ -61,7 +76,12 @@ def make_all_verysmall_random_init(n_qubits, n_layers, n_dims):
                 else:
                     layer_params[i, j, k] = layer_params[i, j, k] - 0.001
                 # intervall [-0.011, -0.001[ & [0.001, 0.011[
-    layer_params = np.arctanh(layer_params)  # will later be inside a tanh function
+    if (
+        args.weight_remapping == "tanh"
+        or args.weight_remapping == "double_tanh"
+        or args.weight_remapping == "pos_tanh"
+    ):
+        layer_params = np.arctanh(layer_params)  # will later be inside a tanh function
     return layer_params
 
 
@@ -77,7 +97,12 @@ def make_all_small_random_init(n_qubits, n_layers, n_dims):
                 else:
                     layer_params[i, j, k] = layer_params[i, j, k] - a
                 # intervall [-0.11, -0.01[ & [0.01, 0.11[
-    layer_params = np.arctanh(layer_params)  # will later be inside a tanh function
+    if (
+        args.weight_remapping == "tanh"
+        or args.weight_remapping == "double_tanh"
+        or args.weight_remapping == "pos_tanh"
+    ):
+        layer_params = np.arctanh(layer_params)  # will later be inside a tanh function
     return layer_params
 
 
@@ -93,7 +118,12 @@ def make_all_medium_random_init(n_qubits, n_layers, n_dims):
                 else:
                     layer_params[i, j, k] = layer_params[i, j, k] - 0.25
                 # intervall [-0.75, -0.25[ & [0.25, 0.75[
-    layer_params = np.arctanh(layer_params)  # will later be inside a tanh function
+    if (
+        args.weight_remapping == "tanh"
+        or args.weight_remapping == "double_tanh"
+        or args.weight_remapping == "pos_tanh"
+    ):
+        layer_params = np.arctanh(layer_params)  # will later be inside a tanh function
     return layer_params
 
 
@@ -109,24 +139,44 @@ def make_all_big_random_init(n_qubits, n_layers, n_dims):
                 else:
                     layer_params[i, j, k] = layer_params[i, j, k] - 0.6 + a
                 # intervall [-0.99, -0.59[ & [0.59, 0.99[
-    layer_params = np.arctanh(layer_params)  # will later be inside a tanh function
+    if (
+        args.weight_remapping == "tanh"
+        or args.weight_remapping == "double_tanh"
+        or args.weight_remapping == "pos_tanh"
+    ):
+        layer_params = np.arctanh(layer_params)  # will later be inside a tanh function
     return layer_params
 
 
 def make_gauss_init(n_qubits, n_layers, n_dims):
-    layer_params = np.random.normal(0, 1, (n_qubits, n_layers, n_dims))
-    # could be initialised at 0 so we clip it to avoid vanishing gradients
-    for i in range(n_qubits):
-        for j in range(n_layers):
-            for k in range(n_dims):
-                if layer_params[i, j, k] >= 0:
-                    layer_params[i, j, k] = np.clip(
-                        layer_params[i, j, k], 0 + a, np.arctanh(1 - a)
-                    )
-                else:
-                    layer_params[i, j, k] = np.clip(
-                        layer_params[i, j, k], np.arctanh(-1 + a), 0 - a
-                    )
+    if (
+        args.weight_remapping == "tanh"
+        or args.weight_remapping == "double_tanh"
+        or args.weight_remapping == "pos_tanh"
+    ):
+        layer_params = np.random.normal(0, 1, (n_qubits, n_layers, n_dims))
+        # could be initialised at 0 so we clip it to avoid vanishing gradients
+        for i in range(n_qubits):
+            for j in range(n_layers):
+                for k in range(n_dims):
+                    if layer_params[i, j, k] >= 0:
+                        layer_params[i, j, k] = np.clip(
+                            layer_params[i, j, k], 0 + a, np.arctanh(1 - a)
+                        )
+                    else:
+                        layer_params[i, j, k] = np.clip(
+                            layer_params[i, j, k], np.arctanh(-1 + a), 0 - a
+                        )
+    else:
+        layer_params = np.random.normal(0, 0.5, (n_qubits, n_layers, n_dims))
+        # could be initialised at 0 so we clip it to avoid vanishing gradients
+        for i in range(n_qubits):
+            for j in range(n_layers):
+                for k in range(n_dims):
+                    if layer_params[i, j, k] >= 0:
+                        layer_params[i, j, k] = np.clip(layer_params[i, j, k], 0 + a, 1 - a)
+                    else:
+                        layer_params[i, j, k] = np.clip(layer_params[i, j, k], -1 + a, 0 - a)
     return layer_params
 
 

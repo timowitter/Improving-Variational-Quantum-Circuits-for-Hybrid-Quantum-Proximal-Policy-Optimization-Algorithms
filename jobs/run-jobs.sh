@@ -6,14 +6,14 @@
 #          "Jerbi-no-reuploading-no-input-scaleing" / "Jerbi-reuploading-no-input-scaleing" / "Jerbi-reuploading"
 
 
-name1="qppo-simple_reuploading-qlr0.5e-3-lr0.5e-4-clipcoef0.20-6varlayers-nologoutput-allsmall-(72-params)"
-name2="qppo-simple_reuploading-qlr0.5e-3-lr0.5e-4-clipcoef0.02-6varlayers-nologoutput-allsmall-(72-params)"
-name3="qppo-simple_reuploading-qlr2.5e-3-lr2.5e-4-clipcoef0.20-6varlayers-nologoutput-allsmall-(72-params)"
-name4="qppo-simple_reuploading-qlr2.5e-3-lr2.5e-4-clipcoef0.02-6varlayers-nologoutput-allsmall-(72-params)"
-name5="qppo-simple_reuploading-qlr10.e-3-lr10.e-4-clipcoef0.20-6varlayers-nologoutput-allsmall-(72-params)"
-name6="qppo-simple_reuploading-qlr10.e-3-lr10.e-4-clipcoef0.02-6varlayers-nologoutput-allsmall-(72-params)"
-#name7="qppo-simple_reuploading-qlr50.e-3-lr50.e-4-clipcoef0.20-6varlayers-nologoutput-allsmall-(72-params)"
-name8="qppo-simple_reuploading-qlr50.e-3-lr50.e-4-clipcoef0.02-6varlayers-nologoutput-allsmall-(72-params)"
+name1="qppo-simple_reuploading-qlr0.5e-3-lr0.5e-4-clipcoef0.20-fixed"
+name2="qppo-simple_reuploading-qlr0.5e-3-lr0.5e-4-clipcoef0.02-fixed"
+name3="qppo-simple_reuploading-qlr2.5e-3-lr2.5e-4-clipcoef0.20-fixed"
+name4="qppo-simple_reuploading-qlr2.5e-3-lr2.5e-4-clipcoef0.02-fixed"
+name5="qppo-simple_reuploading-qlr10.e-3-lr10.e-4-clipcoef0.20-fixed"
+name6="qppo-simple_reuploading-qlr10.e-3-lr10.e-4-clipcoef0.02-fixed"
+#name7="qppo-simple_reuploading-qlr50.e-3-lr50.e-4-clipcoef0.20-fixed"
+name8="qppo-simple_reuploading-qlr50.e-3-lr50.e-4-clipcoef0.02-fixed"
 
 
 start_seed=10
@@ -38,6 +38,9 @@ for env in ${envs[@]}; do
     done
 done
 
+
+
+--weight-remapping none / clipped / pos_clipped / tanh / double_tanh / pos_tanh
 #default settings ppo:  'python main.py --exp-name ppo_default  --circuit "simple" --seed 1 --gym-id Deterministic-ShortestPath-4x4-FrozenLake-v0 --num-steps 128 --total-timesteps 300000 --learning-rate 2.5e-4 --qlearning-rate 0e-3 --n-qubits 0 --n-var-layers 0 --n-enc-layers 0 --actor-hidden-layer-nodes 4 --critic-hidden-layer-nodes 64 --quantum-actor False --load-chkpt False')
 
 #default settings qppo: 'python main.py --exp-name qppo_default --circuit "simple" --seed 1 --gym-id Deterministic-ShortestPath-4x4-FrozenLake-v0 --num-steps 128 --total-timesteps 400000 --warmup-timesteps 50000 --warmup-learning-rate-bonus 0 --learning-rate 2.5e-4 --warmup-qlearning-rate 5e-3 --qlearning-rate 0.5e-3 --n-qubits 4 --n-var-layers 2 --n-enc-layers 1 --hybrid False --anneal-lr True --load-chkpt False')

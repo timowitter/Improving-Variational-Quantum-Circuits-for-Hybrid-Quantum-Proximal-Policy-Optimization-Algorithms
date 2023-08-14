@@ -9,6 +9,62 @@ from transform_funks import normalize_obs, transform_obs_to_binary
 
 args = parse_args()
 
+
+# weight re-mapping
+# according to Improving Convergence for Quantum Variational Classifiers using Weight Re-Mapping by Michael Kolle et al.
+
+
+def no_remapping(layer_params):
+    layer_params = np.pi * layer_params
+    return layer_params
+
+
+def clipped_remapping(layer_params):
+    layer_params = np.pi * torch.clamp(layer_params, -1, 1)
+    # intervall [-pi,pi]
+    return layer_params
+
+
+def pos_clipped_remapping(layer_params):
+    layer_params = np.pi * torch.clamp(1 + layer_params, 0, 2)
+    # intervall [0,2pi]
+    return layer_params
+
+
+def tanh_remapping(layer_params):
+    layer_params = np.pi * torch.tanh(layer_params)
+    # intervall ]-pi,pi[
+    return layer_params
+
+
+def double_tanh_remapping(layer_params):
+    layer_params = 2 * np.pi * torch.tanh(layer_params)
+    # intervall ]-2pi,2pi[
+    return layer_params
+
+
+def pos_tanh_remapping(layer_params):
+    layer_params = np.pi * (1 + torch.tanh(layer_params))
+    # intervall ]0,2pi[
+    return layer_params
+
+
+def choose_remapping(layer_params):
+    if args.weight_remapping == "tanh":
+        layer_params = tanh_remapping(layer_params)
+    elif args.weight_remapping == "double_tanh":
+        layer_params = double_tanh_remapping(layer_params)
+    elif args.weight_remapping == "pos_tanh":
+        layer_params = pos_tanh_remapping(layer_params)
+
+    elif args.weight_remapping == "clipped":
+        layer_params = clipped_remapping(layer_params)
+    elif args.weight_remapping == "pos_clipped":
+        layer_params = pos_clipped_remapping(layer_params)
+    else:
+        layer_params = no_remapping(layer_params)
+
+
 #######################################################################################################################################################
 ##                                              quantum actor circuits                                                                               ##
 ##                                                                                                                                                   ##
@@ -46,7 +102,7 @@ def simple_actor_circuit(layer_params, observation, act_dim):
 
     # Variational Quantum Circuit
     for layer_nr in range(args.n_var_layers):
-        simple_layer(np.pi * torch.tanh(layer_params), layer_nr)
+        simple_layer(choose_remapping(layer_params), layer_nr)
 
     if args.hybrid:
         return [qml.expval(qml.PauliZ(ind)) for ind in range(args.n_qubits)]
@@ -66,7 +122,7 @@ def simple_reuploading_actor_circuit(layer_params, observation, act_dim):
         for i in range(args.n_qubits):
             qml.RY(np.pi * norm_obs[i], wires=i)
         # Variational Layer
-        simple_layer(np.pi * torch.tanh(layer_params), layer_nr)
+        simple_layer(choose_remapping(layer_params), layer_nr)
 
     if args.hybrid:
         return [qml.expval(qml.PauliZ(ind)) for ind in range(args.n_qubits)]
@@ -105,7 +161,7 @@ def simple_reuploading_actor_circuit_with_input_scaleing(layer_params, observati
                 k = layer_nr % 3
                 qml.RY(np.pi * torch.tanh(layer_params[i, j, k] * observation[i]), wires=i)
         # Variational Layer
-        simple_layer(np.pi * torch.tanh(layer_params), layer_nr)
+        simple_layer(choose_remapping(layer_params), layer_nr)
 
     if args.hybrid:
         return [qml.expval(qml.PauliZ(ind)) for ind in range(args.n_qubits)]
@@ -140,7 +196,7 @@ def Hgog_actor_circuit(layer_params, observation, act_dim):
 
     # Variational Quantum Circuit
     for layer_nr in range(args.n_var_layers):
-        Hgog_layer(np.pi * torch.tanh(layer_params), layer_nr)
+        Hgog_layer(choose_remapping(layer_params), layer_nr)
 
     if args.hybrid:
         return [qml.expval(qml.PauliZ(ind)) for ind in range(args.n_qubits)]
@@ -157,7 +213,7 @@ def Hgog_reuploading_actor_circuit(layer_params, observation, act_dim):
         for i in range(args.n_qubits):
             qml.RX(np.pi * norm_obs[i], wires=i)
         # Variational Layer
-        Hgog_layer(np.pi * torch.tanh(layer_params), layer_nr)
+        Hgog_layer(choose_remapping(layer_params), layer_nr)
 
     if args.hybrid:
         return [qml.expval(qml.PauliZ(ind)) for ind in range(args.n_qubits)]
@@ -194,7 +250,7 @@ def Hgog_reuploading_actor_circuit_with_output_scaleing(layer_params, observatio
                 k = layer_nr % 3
                 qml.RX(np.pi * torch.tanh(layer_params[i, j, k] * observation[i]), wires=i)
         # Variational Layer
-        Hgog_layer(np.pi * torch.tanh(layer_params), layer_nr)
+        Hgog_layer(choose_remapping(layer_params), layer_nr)
 
     if args.hybrid:
         return [qml.expval(qml.PauliZ(ind)) for ind in range(args.n_qubits)]
@@ -207,8 +263,8 @@ def Hgog_reuploading_actor_circuit_with_output_scaleing(layer_params, observatio
 
 def variational_layer(layer_params, layer_nr):
     for i in range(args.n_qubits):
-        qml.RZ(np.pi * torch.tanh(layer_params[i, layer_nr, 0]), wires=i)
-        qml.RY(np.pi * torch.tanh(layer_params[i, layer_nr, 1]), wires=i)
+        qml.RZ(layer_params[i, layer_nr, 0], wires=i)
+        qml.RY(layer_params[i, layer_nr, 1], wires=i)
 
     for i in range(args.n_qubits - 1):
         qml.CNOT(wires=[i, i + 1])
@@ -217,8 +273,8 @@ def variational_layer(layer_params, layer_nr):
 
 def encodeing_layer(encodeing_params, layer_nr, state_vector):
     for i in range(args.n_qubits):
-        qml.RY(np.pi * torch.tanh(encodeing_params[i, layer_nr, 0] * state_vector[i]), wires=i)
-        qml.RZ(np.pi * torch.tanh(encodeing_params[i, layer_nr, 1] * state_vector[i]), wires=i)
+        qml.RY(encodeing_params[i, layer_nr, 0] * state_vector[i], wires=i)
+        qml.RZ(encodeing_params[i, layer_nr, 1] * state_vector[i], wires=i)
 
 
 @qml.qnode(dev, interface="torch", diff_method="backprop")
@@ -227,7 +283,7 @@ def Jerbi_reuploading_actor_circuit(layer_params, observation, act_dim):
     for i in range(args.n_qubits):
         qml.Hadamard(wires=i)
 
-    variational_layer(layer_params, 0)
+    variational_layer(choose_remapping(layer_params), 0)
 
     for layer_nr in range(1, 2 * args.n_enc_layers + 1, 2):
         # for envs with discrete states transform obs to binary
@@ -237,11 +293,13 @@ def Jerbi_reuploading_actor_circuit(layer_params, observation, act_dim):
             or args.gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0"
         ):
             encodeing_layer(
-                layer_params, layer_nr, transform_obs_to_binary(observation, args.n_qubits)
+                choose_remapping(layer_params),
+                layer_nr,
+                transform_obs_to_binary(observation, args.n_qubits),
             )
         else:
-            encodeing_layer(layer_params, layer_nr, observation)
-        variational_layer(layer_params, layer_nr + 1)
+            encodeing_layer(choose_remapping(layer_params), layer_nr, observation)
+        variational_layer(choose_remapping(layer_params), layer_nr + 1)
 
     if args.hybrid:
         return [qml.expval(qml.PauliY(ind)) for ind in range(args.n_qubits)]
@@ -256,14 +314,14 @@ def Jerbi_actor_circuit_no_reuploading_no_input_scaleing(layer_params, observati
     for i in range(args.n_qubits):
         qml.Hadamard(wires=i)
 
-    variational_layer(layer_params, 0)
+    variational_layer(choose_remapping(layer_params), 0)
 
     for i in range(args.n_qubits):
         qml.RY(np.pi * norm_obs[i], wires=i)
         qml.RZ(np.pi * norm_obs[i], wires=i)
 
     for layer_nr in range(1, args.n_var_layers):
-        variational_layer(layer_params, layer_nr)
+        variational_layer(choose_remapping(layer_params), layer_nr)
 
     if args.hybrid:
         return [qml.expval(qml.PauliY(ind)) for ind in range(args.n_qubits)]
@@ -278,14 +336,14 @@ def Jerbi_reuploading_actor_circuit_without_input_scaleing(layer_params, observa
     for i in range(args.n_qubits):
         qml.Hadamard(wires=i)
 
-    variational_layer(layer_params, 0)
+    variational_layer(choose_remapping(layer_params), 0)
 
     for layer_nr in range(1, args.n_var_layers):
         # encodeing layer
         for i in range(args.n_qubits):
             qml.RY(np.pi * norm_obs[i], wires=i)
             qml.RZ(np.pi * norm_obs[i], wires=i)
-        variational_layer(layer_params, layer_nr)
+        variational_layer(choose_remapping(layer_params), layer_nr)
 
     if args.hybrid:
         return [qml.expval(qml.PauliY(ind)) for ind in range(args.n_qubits)]
@@ -368,7 +426,7 @@ def simple_critic_circuit(layer_params, observation):
 
     # Variational Quantum Circuit
     for layer_nr in range(args.n_var_layers):
-        simple_layer(np.pi * torch.tanh(layer_params), layer_nr)
+        simple_layer(choose_remapping(layer_params), layer_nr)
 
     if args.hybrid:
         return [qml.expval(qml.PauliZ(ind)) for ind in range(args.n_qubits)]
@@ -383,7 +441,7 @@ def simple_reuploading_critic_circuit(layer_params, observation):
     for layer_nr in range(args.n_var_layers):
         for i in range(args.n_qubits):
             qml.RY(np.pi * norm_obs[i], wires=i)
-        simple_layer(np.pi * torch.tanh(layer_params), layer_nr)
+        simple_layer(choose_remapping(layer_params), layer_nr)
 
     if args.hybrid:
         return [qml.expval(qml.PauliZ(ind)) for ind in range(args.n_qubits)]
@@ -415,7 +473,7 @@ def simple_reuploading_critic_circuit_with_input_scaleing(layer_params, observat
                 j = args.n_var_layers + math.floor(layer_nr / 3)
                 k = layer_nr % 3
                 qml.RY(np.pi * torch.tanh(layer_params[i, j, k] * observation[i]), wires=i)
-        simple_layer(np.pi * torch.tanh(layer_params), layer_nr)
+        simple_layer(choose_remapping(layer_params), layer_nr)
 
     if args.hybrid:
         return [qml.expval(qml.PauliZ(ind)) for ind in range(args.n_qubits)]
@@ -436,7 +494,7 @@ def Hgog_critic_circuit(layer_params, observation):
 
     # Variational Quantum Circuit
     for layer_nr in range(args.n_var_layers):
-        Hgog_layer(np.pi * torch.tanh(layer_params), layer_nr)
+        Hgog_layer(choose_remapping(layer_params), layer_nr)
 
     if args.hybrid:
         return [qml.expval(qml.PauliZ(ind)) for ind in range(args.n_qubits)]
@@ -454,7 +512,7 @@ def Hgog_reuploading_critic_circuit(layer_params, observation):
         for i in range(args.n_qubits):
             qml.RX(np.pi * norm_obs[i], wires=i)
         # variational layer
-        Hgog_layer(np.pi * torch.tanh(layer_params), layer_nr)
+        Hgog_layer(choose_remapping(layer_params), layer_nr)
 
     if args.hybrid:
         return [qml.expval(qml.PauliZ(ind)) for ind in range(args.n_qubits)]
@@ -486,7 +544,7 @@ def Hgog_reuploading_critic_circuit_with_output_scaleing(layer_params, observati
                 j = args.n_var_layers + math.floor(layer_nr / 3)
                 k = layer_nr % 3
                 qml.RX(np.pi * torch.tanh(layer_params[i, j, k] * observation[i]), wires=i)
-        Hgog_layer(np.pi * torch.tanh(layer_params), layer_nr)
+        Hgog_layer(choose_remapping(layer_params), layer_nr)
 
     if args.hybrid:
         return [qml.expval(qml.PauliZ(ind)) for ind in range(args.n_qubits)]
@@ -502,7 +560,7 @@ def Jerbi_reuploading_critic_circuit(layer_params, observation):
     for i in range(args.n_qubits):
         qml.Hadamard(wires=i)
 
-    variational_layer(layer_params, 0)
+    variational_layer(choose_remapping(layer_params), 0)
 
     if (
         args.gym_id == "FrozenLake-v0"
@@ -511,13 +569,15 @@ def Jerbi_reuploading_critic_circuit(layer_params, observation):
     ):
         for layer_nr in range(1, 2 * args.n_enc_layers + 1, 2):
             encodeing_layer(
-                layer_params, layer_nr, transform_obs_to_binary(observation, args.n_qubits)
+                choose_remapping(layer_params),
+                layer_nr,
+                transform_obs_to_binary(observation, args.n_qubits),
             )
-            variational_layer(layer_params, layer_nr + 1)
+            variational_layer(choose_remapping(layer_params), layer_nr + 1)
     else:
         for layer_nr in range(1, 2 * args.n_enc_layers + 1, 2):
-            encodeing_layer(layer_params, layer_nr, observation)
-            variational_layer(layer_params, layer_nr + 1)
+            encodeing_layer(choose_remapping(layer_params), layer_nr, observation)
+            variational_layer(choose_remapping(layer_params), layer_nr + 1)
 
     if args.hybrid:
         return [qml.expval(qml.PauliY(ind)) for ind in range(args.n_qubits)]
@@ -533,14 +593,14 @@ def Jerbi_critic_circuit_no_reuploading_no_input_scaleing(layer_params, observat
     for i in range(args.n_qubits):
         qml.Hadamard(wires=i)
 
-    variational_layer(layer_params, 0)
+    variational_layer(choose_remapping(layer_params), 0)
 
     for i in range(args.n_qubits):
         qml.RY(np.pi * norm_obs[i], wires=i)
         qml.RZ(np.pi * norm_obs[i], wires=i)
 
     for layer_nr in range(1, args.n_var_layers):
-        variational_layer(layer_params, layer_nr)
+        variational_layer(choose_remapping(layer_params), layer_nr)
 
     if args.hybrid:
         return [qml.expval(qml.PauliY(ind)) for ind in range(args.n_qubits)]
@@ -555,13 +615,13 @@ def Jerbi_reuploading_critic_circuit_without_input_scaleing(layer_params, observ
     for i in range(args.n_qubits):
         qml.Hadamard(wires=i)
 
-    variational_layer(layer_params, 0)
+    variational_layer(choose_remapping(layer_params), 0)
 
     for layer_nr in range(1, args.n_var_layers):
         for i in range(args.n_qubits):
             qml.RY(np.pi * norm_obs[i], wires=i)
             qml.RZ(np.pi * norm_obs[i], wires=i)
-        variational_layer(layer_params, layer_nr)
+        variational_layer(choose_remapping(layer_params), layer_nr)
 
     if args.hybrid:
         return [qml.expval(qml.PauliY(ind)) for ind in range(args.n_qubits)]

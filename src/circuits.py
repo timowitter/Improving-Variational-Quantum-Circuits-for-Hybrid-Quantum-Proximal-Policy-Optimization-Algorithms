@@ -63,6 +63,7 @@ def choose_remapping(layer_params):
         layer_params = pos_clipped_remapping(layer_params)
     else:
         layer_params = no_remapping(layer_params)
+    return layer_params
 
 
 #######################################################################################################################################################

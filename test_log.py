@@ -318,7 +318,7 @@ exp_names = [
 ]
 plot_gradient_avg(results_dir, plot_dir, gym_id, exp_names, seeds, max_steps)
 
-"""
+
 # Hyperparameter Test 4d: test different parameter initialisation methods and record gradient mean and var
 
 plot_dir = plots_dir + "/Hyperparameter-Test-4d_QPPO-param-init"
@@ -382,5 +382,37 @@ exp_names = [
     "qppo-simple_reuploading-qlr10.e-3-lr10.e-4-clipcoef0.02-6varlayers-nologoutput-allsmall-(72-params)",
     #   "qppo-simple_reuploading-qlr50.e-3-lr50.e-4-clipcoef0.20-6varlayers-nologoutput-allsmall-(72-params)",
     "qppo-simple_reuploading-qlr50.e-3-lr50.e-4-clipcoef0.02-6varlayers-nologoutput-allsmall-(72-params)",
+]
+plot_gradient_avg(results_dir, plot_dir, gym_id, exp_names, seeds, max_steps)
+"""
+
+# Hyperparameter Test 4f: repeat 4e with fixed transform functions
+
+plot_dir = plots_dir + "/Hyperparameter-Test-4f_QPPO-lr+clipfrac"
+gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
+exp_names = [
+    "qppo-simple_reuploading-qlr0.5e-3-lr0.5e-4-clipcoef0.20-fixed",
+    "qppo-simple_reuploading-qlr0.5e-3-lr0.5e-4-clipcoef0.02-fixed",
+    "qppo-simple_reuploading-qlr2.5e-3-lr2.5e-4-clipcoef0.20-fixed",
+    "qppo-simple_reuploading-qlr2.5e-3-lr2.5e-4-clipcoef0.02-fixed",
+    "qppo-simple_reuploading-qlr10.e-3-lr10.e-4-clipcoef0.20-fixed",
+    "qppo-simple_reuploading-qlr10.e-3-lr10.e-4-clipcoef0.02-fixed",
+    "qppo-simple_reuploading-qlr50.e-3-lr50.e-4-clipcoef0.02-fixed",
+    "random-baseline",
+]
+seeds = [10, 20]
+stepsize = 4 * 128 * 8
+max_steps = 200000
+
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+
+exp_names = [
+    "qppo-simple_reuploading-qlr0.5e-3-lr0.5e-4-clipcoef0.20-fixed",
+    "qppo-simple_reuploading-qlr0.5e-3-lr0.5e-4-clipcoef0.02-fixed",
+    "qppo-simple_reuploading-qlr2.5e-3-lr2.5e-4-clipcoef0.20-fixed",
+    "qppo-simple_reuploading-qlr2.5e-3-lr2.5e-4-clipcoef0.02-fixed",
+    "qppo-simple_reuploading-qlr10.e-3-lr10.e-4-clipcoef0.20-fixed",
+    "qppo-simple_reuploading-qlr10.e-3-lr10.e-4-clipcoef0.02-fixed",
+    "qppo-simple_reuploading-qlr50.e-3-lr50.e-4-clipcoef0.02-fixed",
 ]
 plot_gradient_avg(results_dir, plot_dir, gym_id, exp_names, seeds, max_steps)

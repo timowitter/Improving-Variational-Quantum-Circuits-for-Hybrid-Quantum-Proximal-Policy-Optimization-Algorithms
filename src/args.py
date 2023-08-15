@@ -276,18 +276,9 @@ def parse_args():
     )
 
     parser.add_argument(
-        "--log-circuit-output",
-        type=lambda x: bool(strtobool(x)),
-        default=True,
-        nargs="?",
-        const=True,
-        help="if no output scaleing or hybrid active toggle if circuit output is used as logprob for softmax instead of prob",
-    )
-
-    parser.add_argument(
         "--clip-circuit-grad-norm",
         type=lambda x: bool(strtobool(x)),
-        default=False,
+        default=True,
         nargs="?",
         const=True,
         help="toggle clip circuit gradient norm",

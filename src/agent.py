@@ -169,12 +169,7 @@ class Agent(nn.Module):
         else:
             logits = self.actor(trans_obs(observation, args.gym_id, obs_dim))
 
-        if (
-            args.quantum_actor
-            and not args.output_scaleing
-            and not args.hybrid
-            and not args.log_circuit_output
-        ):
+        if args.quantum_actor and not args.output_scaleing and not args.hybrid:
             probs = Categorical(logits + 1)  # softMaxOutPut = (logits+1) / (logits+1).sum()
 
         else:

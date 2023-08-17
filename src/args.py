@@ -29,14 +29,14 @@ def parse_args():
     parser.add_argument(
         "--exp-scheduling-qlearning-rate",
         type=float,
-        default=5e-3,
+        default=10e-3,
         help="quantum optimizer learning rate at start of exp-scheduling",
     )
     parser.add_argument(
         "--lin-scheduling-qlearning-rate",
         type=float,
         default=1e-5,
-        help="quantum optimizer learning rate after lin-scheduling",
+        help="quantum optimizer learning rate after lin-scheduling timesteps are over (usually at the end of learning)",
     )
     parser.add_argument(
         "--learning-rate", type=float, default=2.5e-4, help="optimizer learning rate"
@@ -60,7 +60,7 @@ def parse_args():
     parser.add_argument(
         "--exp-scheduling-timesteps",
         type=int,
-        default=50000,
+        default=150000,
         help="length of the exp-scheduling Phase",
     )
     parser.add_argument(
@@ -292,12 +292,14 @@ def parse_args():
         const=True,
         help="toggle clip circuit gradient norm",
     )
+
     parser.add_argument(
         "--param-init",
         type=str,
         default="random",
         help="the parameter initialisation that is to be used, can be one of:  random / random_clipped / gauss_distribution / allsmall / allmid / allbig",
     )
+
     parser.add_argument(
         "--weight-remapping",
         type=str,

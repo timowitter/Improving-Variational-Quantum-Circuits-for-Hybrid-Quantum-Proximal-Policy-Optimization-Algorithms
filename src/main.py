@@ -216,7 +216,7 @@ if __name__ == "__main__":
                     lin_scheduling_updates
                 )  # 1 at start, linearly decreasing over time -> lr will decrease over time
                 lrnow_circuit = np.clip(
-                    frac_lin * 2 * args.qlearning_rate,
+                    frac_lin * args.qlearning_rate,
                     args.lin_scheduling_qlearning_rate,
                     2 * args.qlearning_rate,
                 )

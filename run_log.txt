@@ -662,7 +662,7 @@ done
 
 Frozen Lake:
 
-Hyperparameter Test 1: Learning Rate
+Hyperparameter Test 1: Learning Rates
 
 
 name1="FL-qppo-simple_reuploading-qlr2.5e-3-lr2.5e-4-clipcoef0.20-6varlayers-(72-params)"

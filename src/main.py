@@ -176,20 +176,34 @@ if __name__ == "__main__":
                     exp_scheduling_updates - update + 1.0
                 ) ** 2 / exp_scheduling_updates**2  # 1 at start, exponentially decreasing over time -> greedyness will decrease over time
 
-                lrnow_circuit = (
-                    frac_exp * (args.exp_scheduling_qlearning_rate - 2 * args.qlearning_rate)
-                    + 2 * args.qlearning_rate
-                )
+                # prevent hyperparameter mixup
+                if args.lin_scheduling_qlearning_rate >= args.qlearning_rate:
+                    lrnow_circuit = (
+                        frac_exp
+                        * (args.exp_scheduling_qlearning_rate - args.lin_scheduling_qlearning_rate)
+                        + args.lin_scheduling_qlearning_rate
+                    )
+                else:
+                    lrnow_circuit = (
+                        frac_exp * (args.exp_scheduling_qlearning_rate - args.qlearning_rate)
+                        + args.qlearning_rate
+                    )
+
             elif update <= lin_scheduling_updates:
                 # phase 2 main learning: linear annealing
                 frac_lin = 1.0 - (update - exp_scheduling_updates - 1.0) / (
                     lin_scheduling_updates - exp_scheduling_updates
                 )  # 1 at start, linearly decreasing over time -> lr will decrease over time
-                lrnow_circuit = np.clip(
-                    frac_lin * 2 * args.qlearning_rate,
-                    args.lin_scheduling_qlearning_rate,
-                    2 * args.qlearning_rate,
-                )
+                if args.lin_scheduling_qlearning_rate >= args.qlearning_rate:
+                    lrnow_circuit = (
+                        frac_lin * (args.lin_scheduling_qlearning_rate - args.qlearning_rate)
+                        + args.qlearning_rate
+                    )
+                else:
+                    lrnow_circuit = (
+                        frac_lin * (args.qlearning_rate - args.lin_scheduling_qlearning_rate)
+                        + args.lin_scheduling_qlearning_rate
+                    )
             else:
                 # phase 3 lin_scheduling: constant small lr
                 lrnow_circuit = args.lin_scheduling_qlearning_rate
@@ -215,14 +229,26 @@ if __name__ == "__main__":
                 frac_lin = 1.0 - (update - 1.0) / (
                     lin_scheduling_updates
                 )  # 1 at start, linearly decreasing over time -> lr will decrease over time
-                lrnow_circuit = np.clip(
-                    frac_lin * args.qlearning_rate,
-                    args.lin_scheduling_qlearning_rate,
-                    2 * args.qlearning_rate,
-                )
+
+                if args.lin_scheduling_qlearning_rate >= args.qlearning_rate:
+                    lrnow_circuit = (
+                        frac_lin * (args.lin_scheduling_qlearning_rate - args.qlearning_rate)
+                        + args.qlearning_rate
+                    )
+                else:
+                    lrnow_circuit = (
+                        frac_lin * (args.qlearning_rate - args.lin_scheduling_qlearning_rate)
+                        + args.lin_scheduling_qlearning_rate
+                    )
+                # lrnow_circuit = np.clip(
+                #    frac_lin * args.qlearning_rate,
+                #    args.lin_scheduling_qlearning_rate,
+                #    2 * args.qlearning_rate,
+                # )
             else:
-                # phase 3 lin_scheduling: constant small lr
-                lrnow_circuit = args.lin_scheduling_qlearning_rate
+                # phase 2 lin_scheduling: constant small lr
+                lrnow_circuit = args.qlearning_rate
+                # lrnow_circuit = args.lin_scheduling_qlearning_rate
 
         if args.exp_qlr_scheduling or args.lin_qlr_scheduling:
             if args.quantum_actor:

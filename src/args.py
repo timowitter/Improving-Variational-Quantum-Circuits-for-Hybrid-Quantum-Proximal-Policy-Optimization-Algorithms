@@ -35,8 +35,8 @@ def parse_args():
     parser.add_argument(
         "--lin-scheduling-qlearning-rate",
         type=float,
-        default=1e-5,
-        help="quantum optimizer learning rate after lin-scheduling timesteps are over (usually at the end of learning)",
+        default=2.5e-4,
+        help="quantum optimizer learning at start of lin-scheduling",
     )
     parser.add_argument(
         "--learning-rate", type=float, default=2.5e-4, help="optimizer learning rate"

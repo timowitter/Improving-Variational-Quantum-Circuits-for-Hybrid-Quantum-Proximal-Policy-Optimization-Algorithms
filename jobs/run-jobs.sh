@@ -7,11 +7,11 @@
 
 
 
-name15="FL-qppo-simple_reuploading-lin_sced-start-qlr5.0e-3-end10e4-qlr0.5e-3-lr2.5e-4-6varlayers-(72-params)"
-name16="FL-qppo-simple_reuploading-exp_sced-start-qlr10.e-3-end10e4-qlr0.5e-3-lr2.5e-4-6varlayers-(72-params)"
-name17="FL-qppo-simple_reuploading-lin_sced-start-qlr5.0e-3-end10e4-qlr0.5e-3-lr0.5e-4-6varlayers-(72-params)"
-name18="FL-qppo-simple_reuploading-exp_sced-start-qlr10.e-3-end10e4-qlr0.5e-3-lr0.5e-4-6varlayers-(72-params)"
-name19="FL-qppo-simple_reuploading-double_sced-start-qlr10.e-3-mid05e4-qlr2.5e-3-end15e4-qlr0.5e-3-lr2.5e-4-6varlayers-(72-params)"
+name20="FL-qppo-simple_reuploading-exp_sced-start-qlr10.e-3-end50e3-qlr0.5e-3-lr2.5e-4-6varlayers-(72-params)"
+name21="FL-qppo-simple_reuploading-exp_sced-start-qlr10.e-3-end25e3-qlr0.5e-3-lr2.5e-4-6varlayers-(72-params)"
+name22="FL-qppo-simple_reuploading-double_sced-start-qlr10.e-3-mid25e3-qlr2.5e-3-end15e4-qlr0.5e-3-lr0.5e-4-6varlayers-(72-params)"
+name23="FL-qppo-simple_reuploading-double_sced-start-qlr10.e-3-mid25e3-qlr2.5e-3-end15e4-qlr0.5e-3-lr2.5e-4-6varlayers-(72-params)"
+name24="FL-qppo-simple_reuploading-double_sced-start-qlr10.e-3-mid25e3-qlr2.5e-3-end15e4-qlr0.5e-3-lr10.e-4-6varlayers-(72-params)"
 
 start_seed=10
 seed_step=10
@@ -24,11 +24,11 @@ circuits=("simple_reuploading")
 for env in ${envs[@]}; do
     for circuit in ${circuits[@]}; do
         for seed in $(seq $start_seed $seed_step $end_seed); do
-            sbatch --job-name="run-$env-$name15-$seed" jobs/job.sh --exp-name $name15 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 0.5e-3 --n-qubits 4 --n-var-layers 6 --n-enc-layers 6 --lin-qlr-scheduling True --output-scaleing False --load-chkpt False --clip-coef 0.2 --lin-scheduling-timesteps 100000 --lin-scheduling-qlearning-rate 5e-3
-            sbatch --job-name="run-$env-$name16-$seed" jobs/job.sh --exp-name $name16 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 0.5e-3 --n-qubits 4 --n-var-layers 6 --n-enc-layers 6 --exp-qlr-scheduling True --output-scaleing False --load-chkpt False --clip-coef 0.2 --exp-scheduling-timesteps 100000 --exp-scheduling-qlearning-rate 10e-3
-            sbatch --job-name="run-$env-$name17-$seed" jobs/job.sh --exp-name $name17 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 0.5e-4 --qlearning-rate 0.5e-3 --n-qubits 4 --n-var-layers 6 --n-enc-layers 6 --lin-qlr-scheduling True --output-scaleing False --load-chkpt False --clip-coef 0.2 --lin-scheduling-timesteps 100000 --lin-scheduling-qlearning-rate 5e-3
-            sbatch --job-name="run-$env-$name18-$seed" jobs/job.sh --exp-name $name18 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 0.5e-4 --qlearning-rate 0.5e-3 --n-qubits 4 --n-var-layers 6 --n-enc-layers 6 --exp-qlr-scheduling True --output-scaleing False --load-chkpt False --clip-coef 0.2 --exp-scheduling-timesteps 100000 --exp-scheduling-qlearning-rate 10e-3
-            sbatch --job-name="run-$env-$name19-$seed" jobs/job.sh --exp-name $name19 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 0.5e-3 --n-qubits 4 --n-var-layers 6 --n-enc-layers 6 --exp-qlr-scheduling True --output-scaleing False --load-chkpt False --clip-coef 0.2 --exp-scheduling-timesteps  50000 --exp-scheduling-qlearning-rate 10e-3 --lin-qlr-scheduling True --lin-scheduling-timesteps 150000 --lin-scheduling-qlearning-rate 2.5e-3
+            sbatch --job-name="run-$env-$name20-$seed" jobs/job.sh --exp-name $name20 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 0.5e-3 --n-qubits 4 --n-var-layers 6 --n-enc-layers 6 --exp-qlr-scheduling True --output-scaleing False --load-chkpt False --clip-coef 0.2 --exp-scheduling-timesteps 50000 --exp-scheduling-qlearning-rate 10e-3
+            sbatch --job-name="run-$env-$name21-$seed" jobs/job.sh --exp-name $name21 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 0.5e-3 --n-qubits 4 --n-var-layers 6 --n-enc-layers 6 --exp-qlr-scheduling True --output-scaleing False --load-chkpt False --clip-coef 0.2 --exp-scheduling-timesteps 25000 --exp-scheduling-qlearning-rate 10e-3
+            sbatch --job-name="run-$env-$name22-$seed" jobs/job.sh --exp-name $name22 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 0.5e-4 --qlearning-rate 0.5e-3 --n-qubits 4 --n-var-layers 6 --n-enc-layers 6 --exp-qlr-scheduling True --output-scaleing False --load-chkpt False --clip-coef 0.2 --exp-scheduling-timesteps 25000 --exp-scheduling-qlearning-rate 10e-3 --lin-qlr-scheduling True --lin-scheduling-timesteps 150000 --lin-scheduling-qlearning-rate 2.5e-3
+            sbatch --job-name="run-$env-$name23-$seed" jobs/job.sh --exp-name $name23 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 0.5e-3 --n-qubits 4 --n-var-layers 6 --n-enc-layers 6 --exp-qlr-scheduling True --output-scaleing False --load-chkpt False --clip-coef 0.2 --exp-scheduling-timesteps 25000 --exp-scheduling-qlearning-rate 10e-3 --lin-qlr-scheduling True --lin-scheduling-timesteps 150000 --lin-scheduling-qlearning-rate 2.5e-3
+            sbatch --job-name="run-$env-$name24-$seed" jobs/job.sh --exp-name $name24 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 10.0e-4 --qlearning-rate 0.5e-3 --n-qubits 4 --n-var-layers 6 --n-enc-layers 6 --exp-qlr-scheduling True --output-scaleing False --load-chkpt False --clip-coef 0.2 --exp-scheduling-timesteps 25000 --exp-scheduling-qlearning-rate 10e-3 --lin-qlr-scheduling True --lin-scheduling-timesteps 150000 --lin-scheduling-qlearning-rate 2.5e-3
         done
     done
 done

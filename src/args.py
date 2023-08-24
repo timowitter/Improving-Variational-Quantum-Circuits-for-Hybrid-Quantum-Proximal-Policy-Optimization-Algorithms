@@ -61,13 +61,19 @@ def parse_args():
         "--exp-scheduling-timesteps",
         type=int,
         default=150000,
-        help="length of the exp-scheduling Phase",
+        help="length of the exp-scheduling half time",
+    )
+    parser.add_argument(
+        "--quad-scheduling-timesteps",
+        type=int,
+        default=150000,
+        help="length of the quad-scheduling Phase",
     )
     parser.add_argument(
         "--lin-scheduling-timesteps",
         type=int,
         default=500000,
-        help="length of the lin-scheduling Phase (not executed during exp-scheduling timesteps if both are enabled)",
+        help="length of the lin-scheduling Phase (not executed during quad-scheduling timesteps if both are enabled)",
     )
     parser.add_argument(
         "--torch-deterministic",
@@ -106,7 +112,15 @@ def parse_args():
         default=False,
         nargs="?",
         const=True,
-        help="exponential leaning rate scheduling for quantum circuits, executed before lin-qlr-scheduling if both are enabled",
+        help="exponential leaning rate scheduling for quantum circuits, overrides other scedulings",
+    )
+    parser.add_argument(
+        "--quad-qlr-scheduling",
+        type=lambda x: bool(strtobool(x)),
+        default=False,
+        nargs="?",
+        const=True,
+        help="quadratic leaning rate scheduling for quantum circuits, executed before lin-qlr-scheduling if both are enabled",
     )
     parser.add_argument(
         "--lin-qlr-scheduling",

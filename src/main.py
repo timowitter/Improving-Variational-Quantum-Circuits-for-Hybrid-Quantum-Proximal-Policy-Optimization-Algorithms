@@ -152,6 +152,7 @@ if __name__ == "__main__":
     start_time = time.time()
     num_updates = args.total_timesteps // args.batch_size
     exp_scheduling_updates = args.exp_scheduling_timesteps // args.batch_size
+    quad_scheduling_updates = args.quad_scheduling_timesteps // args.batch_size
     lin_scheduling_updates = args.lin_scheduling_timesteps // args.batch_size
 
     if args.load_chkpt:
@@ -168,31 +169,41 @@ if __name__ == "__main__":
 
     # Training loop
     for update in range(done_updates + 1, num_updates + 1):
-        # Annealing the rate if instructed to do so
-        if args.exp_qlr_scheduling and args.lin_qlr_scheduling:
-            if update <= exp_scheduling_updates:
-                # phase 1 exp_scheduling: exponential annealing
-                frac_exp = (
-                    exp_scheduling_updates - update + 1.0
-                ) ** 2 / exp_scheduling_updates**2  # 1 at start, exponentially decreasing over time -> greedyness will decrease over time
+        # Annealing the Quantum Leaning Rate if activated
+        if args.exp_qlr_scheduling:
+            frac_exp = 2.0 ** ((-update + 1.0) / exp_scheduling_updates)
+            lrnow_circuit = (
+                frac_exp * (args.exp_scheduling_qlearning_rate - args.qlearning_rate)
+                + args.qlearning_rate
+            )
+
+        elif args.quad_qlr_scheduling and args.lin_qlr_scheduling:
+            if update <= quad_scheduling_updates:
+                # phase 1 quad_scheduling: exponential annealing
+                frac_quad = (
+                    quad_scheduling_updates - update + 1.0
+                ) ** 2 / quad_scheduling_updates**2  # 1 at start, exponentially decreasing over time -> greedyness will decrease over time
 
                 # prevent hyperparameter mixup
                 if args.lin_scheduling_qlearning_rate >= args.qlearning_rate:
                     lrnow_circuit = (
-                        frac_exp
-                        * (args.exp_scheduling_qlearning_rate - args.lin_scheduling_qlearning_rate)
+                        frac_quad
+                        * (
+                            args.quad_scheduling_qlearning_rate
+                            - args.lin_scheduling_qlearning_rate
+                        )
                         + args.lin_scheduling_qlearning_rate
                     )
                 else:
                     lrnow_circuit = (
-                        frac_exp * (args.exp_scheduling_qlearning_rate - args.qlearning_rate)
+                        frac_quad * (args.quad_scheduling_qlearning_rate - args.qlearning_rate)
                         + args.qlearning_rate
                     )
 
             elif update <= lin_scheduling_updates:
                 # phase 2 main learning: linear annealing
-                frac_lin = 1.0 - (update - exp_scheduling_updates - 1.0) / (
-                    lin_scheduling_updates - exp_scheduling_updates
+                frac_lin = 1.0 - (update - quad_scheduling_updates - 1.0) / (
+                    lin_scheduling_updates - quad_scheduling_updates
                 )  # 1 at start, linearly decreasing over time -> lr will decrease over time
                 if args.lin_scheduling_qlearning_rate >= args.qlearning_rate:
                     lrnow_circuit = (
@@ -208,15 +219,15 @@ if __name__ == "__main__":
                 # phase 3 lin_scheduling: constant small lr
                 lrnow_circuit = args.lin_scheduling_qlearning_rate
 
-        elif args.exp_qlr_scheduling:
-            if update <= exp_scheduling_updates:
-                # phase 1 exp_scheduling: exponential annealing
-                frac_exp = (
-                    exp_scheduling_updates - update + 1.0
-                ) ** 2 / exp_scheduling_updates**2  # 1 at start, exponentially decreasing over time -> greedyness will decrease over time
+        elif args.quad_qlr_scheduling:
+            if update <= quad_scheduling_updates:
+                # phase 1 quad_scheduling: exponential annealing
+                frac_quad = (
+                    quad_scheduling_updates - update + 1.0
+                ) ** 2 / quad_scheduling_updates**2  # 1 at start, exponentially decreasing over time -> greedyness will decrease over time
 
                 lrnow_circuit = (
-                    frac_exp * (args.exp_scheduling_qlearning_rate - args.qlearning_rate)
+                    frac_quad * (args.quad_scheduling_qlearning_rate - args.qlearning_rate)
                     + args.qlearning_rate
                 )
             else:
@@ -240,17 +251,12 @@ if __name__ == "__main__":
                         frac_lin * (args.qlearning_rate - args.lin_scheduling_qlearning_rate)
                         + args.lin_scheduling_qlearning_rate
                     )
-                # lrnow_circuit = np.clip(
-                #    frac_lin * args.qlearning_rate,
-                #    args.lin_scheduling_qlearning_rate,
-                #    2 * args.qlearning_rate,
-                # )
             else:
                 # phase 2 lin_scheduling: constant small lr
                 lrnow_circuit = args.qlearning_rate
                 # lrnow_circuit = args.lin_scheduling_qlearning_rate
 
-        if args.exp_qlr_scheduling or args.lin_qlr_scheduling:
+        if args.exp_qlr_scheduling or args.quad_qlr_scheduling or args.lin_qlr_scheduling:
             if args.quantum_actor:
                 optimizer2.param_groups[0]["lr"] = lrnow_circuit
             if args.quantum_critic:

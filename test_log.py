@@ -714,7 +714,10 @@ plot_dir = plots_dir + "/FL-actor-Hyperparameter-Test-1e-final-results"
 gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
 exp_names = [
     "FL-qppo-simple_reuploading-qlr2.5e-3-lr2.5e-4-clipcoef0.20-6varlayers-(72-params)",
+    "FL-qppo-simple_reuploading-qlr2.5e-3-lr2.5e-4-clipcoef0.02-6varlayers-(72-params)",
     "FL-qppo-simple_reuploading-exp_sced-start-qlr10.e-3-end10e4-qlr0.5e-3-lr2.5e-4-6varlayers-(72-params)",
+    "FL-qppo-simple_reuploading-exp_sced-start-qlr10.e-3-end25e3-qlr0.5e-3-lr2.5e-4-6varlayers-(72-params)",
+    "FL-qppo-simple_reuploading-exp_sced-start-qlr10.e-3-end25e3-qlr0.5e-3-lr10.e-4-6varlayers-(72-params)",
     "FL-qppo-simple_reuploading-double_sced-start-qlr10.e-3-mid05e4-qlr2.5e-3-end15e4-qlr0.5e-3-lr2.5e-4-6varlayers-(72-params)",
     "random-baseline",
     "ppo_default_lr100.0e-4",

@@ -654,8 +654,8 @@ max_steps = 150000
 
 plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
 
-
-plot_dir = plots_dir + "/FL-actor-Hyperparameter-Test-1c-exp-sced"
+"""
+plot_dir = plots_dir + "/FL-actor-Hyperparameter-Test-1c-sq-sced"
 gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
 exp_names = [
     "FL-qppo-simple_reuploading-exp_sced-start-qlr10.e-3-end-qlr0.5e-3-lr2.5e-4-6varlayers-(72-params)",
@@ -669,7 +669,7 @@ stepsize = 4 * 128 * 8
 max_steps = 150000
 
 plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
-
+"""
 
 plot_dir = plots_dir + "/FL-actor-Hyperparameter-Test-1c-double-sced"
 gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
@@ -705,11 +705,6 @@ plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_ste
 """
 
 
-name1 = "FL-qppo-simple_reuploading-qlr2.5e-3-lr2.5e-4-clipcoef0.20-6varlayers-(72-params)"
-name16 = "FL-qppo-simple_reuploading-exp_sced-start-qlr10.e-3-end10e4-qlr0.5e-3-lr2.5e-4-6varlayers-(72-params)"
-name19 = "FL-qppo-simple_reuploading-double_sced-start-qlr10.e-3-mid05e4-qlr2.5e-3-end15e4-qlr0.5e-3-lr2.5e-4-6varlayers-(72-params)"
-
-
 plot_dir = plots_dir + "/FL-actor-Hyperparameter-Test-1e-final-results"
 gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
 exp_names = [
@@ -725,5 +720,23 @@ exp_names = [
 seeds = [10, 20, 30, 40, 50]
 stepsize = 4 * 128 * 8
 max_steps = 300000
+
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+
+
+plot_dir = plots_dir + "/FL-actor-Hyperparameter-Test-1c-exp-sced"
+gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
+exp_names = [
+    "FL-qppo-simple_reuploading-qlr2.5e-3-lr2.5e-4-clipcoef0.20-6varlayers-(72-params)",
+    "FL-qppo-simple_reuploading-exp_sced-start-qlr10.e-3-end10e4-qlr0.5e-3-lr2.5e-4-6varlayers-(72-params)",
+    "FL-qppo-simple_reuploading-double_sced-start-qlr10.e-3-mid05e4-qlr2.5e-3-end15e4-qlr0.5e-3-lr2.5e-4-6varlayers-(72-params)",
+    "FL-qppo-simple_reuploading-exp_sced_fixed-ht12500-start-qlr10.e-3-end-qlr0.1e-3-lr2.5e-4-6varlayers-(72-params)",
+    "FL-qppo-simple_reuploading-exp_sced_fixed-ht06250-start-qlr10.e-3-end-qlr0.1e-3-lr2.5e-4-6varlayers-(72-params)",
+    "random-baseline",
+    "ppo_default_lr100.0e-4",
+]
+seeds = [10, 20, 30]
+stepsize = 4 * 128 * 8
+max_steps = 150000
 
 plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)

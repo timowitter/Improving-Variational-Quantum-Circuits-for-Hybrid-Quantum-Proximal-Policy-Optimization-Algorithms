@@ -12,9 +12,9 @@ name28="FL-qppo-simple_reuploading-exp_sced_fixed-ht15000-start-qlr10.e-3-end-ql
 name29="FL-qppo-simple_reuploading-exp_sced_fixed-ht25000-start-qlr10.e-3-end-qlr0.1e-3-lr2.5e-4-6varlayers-(72-params)"
 name30="FL-qppo-simple_reuploading-exp_sced_fixed-ht40000-start-qlr10.e-3-end-qlr0.1e-3-lr2.5e-4-6varlayers-(72-params)"
 
-start_seed=10
+start_seed=30
 seed_step=10
-end_seed=30
+end_seed=50
 envs=("Deterministic-ShortestPath-4x4-FrozenLake-v0") 
 timesteps=150000
 

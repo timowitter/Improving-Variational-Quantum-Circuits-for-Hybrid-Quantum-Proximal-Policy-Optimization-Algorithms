@@ -401,8 +401,8 @@ def actor_circuit_selection():
 
     if args.quantum_actor and args.hybrid:
         print("with hybrid input postprocessing")
-    elif args.quantum_actor and args.input_scaleing:
-        print("with input scaleing")
+    elif args.quantum_actor and args.output_scaleing:
+        print("with output scaleing")
     elif args.quantum_actor:
         print("without input scaleing")
 

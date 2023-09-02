@@ -149,10 +149,15 @@ class Agent(nn.Module):
         action=None,
     ):
         if args.quantum_actor:
-            logits_uncat = actor_circuit(actor_layer_params, observation, acts_dim)
+            logits_uncat = actor_circuit(
+                actor_layer_params, observation, acts_dim
+            )  # logits_uncat is a list, logits needs to be a tensor
 
             if args.hybrid:  # hybrid output postprocessing
-                logits = self.hybrid_actor(logits_uncat.float())
+                logits_cat = torch.Tensor(acts_dim)
+                for i in range(acts_dim):
+                    logits_cat[i] = logits_uncat[i]
+                logits = self.hybrid_actor(logits_cat.float())
 
             elif args.output_scaleing:
                 # output scaleing with (trainable) output parameters for (trainable) greedyness

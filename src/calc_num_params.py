@@ -68,7 +68,10 @@ def calc_num_actor_params():
         and args.output_scaleing
         and not args.scheduled_output_scaleing
     ):
-        actor_par_count = actor_par_count + num_acts
+        if not args.shared_output_scaleing_param:
+            actor_par_count = actor_par_count + num_acts
+        else:
+            actor_par_count = actor_par_count + 1
     actor_par_count = actor_par_count * debug
     return actor_par_count
 

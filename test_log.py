@@ -743,7 +743,7 @@ stepsize = 4 * 128 * 8
 max_steps = 150000
 
 plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
-"""
+
 
 
 plot_dir = plots_dir + "/FL-actor-Hyperparameter-Test-2-number-of-layers"
@@ -754,8 +754,42 @@ exp_names = [
     "FL-qppo-simple_reuploading-exp_sced_fixed-ht25000-start-qlr10.e-3-end-qlr0.1e-3-lr2.5e-4-6varlayers-(72-params)",
     "FL-qppo-ac-simple_reuploading-exp_sced-ht25000-start-qlr10.e-3-end-qlr0.1e-3-lr2.5e-4-8varlayers-(96-params)",
     "FL-qppo-ac-simple_reuploading-exp_sced-ht25000-start-qlr10.e-3-end-qlr0.1e-3-lr2.5e-4-10varlayers-(120-params)",
+    "random-baseline",
+    "ppo_default_lr100.0e-4",
+]
+seeds = [10, 20, 30]
+stepsize = 4 * 128 * 8
+max_steps = 150000
+
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+
+
+plot_dir = plots_dir + "/FL-actor-Hyperparameter-Test-2b-number-of-layers-fixed-qlr"
+gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
+exp_names = [
+    "FL-qppo-ac-simple_reuploading-qlr2.5e-3-lr2.5e-4-2varlayers-(24-params)",
+    "FL-qppo-ac-simple_reuploading-qlr2.5e-3-lr2.5e-4-4varlayers-(48-params)",
     "FL-qppo-simple_reuploading-qlr2.5e-3-lr2.5e-4-clipcoef0.20-6varlayers-(72-params)",
     "FL-qppo-ac-simple_reuploading-qlr2.5e-3-lr2.5e-4-8varlayers-(96-params)",
+    "random-baseline",
+    "ppo_default_lr100.0e-4",
+]
+seeds = [10, 20, 30]
+stepsize = 4 * 128 * 8
+max_steps = 150000
+
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+"""
+
+plot_dir = plots_dir + "/FL-actor-Hyperparameter-Test-3-init"
+gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
+exp_names = [
+    "FL-qppo-simple_reuploading-exp_sced_fixed-ht25000-start-qlr10.e-3-end-qlr0.1e-3-lr2.5e-4-6varlayers-(72-params)",
+    "FL-qppo-ac-simple_reuploading-exp_sced-ht25000-start-qlr10.e-3-end-qlr0.1e-3-lr2.5e-4-clippedrandominit-6varlayers-(72-params)",
+    "FL-qppo-ac-simple_reuploading-exp_sced-ht25000-start-qlr10.e-3-end-qlr0.1e-3-lr2.5e-4-gaussinit-6varlayers-(72-params)",
+    "FL-qppo-ac-simple_reuploading-exp_sced-ht25000-start-qlr10.e-3-end-qlr0.1e-3-lr2.5e-4-allsmallinit-6varlayers-(72-params)",
+    "FL-qppo-ac-simple_reuploading-exp_sced-ht25000-start-qlr10.e-3-end-qlr0.1e-3-lr2.5e-4-allmidinit-6varlayers-(72-params)",
+    "FL-qppo-ac-simple_reuploading-exp_sced-ht25000-start-qlr10.e-3-end-qlr0.1e-3-lr2.5e-4-allbiginit-6varlayers-(72-params)",
     "random-baseline",
     "ppo_default_lr100.0e-4",
 ]

@@ -223,7 +223,7 @@ def Hgog_reuploading_actor_circuit(layer_params, observation, act_dim):
 
 
 @qml.qnode(dev, interface="torch", diff_method="backprop")
-def Hgog_reuploading_actor_circuit_with_output_scaleing(layer_params, observation, act_dim):
+def Hgog_reuploading_actor_circuit_with_input_scaleing(layer_params, observation, act_dim):
     for layer_nr in range(args.n_var_layers):
         # Encodeing layer
         # for discrete states transform obs to binary
@@ -380,9 +380,9 @@ def actor_circuit_selection():
     elif args.quantum_actor and args.circuit == "Hgog_reuploading":
         actor_circuit = Hgog_reuploading_actor_circuit
         print("useing Hgog reuploading Quantum Circuit as actor")
-    elif args.quantum_actor and args.circuit == "Hgog_reuploading_with_output_scaleing":
-        actor_circuit = Hgog_reuploading_actor_circuit_with_output_scaleing
-        print("useing Hgog reuploading Quantum Circuit with output scaleing as actor")
+    elif args.quantum_actor and args.circuit == "Hgog_reuploading_with_input_scaleing":
+        actor_circuit = Hgog_reuploading_actor_circuit_with_input_scaleing
+        print("useing Hgog reuploading Quantum Circuit with input scaleing as actor")
 
     elif args.quantum_actor and args.circuit == "Jerbi-no-reuploading-no-input-scaleing":
         actor_circuit = Jerbi_actor_circuit_no_reuploading_no_input_scaleing
@@ -392,7 +392,7 @@ def actor_circuit_selection():
         print("useing Jerbi reuploading Quantum Circuit as actor")
     elif args.quantum_actor and args.circuit == "Jerbi-reuploading-no-input-scaleing":
         actor_circuit = Jerbi_reuploading_actor_circuit_without_input_scaleing
-        print("useing Jerbi reuploading Quantum Circuit without output scaleing as actor")
+        print("useing Jerbi reuploading Quantum Circuit without input scaleing as actor")
     elif not args.quantum_actor:
         actor_circuit = empty_circuit
         print("useing classical actor")
@@ -400,11 +400,11 @@ def actor_circuit_selection():
         print("actor selection ERROR: ", args.circuit, " does not exist")
 
     if args.quantum_actor and args.hybrid:
-        print("with hybrid output postprocessing")
-    elif args.quantum_actor and args.output_scaleing:
-        print("with output scaleing")
+        print("with hybrid input postprocessing")
+    elif args.quantum_actor and args.input_scaleing:
+        print("with input scaleing")
     elif args.quantum_actor:
-        print("without output scaleing")
+        print("without input scaleing")
 
     return actor_circuit
 
@@ -522,7 +522,7 @@ def Hgog_reuploading_critic_circuit(layer_params, observation):
 
 
 @qml.qnode(dev, interface="torch", diff_method="backprop")
-def Hgog_reuploading_critic_circuit_with_output_scaleing(layer_params, observation):
+def Hgog_reuploading_critic_circuit_with_input_scaleing(layer_params, observation):
     for layer_nr in range(args.n_var_layers):
         if (
             args.gym_id == "FrozenLake-v0"
@@ -652,9 +652,9 @@ def critic_circuit_selection():
     elif args.quantum_critic and args.circuit == "Hgog_reuploading":
         critic_circuit = Hgog_reuploading_critic_circuit
         print("useing Hgog reuploading Quantum Circuit as critic")
-    elif args.quantum_critic and args.circuit == "Hgog_reuploading_with_output_scaleing":
-        critic_circuit = Hgog_reuploading_critic_circuit_with_output_scaleing
-        print("useing Hgog reuploading Quantum Circuit with output scaleing as critic")
+    elif args.quantum_critic and args.circuit == "Hgog_reuploading_with_input_scaleing":
+        critic_circuit = Hgog_reuploading_critic_circuit_with_input_scaleing
+        print("useing Hgog reuploading Quantum Circuit with input scaleing as critic")
 
     elif args.quantum_critic and args.circuit == "Jerbi-no-reuploading-no-input-scaleing":
         critic_circuit = Jerbi_critic_circuit_no_reuploading_no_input_scaleing
@@ -664,7 +664,7 @@ def critic_circuit_selection():
         print("useing Jerbi data reuploading Quantum Circuit as critic")
     elif args.quantum_critic and args.circuit == "Jerbi-reuploading-no-input-scaleing":
         critic_circuit = Jerbi_reuploading_critic_circuit_without_input_scaleing
-        print("useing Jerbi reuploading Quantum Circuit without output scaleing as critic")
+        print("useing Jerbi reuploading Quantum Circuit without input scaleing as critic")
     elif not args.quantum_critic:
         critic_circuit = empty_circuit
         print("useing classical critic")
@@ -672,8 +672,8 @@ def critic_circuit_selection():
         print("critic selection ERROR: ", args.circuit, " does not exist")
 
     if args.quantum_critic and args.hybrid:
-        print("with hybrid output postprocessing")
+        print("with hybrid input postprocessing")
     elif args.quantum_critic and not args.hybrid:
-        print("with manual output rescaleing")
+        print("with manual input rescaleing")
 
     return critic_circuit

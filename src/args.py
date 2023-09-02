@@ -228,10 +228,19 @@ def parse_args():
         "--circuit",
         type=str,
         default="simple",
-        help="the circuit that is to be used, can be one of:  simple / simple_reuploading / simple_reuploading_with_input_scaleing / Hgog / Hgog_reuploading / Hgog_reuploading_with_output_scaleing / Jerbi-no-reuploading-no-input-scaleing / Jerbi-reuploading-no-input-scaleing / Jerbi-reuploading",
+        help="the circuit that is to be used, can be one of:  simple / simple_reuploading / simple_reuploading_with_input_scaleing / Hgog / Hgog_reuploading / Hgog_reuploading_with_input_scaleing / Jerbi-no-reuploading-no-input-scaleing / Jerbi-reuploading-no-input-scaleing / Jerbi-reuploading",
     )
     parser.add_argument(
         "--output-scaleing",
+        type=lambda x: bool(strtobool(x)),
+        default=False,
+        nargs="?",
+        const=True,
+        help="toggle output scaleing",
+    )
+
+    parser.add_argument(
+        "--shared-output-scaleing-param",
         type=lambda x: bool(strtobool(x)),
         default=True,
         nargs="?",

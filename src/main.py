@@ -82,7 +82,10 @@ if __name__ == "__main__":
     actor_layer_params = (
         make_actor_layer_params()
     )  # alternative: layer_params = np.random.normal(0, np.tan(0.5), (args.n_qubits, (2 * args.n_var_layers) + 2, 2))
-    output_scaleing_params = np.ones(envs.single_action_space.n) * args.output_scaleing_start
+    if not args.shared_output_scaleing_param and not args.scheduled_output_scaleing:
+        output_scaleing_params = np.ones(envs.single_action_space.n) * args.output_scaleing_start
+    else:
+        output_scaleing_params = np.ones(1) * args.output_scaleing_start
     critic_layer_params = make_critic_layer_params()
 
     if args.load_chkpt:  # load Parameters from checkpoint
@@ -264,9 +267,9 @@ if __name__ == "__main__":
 
         if args.output_scaleing and args.scheduled_output_scaleing:
             sced_out_scale_bonus = ((global_step) / 100000) * args.sced_out_scale_fac
-            for i in range(envs.single_action_space.n):
-                output_scaleing_params[i] = 1 + sced_out_scale_bonus
-                # np.sqrt()  # sqrt is NOT needed since it will NOT be multiplyed with its mean in this version of the code
+            # for i in range(envs.single_action_space.n):
+            output_scaleing_params[0] = 1 + sced_out_scale_bonus
+            # np.sqrt()  # sqrt is NOT needed since it will NOT be multiplyed with its mean in this version of the code
 
         # Environment interaction
         for step in range(0, args.num_steps):

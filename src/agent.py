@@ -158,9 +158,14 @@ class Agent(nn.Module):
                 # output scaleing with (trainable) output parameters for (trainable) greedyness
                 logits = torch.zeros(acts_dim)
                 for i in range(acts_dim):
-                    logits[i] = logits_uncat[i] * (
-                        output_scaleing_params[i]  # * output_scaleing_params.mean()
-                    )
+                    if (
+                        not args.shared_output_scaleing_param
+                        and not args.scheduled_output_scaleing
+                    ):
+                        logits[i] = logits_uncat[i] * (output_scaleing_params[i])
+                    else:
+                        logits[i] = logits_uncat[i] * (output_scaleing_params[0])
+                    # * output_scaleing_params.mean()
             else:
                 # merge list of tensors to tensor
                 logits = torch.Tensor(acts_dim)

@@ -779,7 +779,7 @@ stepsize = 4 * 128 * 8
 max_steps = 150000
 
 plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
-"""
+
 
 plot_dir = plots_dir + "/FL-actor-Hyperparameter-Test-3-init"
 gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
@@ -791,6 +791,24 @@ exp_names = [
     "FL-qppo-ac-simple_reuploading-exp_sced-ht25000-start-qlr10.e-3-end-qlr0.1e-3-lr2.5e-4-allmidinit-6varlayers-(72-params)",
     "FL-qppo-ac-simple_reuploading-exp_sced-ht25000-start-qlr10.e-3-end-qlr0.1e-3-lr2.5e-4-allbiginit-6varlayers-(72-params)",
     "random-baseline",
+    "ppo_default_lr100.0e-4",
+]
+seeds = [10, 20, 30]
+stepsize = 4 * 128 * 8
+max_steps = 150000
+
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+"""
+
+plot_dir = plots_dir + "/FL-actor-Test-1-output-scaleing"
+gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
+exp_names = [
+    "FL-qppo-simple_reuploading-exp_sced_fixed-ht25000-start-qlr10.e-3-end-qlr0.1e-3-lr2.5e-4-6varlayers-(72-params)",
+    "FL-qppo-ac-simple_reuploading-exp_sced-output_scaleing-1param-1e-4-(73-params)",
+    "FL-qppo-ac-simple_reuploading-exp_sced-output_scaleing-1param-1e-3-(73-params)",
+    "FL-qppo-ac-simple_reuploading-exp_sced-output_scaleing-4params-1e-4-(76-params)",
+    "FL-qppo-ac-simple_reuploading-exp_sced-output_scaleing-4params-1e-3-(76-params)",
+    "FL-qppo-ac-simple_reuploading-exp_sced-hybrid_output-20params-(92-params)",
     "ppo_default_lr100.0e-4",
 ]
 seeds = [10, 20, 30]

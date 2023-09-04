@@ -1027,7 +1027,7 @@ done
 
 
 
-Hyperparameter Test 1: Output scaleing
+Test 1: Output scaleing
 
 
 name1="FL-qppo-ac-simple_reuploading-exp_sced-output_scaleing-1param-1e-4-(73-params)"
@@ -1057,3 +1057,80 @@ for env in ${envs[@]}; do
     done
 done
 
+
+
+name6="FL-qppo-ac-simple_reuploading-exp_sced-output_scaleing-1param-1e-2-(73-params)"
+name7="FL-qppo-ac-simple_reuploading-exp_sced-output_scaleing-4params-1e-2-(76-params)"
+name8="FL-qppo-ac-simple_reuploading-qlr2.5e-3-output_scaleing-1param-1e-3-(73-params)"
+name9="FL-qppo-ac-simple_reuploading-qlr1.0e-3-output_scaleing-1param-1e-3-(73-params)"
+
+
+start_seed=10
+seed_step=10
+end_seed=30
+envs=("Deterministic-ShortestPath-4x4-FrozenLake-v0") 
+timesteps=150000
+
+circuits=("simple_reuploading")
+
+for env in ${envs[@]}; do
+    for circuit in ${circuits[@]}; do
+        for seed in $(seq $start_seed $seed_step $end_seed); do
+            sbatch --job-name="run-$env-$name6-$seed" jobs/job.sh  --exp-name $name6  --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 0.1e-3 --n-qubits 4 --n-var-layers 6 --n-enc-layers 6 --load-chkpt False --exp-qlr-scheduling True  --exp-scheduling-timesteps 25000 --exp-scheduling-qlearning-rate 10e-3 --output-scaleing True --output-scaleing-learning-rate 1e-2 --shared-output-scaleing-param True
+            sbatch --job-name="run-$env-$name7-$seed" jobs/job.sh  --exp-name $name7  --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 0.1e-3 --n-qubits 4 --n-var-layers 6 --n-enc-layers 6 --load-chkpt False --exp-qlr-scheduling True  --exp-scheduling-timesteps 25000 --exp-scheduling-qlearning-rate 10e-3 --output-scaleing True --output-scaleing-learning-rate 1e-2 --shared-output-scaleing-param False
+            sbatch --job-name="run-$env-$name8-$seed" jobs/job.sh  --exp-name $name8  --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 2.5e-3 --n-qubits 4 --n-var-layers 6 --n-enc-layers 6 --load-chkpt False --output-scaleing True --output-scaleing-learning-rate 1e-3 --shared-output-scaleing-param True
+            sbatch --job-name="run-$env-$name9-$seed" jobs/job.sh  --exp-name $name9  --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 1.0e-3 --n-qubits 4 --n-var-layers 6 --n-enc-layers 6 --load-chkpt False --output-scaleing True --output-scaleing-learning-rate 1e-3 --shared-output-scaleing-param True
+        done
+    done
+done
+
+
+
+
+name2="FL-qppo-ac-simple_reuploading-exp_sced-output_scaleing-1param-1e-3-(73-params)"
+name4="FL-qppo-ac-simple_reuploading-exp_sced-output_scaleing-4params-1e-3-(76-params)"
+name5="FL-qppo-ac-simple_reuploading-exp_sced-hybrid_output-20params-(92-params)"
+
+
+start_seed=40
+seed_step=10
+end_seed=50
+envs=("Deterministic-ShortestPath-4x4-FrozenLake-v0") 
+timesteps=150000
+
+circuits=("simple_reuploading")
+
+for env in ${envs[@]}; do
+    for circuit in ${circuits[@]}; do
+        for seed in $(seq $start_seed $seed_step $end_seed); do
+            sbatch --job-name="run-$env-$name2-$seed" jobs/job.sh  --exp-name $name2  --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 0.1e-3 --n-qubits 4 --n-var-layers 6 --n-enc-layers 6 --exp-qlr-scheduling True  --load-chkpt False --exp-scheduling-timesteps 25000 --exp-scheduling-qlearning-rate 10e-3 --output-scaleing True --output-scaleing-learning-rate 1e-3 --shared-output-scaleing-param True
+            sbatch --job-name="run-$env-$name4-$seed" jobs/job.sh  --exp-name $name4  --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 0.1e-3 --n-qubits 4 --n-var-layers 6 --n-enc-layers 6 --exp-qlr-scheduling True  --load-chkpt False --exp-scheduling-timesteps 25000 --exp-scheduling-qlearning-rate 10e-3 --output-scaleing True --output-scaleing-learning-rate 1e-3 --shared-output-scaleing-param False
+            sbatch --job-name="run-$env-$name5-$seed" jobs/job.sh  --exp-name $name5  --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 0.1e-3 --n-qubits 4 --n-var-layers 6 --n-enc-layers 6 --exp-qlr-scheduling True  --load-chkpt False --exp-scheduling-timesteps 25000 --exp-scheduling-qlearning-rate 10e-3 --output-scaleing False --hybrid True
+        done
+    done
+done
+
+
+
+
+
+
+Test 2: Circuit Architekture: state reuploading
+
+name1="FL-qppo-ac-simple-exp_sced-output_scaleing-1param-1e-3-(73-params)"
+
+start_seed=10
+seed_step=10
+end_seed=30
+envs=("Deterministic-ShortestPath-4x4-FrozenLake-v0") 
+timesteps=150000
+
+circuits=("simple")
+
+for env in ${envs[@]}; do
+    for circuit in ${circuits[@]}; do
+        for seed in $(seq $start_seed $seed_step $end_seed); do
+            sbatch --job-name="run-$env-$name1-$seed" jobs/job.sh  --exp-name $name1  --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 0.1e-3 --n-qubits 4 --n-var-layers 6 --n-enc-layers 6 --load-chkpt False --exp-qlr-scheduling True  --exp-scheduling-timesteps 25000 --exp-scheduling-qlearning-rate 10e-3 --output-scaleing True --output-scaleing-learning-rate 1e-3 --shared-output-scaleing-param True
+        done
+    done
+done

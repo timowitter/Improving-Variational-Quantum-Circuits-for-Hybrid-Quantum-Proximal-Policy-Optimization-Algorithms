@@ -1116,7 +1116,7 @@ done
 
 
 
-
+Bias Test with alternate Frozen Lake Environment (there is no Hyperparameter for this, you have to uncomment a line in env_setup.py)
 
 
 

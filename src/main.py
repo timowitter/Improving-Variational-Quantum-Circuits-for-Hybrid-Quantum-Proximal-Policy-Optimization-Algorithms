@@ -21,6 +21,7 @@ from env_setup import make_env
 from envs_storage import Store_envs
 from layer_params import make_actor_layer_params, make_critic_layer_params
 from save_results import Save_results
+from utils import get_act_dim, get_obs_dim
 
 args = parse_args()
 chkpt_pathExists = os.path.exists(args.chkpt_dir)
@@ -33,12 +34,7 @@ if not results_pathExists:
 save_args(args)
 
 if __name__ == "__main__":
-    actor_par_count = calc_num_actor_params()
-    critic_par_count = calc_num_critic_params()
-    print("calculated number of actor parameters: ", actor_par_count)
-    print("calculated number of critic parameters: ", critic_par_count)
-
-    run_name = f"{args.gym_id}__{args.exp_name}__{actor_par_count}__{critic_par_count}__{args.seed}__{int(time.time())}"  #
+    run_name = f"{args.gym_id}__{args.exp_name}__{args.seed}__{int(time.time())}"  #
 
     writer = SummaryWriter(f"runs/{run_name}")
     writer.add_text(
@@ -77,13 +73,20 @@ if __name__ == "__main__":
     ), "onely discrete action spaces supported"
     save_results = Save_results(args.results_dir, args.load_chkpt, args.record_grads)
 
+    actor_par_count = calc_num_actor_params(envs)
+    critic_par_count = calc_num_critic_params(envs)
+    print("calculated number of actor parameters: ", actor_par_count)
+    print("calculated number of critic parameters: ", critic_par_count)
+
     # Declare Quantum Circuit Parameters and agent
     agent = Agent(envs)
     actor_layer_params = (
         make_actor_layer_params()
     )  # alternative: layer_params = np.random.normal(0, np.tan(0.5), (args.n_qubits, (2 * args.n_var_layers) + 2, 2))
     if not args.shared_output_scaleing_param and not args.scheduled_output_scaleing:
-        output_scaleing_params = np.ones(envs.single_action_space.n) * args.output_scaleing_start
+        output_scaleing_params = (
+            np.ones(get_act_dim(envs.single_action_space)) * args.output_scaleing_start
+        )
     else:
         output_scaleing_params = np.ones(1) * args.output_scaleing_start
     critic_layer_params = make_critic_layer_params()
@@ -267,7 +270,7 @@ if __name__ == "__main__":
 
         if args.output_scaleing and args.scheduled_output_scaleing:
             sced_out_scale_bonus = ((global_step) / 100000) * args.sced_out_scale_fac
-            # for i in range(envs.single_action_space.n):
+            # for i in range(get_act_dim(envs.single_action_space)):
             output_scaleing_params[0] = 1 + sced_out_scale_bonus
             # np.sqrt()  # sqrt is NOT needed since it will NOT be multiplyed with its mean in this version of the code
 
@@ -282,7 +285,7 @@ if __name__ == "__main__":
                 with torch.no_grad():
                     if args.random_baseline:
                         action, logprob, _, value = agent.get_random_action_and_value(
-                            envs.single_action_space.n
+                            get_act_dim(envs.single_action_space)
                         )
                     else:
                         action, logprob, _, value = agent.get_action_and_value(
@@ -292,8 +295,8 @@ if __name__ == "__main__":
                             critic_circuit,
                             critic_layer_params,
                             output_scaleing_params,
-                            envs.single_observation_space.n,
-                            envs.single_action_space.n,
+                            get_obs_dim(envs.single_observation_space),
+                            get_act_dim(envs.single_action_space),
                         )
                     values[step, i] = value.flatten()
                 actions[step, i] = action.short()
@@ -335,7 +338,7 @@ if __name__ == "__main__":
                 for i in range(args.num_envs):
                     next_value_i[i] = agent.get_value(
                         next_obs[i],
-                        envs.single_observation_space.n,
+                        get_obs_dim(envs.single_observation_space),
                         critic_circuit,
                         critic_layer_params,
                     )
@@ -401,8 +404,8 @@ if __name__ == "__main__":
                             critic_circuit,
                             critic_layer_params,
                             output_scaleing_params,
-                            envs.single_observation_space.n,
-                            envs.single_action_space.n,
+                            get_obs_dim(envs.single_observation_space),
+                            get_act_dim(envs.single_action_space),
                             b_actions.long()[mb_inds[i]],
                         )
 
@@ -612,7 +615,9 @@ if __name__ == "__main__":
                 store_envs.save_envs(args.chkpt_dir, args.num_envs)
 
         else:  # if random baseline
-            _, _, entropy_, _ = agent.get_random_action_and_value(envs.single_action_space.n)
+            _, _, entropy_, _ = agent.get_random_action_and_value(
+                get_act_dim(envs.single_action_space)
+            )
             save_results.append_update_results(
                 0,
                 0,

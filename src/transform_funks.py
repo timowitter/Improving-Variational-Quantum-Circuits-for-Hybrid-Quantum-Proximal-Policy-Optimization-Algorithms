@@ -33,7 +33,6 @@ def trans_obs(observation, gym_id, single_observation_space_n):
     return trans_obs
 
 
-# , args.gym_id, args.n_qubits
 def normalize_obs(observation, gym_id, n_qubits):
     if (
         gym_id == "CartPole-v0" or gym_id == "CartPole-v1"

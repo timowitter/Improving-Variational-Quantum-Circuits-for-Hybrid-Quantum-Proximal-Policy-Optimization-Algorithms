@@ -6,8 +6,14 @@ from gymnasium.envs.registration import register
 register(
     id="Deterministic-ShortestPath-4x4-FrozenLake-v0",  # name given to this new environment
     entry_point="ShortestPathFrozenLake:ShortestPathFrozenLake",  # env entry point
-    # kwargs={'desc': ["SFFF", "FFFH", "FHFH", "HFFG"], 'map_name': '4x4', 'is_slippery': False} # argument passed to the env
-    # if you want to use alternate Frozen Lake env for Output Scaling Bias Test:
+    kwargs={"desc": ["SFFF", "FFFH", "FHFH", "HFFG"], "map_name": "4x4", "is_slippery": False},
+    # argument passed to the env
+)
+
+# if you want to use alternate Frozen Lake env for Output Scaling Bias Test:
+register(
+    id="Deterministic-ShortestPath-4x4-FrozenLake-v0-alt",  # name given to this new environment
+    entry_point="ShortestPathFrozenLake:ShortestPathFrozenLake",  # env entry point
     kwargs={"desc": ["SFFF", "HHFF", "FGHF", "FFFF"], "map_name": "4x4", "is_slippery": False},
 )
 # register(
@@ -26,6 +32,10 @@ def make_env(
             env = gym.make("Deterministic-ShortestPath-4x4-FrozenLake-v0")
             print("ShortestPathFrozenLake")
             env = gym.wrappers.TimeLimit(env, max_episode_steps=100)
+        elif gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0-alt":
+            env = gym.make("Deterministic-ShortestPath-4x4-FrozenLake-v0-alt")
+            print("ShortestPathFrozenLake-alt-version")
+            env = gym.wrappers.TimeLimit(env, max_episode_steps=100)
         elif gym_id == "FrozenLake-v1":
             env = gym.make(
                 gym_id, desc=["SFFF", "FFFH", "FHFH", "HFFG"], map_name="4x4", is_slippery=False
@@ -35,15 +45,15 @@ def make_env(
         else:
             env = gym.make(gym_id)
         env = gym.wrappers.RecordEpisodeStatistics(env)  # VectorListInfo
-        if capture_video:
-            if env_num == 0:
-                env = gym.wrappers.RecordVideo(
-                    env, f"videos/{run_name}", record_video_trigger=lambda t: t % 1000 == 0
-                )
-        if not (
-            gym_id == "FrozenLake-v1" or gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0"
-        ):
-            env.seed(seed)
+        # if capture_video:
+        #    if env_num == 0:
+        #        env = gym.wrappers.RecordVideo(
+        #            env, f"videos/{run_name}", record_video_trigger=lambda t: t % 1000 == 0
+        #        )
+        # if not (
+        #    gym_id == "FrozenLake-v1" or gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0"
+        # ):
+        #    env.seed(seed)
         env.action_space.seed(seed)
         env.observation_space.seed(seed)
 

@@ -49,7 +49,7 @@ def simple_layer(layer_params, layer_nr):
 # Variational Quantum Policy Circuit (Actor)
 @qml.qnode(dev, interface="torch", diff_method="backprop")
 def simple_actor_circuit(layer_params, observation, act_dim):
-    norm_obs = normalize_obs(observation, args.gym_id, args.n_qubits)
+    norm_obs = normalize_obs(observation)
 
     # Input Encoding
     for i in range(args.n_qubits):
@@ -69,7 +69,7 @@ def simple_actor_circuit(layer_params, observation, act_dim):
 
 @qml.qnode(dev, interface="torch", diff_method="backprop")
 def simple_reuploading_actor_circuit(layer_params, observation, act_dim):
-    norm_obs = normalize_obs(observation, args.gym_id, args.n_qubits)
+    norm_obs = normalize_obs(observation)
 
     # Variational Quantum Circuit
     for layer_nr in range(args.n_var_layers):
@@ -103,10 +103,7 @@ def simple_reuploading_actor_circuit_with_input_scaleing(layer_params, observati
                 k = layer_nr % 3
                 qml.RY(
                     np.pi
-                    * torch.tanh(
-                        layer_params[i, j, k]
-                        * transform_obs_to_binary(observation, args.n_qubits)[i]
-                    ),
+                    * torch.tanh(layer_params[i, j, k] * transform_obs_to_binary(observation)[i]),
                     wires=i,
                 )
         else:
@@ -144,7 +141,7 @@ def Hgog_layer(layer_params, layer_nr):
 # Variational Quantum Policy Circuit (Actor)
 @qml.qnode(dev, interface="torch", diff_method="backprop")
 def Hgog_actor_circuit(layer_params, observation, act_dim):
-    norm_obs = normalize_obs(observation, args.gym_id, args.n_qubits)
+    norm_obs = normalize_obs(observation)
     # Input Encoding
     for i in range(args.n_qubits):
         qml.RX(np.pi * norm_obs[i], wires=i)
@@ -161,7 +158,7 @@ def Hgog_actor_circuit(layer_params, observation, act_dim):
 
 @qml.qnode(dev, interface="torch", diff_method="backprop")
 def Hgog_reuploading_actor_circuit(layer_params, observation, act_dim):
-    norm_obs = normalize_obs(observation, args.gym_id, args.n_qubits)
+    norm_obs = normalize_obs(observation)
 
     for layer_nr in range(args.n_var_layers):
         # Encodeing Layer
@@ -192,10 +189,7 @@ def Hgog_reuploading_actor_circuit_with_input_scaleing(layer_params, observation
                 k = layer_nr % 3
                 qml.RX(
                     np.pi
-                    * torch.tanh(
-                        layer_params[i, j, k]
-                        * transform_obs_to_binary(observation, args.n_qubits)[i]
-                    ),
+                    * torch.tanh(layer_params[i, j, k] * transform_obs_to_binary(observation)[i]),
                     wires=i,
                 )
         else:
@@ -250,7 +244,7 @@ def Jerbi_reuploading_actor_circuit(layer_params, observation, act_dim):
             encodeing_layer(
                 tanh_remapping(layer_params),
                 layer_nr,
-                transform_obs_to_binary(observation, args.n_qubits),
+                transform_obs_to_binary(observation),
             )
         else:
             encodeing_layer(tanh_remapping(layer_params), layer_nr, observation)
@@ -264,7 +258,7 @@ def Jerbi_reuploading_actor_circuit(layer_params, observation, act_dim):
 
 @qml.qnode(dev, interface="torch", diff_method="backprop")
 def Jerbi_actor_circuit_no_reuploading_no_input_scaleing(layer_params, observation, act_dim):
-    norm_obs = normalize_obs(observation, args.gym_id, args.n_qubits)
+    norm_obs = normalize_obs(observation)
 
     for i in range(args.n_qubits):
         qml.Hadamard(wires=i)
@@ -286,7 +280,7 @@ def Jerbi_actor_circuit_no_reuploading_no_input_scaleing(layer_params, observati
 
 @qml.qnode(dev, interface="torch", diff_method="backprop")
 def Jerbi_reuploading_actor_circuit_without_input_scaleing(layer_params, observation, act_dim):
-    norm_obs = normalize_obs(observation, args.gym_id, args.n_qubits)
+    norm_obs = normalize_obs(observation)
     # layer_params: Variable Layer Parameters, observation: State Variable
     for i in range(args.n_qubits):
         qml.Hadamard(wires=i)
@@ -373,7 +367,7 @@ def actor_circuit_selection():
 # Variational Quantum Policy Circuit (Critic)
 @qml.qnode(dev, interface="torch", diff_method="backprop")
 def simple_critic_circuit(layer_params, observation):
-    norm_obs = normalize_obs(observation, args.gym_id, args.n_qubits)
+    norm_obs = normalize_obs(observation)
 
     # Input Encoding
     for i in range(args.n_qubits):
@@ -391,7 +385,7 @@ def simple_critic_circuit(layer_params, observation):
 
 @qml.qnode(dev, interface="torch", diff_method="backprop")
 def simple_reuploading_critic_circuit(layer_params, observation):
-    norm_obs = normalize_obs(observation, args.gym_id, args.n_qubits)
+    norm_obs = normalize_obs(observation)
 
     for layer_nr in range(args.n_var_layers):
         for i in range(args.n_qubits):
@@ -417,10 +411,7 @@ def simple_reuploading_critic_circuit_with_input_scaleing(layer_params, observat
                 k = layer_nr % 3
                 qml.RY(
                     np.pi
-                    * torch.tanh(
-                        layer_params[i, j, k]
-                        * transform_obs_to_binary(observation, args.n_qubits)[i]
-                    ),
+                    * torch.tanh(layer_params[i, j, k] * transform_obs_to_binary(observation)[i]),
                     wires=i,
                 )
         else:
@@ -442,7 +433,7 @@ def simple_reuploading_critic_circuit_with_input_scaleing(layer_params, observat
 # Variational Quantum Policy Circuit (Actor)
 @qml.qnode(dev, interface="torch", diff_method="backprop")
 def Hgog_critic_circuit(layer_params, observation):
-    norm_obs = normalize_obs(observation, args.gym_id, args.n_qubits)
+    norm_obs = normalize_obs(observation)
     # Input Encoding
     for i in range(args.n_qubits):
         qml.RX(np.pi * norm_obs[i], wires=i)
@@ -459,7 +450,7 @@ def Hgog_critic_circuit(layer_params, observation):
 
 @qml.qnode(dev, interface="torch", diff_method="backprop")
 def Hgog_reuploading_critic_circuit(layer_params, observation):
-    norm_obs = normalize_obs(observation, args.gym_id, args.n_qubits)
+    norm_obs = normalize_obs(observation)
 
     # Variational Quantum Circuit
     for layer_nr in range(args.n_var_layers):
@@ -488,10 +479,7 @@ def Hgog_reuploading_critic_circuit_with_input_scaleing(layer_params, observatio
                 k = layer_nr % 3
                 qml.RX(
                     np.pi
-                    * torch.tanh(
-                        layer_params[i, j, k]
-                        * transform_obs_to_binary(observation, args.n_qubits)[i]
-                    ),
+                    * torch.tanh(layer_params[i, j, k] * transform_obs_to_binary(observation)[i]),
                     wires=i,
                 )
         else:
@@ -526,7 +514,7 @@ def Jerbi_reuploading_critic_circuit(layer_params, observation):
             encodeing_layer(
                 tanh_remapping(layer_params),
                 layer_nr,
-                transform_obs_to_binary(observation, args.n_qubits),
+                transform_obs_to_binary(observation),
             )
             variational_layer(tanh_remapping(layer_params), layer_nr + 1)
     else:
@@ -543,7 +531,7 @@ def Jerbi_reuploading_critic_circuit(layer_params, observation):
 # Variational Quantum Policy Circuit (Actor)
 @qml.qnode(dev, interface="torch", diff_method="backprop")
 def Jerbi_critic_circuit_no_reuploading_no_input_scaleing(layer_params, observation):
-    norm_obs = normalize_obs(observation, args.gym_id, args.n_qubits)
+    norm_obs = normalize_obs(observation)
 
     for i in range(args.n_qubits):
         qml.Hadamard(wires=i)
@@ -565,7 +553,7 @@ def Jerbi_critic_circuit_no_reuploading_no_input_scaleing(layer_params, observat
 
 @qml.qnode(dev, interface="torch", diff_method="backprop")
 def Jerbi_reuploading_critic_circuit_without_input_scaleing(layer_params, observation):
-    norm_obs = normalize_obs(observation, args.gym_id, args.n_qubits)
+    norm_obs = normalize_obs(observation)
 
     for i in range(args.n_qubits):
         qml.Hadamard(wires=i)

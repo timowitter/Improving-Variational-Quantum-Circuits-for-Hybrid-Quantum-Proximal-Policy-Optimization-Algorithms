@@ -137,6 +137,16 @@ def parse_args():
     #    const=True,
     #    help="linear leaning rate scheduling for quantum circuits, executed after exp-qlr-scheduling if both are enabled",
     # )
+
+    parser.add_argument(
+        "--insider-input-rescale",
+        type=lambda x: bool(strtobool(x)),
+        default=False,
+        nargs="?",
+        const=True,
+        help="exponential leaning rate scheduling for quantum circuits, overrides other scedulings",
+    )
+
     parser.add_argument(
         "--gae",
         type=lambda x: bool(strtobool(x)),

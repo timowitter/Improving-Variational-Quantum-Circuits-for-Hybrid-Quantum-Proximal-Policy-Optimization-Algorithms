@@ -125,7 +125,7 @@ class Agent(nn.Module):
                     crit = crit_tmp
                     raise NotImplementedError()
         else:  # classical critic
-            crit = self.critic(trans_obs(observation, args.gym_id, obs_dim))
+            crit = self.critic(trans_obs(observation, obs_dim))
 
         return crit
 
@@ -170,7 +170,7 @@ class Agent(nn.Module):
                 for i in range(acts_dim):
                     logits[i] = logits_uncat[i]
         else:
-            logits = self.actor(trans_obs(observation, args.gym_id, obs_dim))
+            logits = self.actor(trans_obs(observation, obs_dim))
 
         if args.quantum_actor and not args.output_scaleing and not args.hybrid:
             probs = Categorical(logits + 1)  # softMaxOutPut = (logits+1) / (logits+1).sum()

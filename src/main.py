@@ -34,7 +34,7 @@ if not results_pathExists:
 save_args(args)
 
 if __name__ == "__main__":
-    run_name = f"{args.gym_id}__{args.exp_name}__{args.seed}__{int(time.time())}"  #
+    run_name = f"{args.gym_id}__{args.exp_name}__{args.seed}__{int(time.time())}"
 
     writer = SummaryWriter(f"runs/{run_name}")
     writer.add_text(
@@ -57,8 +57,6 @@ if __name__ == "__main__":
                 args.gym_id,
                 args.seed + i,
                 i,
-                args.capture_video,
-                run_name,
                 args.num_envs,
                 args.chkpt_dir,
                 args.load_chkpt,
@@ -83,7 +81,7 @@ if __name__ == "__main__":
     actor_layer_params = (
         make_actor_layer_params()
     )  # alternative: layer_params = np.random.normal(0, np.tan(0.5), (args.n_qubits, (2 * args.n_var_layers) + 2, 2))
-    if not args.shared_output_scaleing_param and not args.scheduled_output_scaleing:
+    if not args.shared_output_scaleing_param:  # and not args.scheduled_output_scaleing
         output_scaleing_params = (
             np.ones(get_act_dim(envs.single_action_space)) * args.output_scaleing_start
         )
@@ -100,7 +98,7 @@ if __name__ == "__main__":
             args.quantum_actor
             and not args.hybrid
             and args.output_scaleing
-            and not args.scheduled_output_scaleing
+            # and not args.scheduled_output_scaleing
         ):
             output_scaleing_params = save_params.load_output_scaleing_params(args.chkpt_dir)
         else:
@@ -115,7 +113,7 @@ if __name__ == "__main__":
             args.quantum_actor
             and not args.hybrid
             and args.output_scaleing
-            and not args.scheduled_output_scaleing
+            # and not args.scheduled_output_scaleing
         ):
             output_scaleing_params = Variable(
                 torch.tensor(output_scaleing_params), requires_grad=True
@@ -136,7 +134,7 @@ if __name__ == "__main__":
         args.quantum_actor
         and not args.hybrid
         and args.output_scaleing
-        and not args.scheduled_output_scaleing
+        # and not args.scheduled_output_scaleing
     ):
         optimizer3 = optim.Adam(
             [output_scaleing_params], lr=args.output_scaleing_learning_rate, eps=1e-5
@@ -157,9 +155,9 @@ if __name__ == "__main__":
     # Game start
     start_time = time.time()
     num_updates = args.total_timesteps // args.batch_size
-    exp_scheduling_updates = args.exp_scheduling_timesteps // args.batch_size
-    quad_scheduling_updates = args.quad_scheduling_timesteps // args.batch_size
-    lin_scheduling_updates = args.lin_scheduling_timesteps // args.batch_size
+    exp_scheduling_updates = args.exp_scheduling_halftime // args.batch_size
+    # sq_scheduling_updates = args.sq_scheduling_timesteps // args.batch_size
+    # lin_scheduling_updates = args.lin_scheduling_timesteps // args.batch_size
 
     if args.load_chkpt:
         global_step, next_obs, next_done = save_params.load_state(args.chkpt_dir)
@@ -183,33 +181,35 @@ if __name__ == "__main__":
                 + args.qlearning_rate
             )
 
-        elif args.quad_qlr_scheduling and args.lin_qlr_scheduling:
-            if update <= quad_scheduling_updates:
-                # phase 1 quad_scheduling: exponential annealing
-                frac_quad = (
-                    quad_scheduling_updates - update + 1.0
-                ) ** 2 / quad_scheduling_updates**2  # 1 at start, exponentially decreasing over time -> greedyness will decrease over time
+        # linear and sq scheduling did not produce relevant results
+        """
+        elif args.sq_qlr_scheduling and args.lin_qlr_scheduling:
+            if update <= sq_scheduling_updates:
+                # phase 1 sq_scheduling: exponential annealing
+                frac_sq = (
+                    sq_scheduling_updates - update + 1.0
+                ) ** 2 / sq_scheduling_updates**2  # 1 at start, exponentially decreasing over time -> greedyness will decrease over time
 
                 # prevent hyperparameter mixup
                 if args.lin_scheduling_qlearning_rate >= args.qlearning_rate:
                     lrnow_circuit = (
-                        frac_quad
+                        frac_sq
                         * (
-                            args.quad_scheduling_qlearning_rate
+                            args.sq_scheduling_qlearning_rate
                             - args.lin_scheduling_qlearning_rate
                         )
                         + args.lin_scheduling_qlearning_rate
                     )
                 else:
                     lrnow_circuit = (
-                        frac_quad * (args.quad_scheduling_qlearning_rate - args.qlearning_rate)
+                        frac_sq * (args.sq_scheduling_qlearning_rate - args.qlearning_rate)
                         + args.qlearning_rate
                     )
 
             elif update <= lin_scheduling_updates:
                 # phase 2 main learning: linear annealing
-                frac_lin = 1.0 - (update - quad_scheduling_updates - 1.0) / (
-                    lin_scheduling_updates - quad_scheduling_updates
+                frac_lin = 1.0 - (update - sq_scheduling_updates - 1.0) / (
+                    lin_scheduling_updates - sq_scheduling_updates
                 )  # 1 at start, linearly decreasing over time -> lr will decrease over time
                 if args.lin_scheduling_qlearning_rate >= args.qlearning_rate:
                     lrnow_circuit = (
@@ -225,15 +225,15 @@ if __name__ == "__main__":
                 # phase 3 lin_scheduling: constant small lr
                 lrnow_circuit = args.lin_scheduling_qlearning_rate
 
-        elif args.quad_qlr_scheduling:
-            if update <= quad_scheduling_updates:
-                # phase 1 quad_scheduling: exponential annealing
-                frac_quad = (
-                    quad_scheduling_updates - update + 1.0
-                ) ** 2 / quad_scheduling_updates**2  # 1 at start, exponentially decreasing over time -> greedyness will decrease over time
+        elif args.sq_qlr_scheduling:
+            if update <= sq_scheduling_updates:
+                # phase 1 sq_scheduling: exponential annealing
+                frac_sq = (
+                    sq_scheduling_updates - update + 1.0
+                ) ** 2 / sq_scheduling_updates**2  # 1 at start, exponentially decreasing over time -> greedyness will decrease over time
 
                 lrnow_circuit = (
-                    frac_quad * (args.quad_scheduling_qlearning_rate - args.qlearning_rate)
+                    frac_sq * (args.sq_scheduling_qlearning_rate - args.qlearning_rate)
                     + args.qlearning_rate
                 )
             else:
@@ -261,18 +261,18 @@ if __name__ == "__main__":
                 # phase 2 lin_scheduling: constant small lr
                 lrnow_circuit = args.qlearning_rate
                 # lrnow_circuit = args.lin_scheduling_qlearning_rate
-
-        if args.exp_qlr_scheduling or args.quad_qlr_scheduling or args.lin_qlr_scheduling:
+        """
+        if args.exp_qlr_scheduling:  # or args.sq_qlr_scheduling or args.lin_qlr_scheduling
             if args.quantum_actor:
                 optimizer2.param_groups[0]["lr"] = lrnow_circuit
             if args.quantum_critic:
                 optimizer4.param_groups[0]["lr"] = lrnow_circuit
 
-        if args.output_scaleing and args.scheduled_output_scaleing:
-            sced_out_scale_bonus = ((global_step) / 100000) * args.sced_out_scale_fac
-            # for i in range(get_act_dim(envs.single_action_space)):
-            output_scaleing_params[0] = 1 + sced_out_scale_bonus
-            # np.sqrt()  # sqrt is NOT needed since it will NOT be multiplyed with its mean in this version of the code
+        # if args.output_scaleing and args.scheduled_output_scaleing:
+        #    sced_out_scale_bonus = ((global_step) / 100000) * args.sced_out_scale_fac
+        #    # for i in range(get_act_dim(envs.single_action_space)):
+        #    output_scaleing_params[0] = 1 + sced_out_scale_bonus
+        #    # np.sqrt()  # sqrt is NOT needed since it will NOT be multiplyed with its mean in this version of the code
 
         # Environment interaction
         for step in range(0, args.num_steps):
@@ -466,7 +466,7 @@ if __name__ == "__main__":
                         if (
                             not args.hybrid
                             and args.output_scaleing
-                            and not args.scheduled_output_scaleing
+                            # and not args.scheduled_output_scaleing
                         ):
                             optimizer3.zero_grad()
                     if args.quantum_critic:
@@ -517,16 +517,11 @@ if __name__ == "__main__":
                         if (
                             not args.hybrid
                             and args.output_scaleing
-                            and not args.scheduled_output_scaleing
+                            # and not args.scheduled_output_scaleing
                         ):
                             optimizer3.step()
                     if args.quantum_critic:
                         optimizer4.step()
-
-                # Early stopping on to high target kl
-                if args.target_kl is not None:
-                    if approx_kl > args.target_kl:
-                        break
 
             # debug variables (info)
             y_pred, y_true = b_values.cpu().numpy(), b_returns.cpu().numpy()
@@ -606,7 +601,7 @@ if __name__ == "__main__":
                     args.quantum_actor
                     and not args.hybrid
                     and args.output_scaleing
-                    and not args.scheduled_output_scaleing
+                    # and not args.scheduled_output_scaleing
                 ):
                     save_params.save_output_scaleing_params(args.chkpt_dir, output_scaleing_params)
                 if args.quantum_critic:
@@ -649,7 +644,7 @@ if __name__ == "__main__":
             args.quantum_actor
             and not args.hybrid
             and args.output_scaleing
-            and not args.scheduled_output_scaleing
+            # and not args.scheduled_output_scaleing
         ):
             save_params.save_output_scaleing_params(args.chkpt_dir, output_scaleing_params)
         if args.quantum_critic:

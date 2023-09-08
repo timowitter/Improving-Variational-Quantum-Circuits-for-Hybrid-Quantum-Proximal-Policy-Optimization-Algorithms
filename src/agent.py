@@ -24,7 +24,7 @@ def layer_init(layer, std=np.sqrt(2), bias_const=0.0):  # 2 Layer Initialisation
 class Agent(nn.Module):
     def __init__(self, envs):
         super(Agent, self).__init__()
-        if not args.quantum_critic:
+        if not args.quantum_critic and args.two_critic_hidden_layers:
             self.critic = nn.Sequential(
                 layer_init(
                     nn.Linear(
@@ -39,8 +39,19 @@ class Agent(nn.Module):
                 nn.Tanh(),
                 layer_init(nn.Linear(args.critic_hidden_layer_nodes, 1), std=1.0),
             )
+        elif not args.quantum_critic:
+            self.critic = nn.Sequential(
+                layer_init(
+                    nn.Linear(
+                        np.array(get_obs_dim(envs.single_observation_space)).prod(),
+                        args.critic_hidden_layer_nodes,
+                    )
+                ),
+                nn.Tanh(),
+                layer_init(nn.Linear(args.critic_hidden_layer_nodes, 1), std=1.0),
+            )
 
-        if not args.quantum_actor:
+        if not args.quantum_actor and args.two_actor_hidden_layers:
             self.actor = nn.Sequential(
                 layer_init(
                     nn.Linear(
@@ -51,6 +62,22 @@ class Agent(nn.Module):
                 nn.Tanh(),
                 layer_init(
                     nn.Linear(args.actor_hidden_layer_nodes, args.actor_hidden_layer_nodes)
+                ),
+                nn.Tanh(),
+                layer_init(
+                    nn.Linear(
+                        args.actor_hidden_layer_nodes, get_act_dim(envs.single_action_space)
+                    ),
+                    std=0.01,
+                ),
+            )
+        elif not args.quantum_actor:
+            self.actor = nn.Sequential(
+                layer_init(
+                    nn.Linear(
+                        np.array(get_obs_dim(envs.single_observation_space)).prod(),
+                        args.actor_hidden_layer_nodes,
+                    )
                 ),
                 nn.Tanh(),
                 layer_init(
@@ -131,7 +158,7 @@ class Agent(nn.Module):
                 for i in range(acts_dim):
                     if (
                         not args.shared_output_scaleing_param
-                        and not args.scheduled_output_scaleing
+                        # and not args.scheduled_output_scaleing
                     ):
                         logits[i] = logits_uncat[i] * (output_scaleing_params[i])
                     else:
@@ -159,7 +186,8 @@ class Agent(nn.Module):
             args.quantum_actor
             and not args.hybrid
             and args.output_scaleing
-            and args.scheduled_output_scaleing
+            # and args.scheduled_output_scaleing
+            and False
         ):
             # logprobs and entropy before output scaleing is used
             logits_pre_outscale = torch.Tensor(acts_dim)

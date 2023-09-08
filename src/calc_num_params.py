@@ -72,7 +72,7 @@ def calc_num_actor_params(envs):
         args.quantum_actor
         and not args.hybrid
         and args.output_scaleing
-        and not args.scheduled_output_scaleing
+        # and not args.scheduled_output_scaleing
     ):
         if not args.shared_output_scaleing_param:
             actor_par_count = actor_par_count + num_acts
@@ -155,7 +155,7 @@ def manually_calc_num_params(
     n_qubits=4,
     hybrid=False,
     output_scaleing=False,
-    scheduled_output_scaleing=False,
+    # scheduled_output_scaleing=False,
     shared_output_scaleing_param=True,
 ):
     actor_par_count = 0
@@ -210,7 +210,7 @@ def manually_calc_num_params(
 
     if quantum and hybrid:
         actor_par_count = actor_par_count + n_qubits * num_acts + num_acts
-    elif quantum and not hybrid and output_scaleing and not scheduled_output_scaleing:
+    elif quantum and not hybrid and output_scaleing:  # and not scheduled_output_scaleing
         if not shared_output_scaleing_param:
             actor_par_count = actor_par_count + num_acts
         else:

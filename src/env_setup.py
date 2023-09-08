@@ -24,9 +24,7 @@ register(
 
 
 # environment setup:
-def make_env(
-    gym_id, seed, env_num, capture_video, run_name, num_envs, chkpt_dir, load_chkpt, store_envs
-):
+def make_env(gym_id, seed, env_num, num_envs, chkpt_dir, load_chkpt, store_envs):
     def thunk():
         if gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0":
             env = gym.make("Deterministic-ShortestPath-4x4-FrozenLake-v0")
@@ -50,10 +48,8 @@ def make_env(
         #        env = gym.wrappers.RecordVideo(
         #            env, f"videos/{run_name}", record_video_trigger=lambda t: t % 1000 == 0
         #        )
-        # if not (
-        #    gym_id == "FrozenLake-v1" or gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0"
-        # ):
-        #    env.seed(seed)
+
+        # env.seed(seed)  #removed with v26, random env generations should be set by np.random.seed()
         env.action_space.seed(seed)
         env.observation_space.seed(seed)
 

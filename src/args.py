@@ -6,8 +6,6 @@ from distutils.util import strtobool
 
 def save_args(args):
     args_chkpt_file = os.path.join(args.chkpt_dir, "commandline_args.txt")
-    # if os.path.exists(args_chkpt_file): # delete old file with same name if it exists and make a new run
-    #        os.remove(args_chkpt_file)
     with open(args_chkpt_file, "w") as f:
         json.dump(args.__dict__, f, indent=2)
 
@@ -18,7 +16,7 @@ def parse_args():
         "--exp-name",
         type=str,
         default=os.path.basename(__file__).rstrip(".py"),
-        help="the name of this experiment",
+        help="the name of the experiment",
     )
     parser.add_argument(
         "--gym-id",
@@ -30,81 +28,90 @@ def parse_args():
         "--exp-scheduling-qlearning-rate",
         type=float,
         default=10e-3,
-        help="quantum optimizer learning rate at start of exp-scheduling",
+        help="quantum optimizer learning rate at start of exp-scheduling, will exponentially decline to the normal q-lr depending on the exp-scheduling-halftime ",
     )
-    parser.add_argument(
-        "--lin-scheduling-qlearning-rate",
-        type=float,
-        default=2.5e-4,
-        help="quantum optimizer learning at start of lin-scheduling",
-    )
+    # parser.add_argument(
+    #    "--sq-scheduling-qlearning-rate",
+    #    type=float,
+    #    default=2.5e-4,
+    #    help="quantum optimizer learning at start of sq-scheduling",
+    # )
+    # parser.add_argument(
+    #    "--lin-scheduling-qlearning-rate",
+    #    type=float,
+    #    default=2.5e-4,
+    #    help="quantum optimizer learning at start of lin-scheduling",
+    # )
     parser.add_argument(
         "--learning-rate", type=float, default=2.5e-4, help="optimizer learning rate"
-    )  # 2.5e-4
+    )
     parser.add_argument(
         "--qlearning-rate", type=float, default=1e-3, help="quantum optimizer learning rate"
     )
     parser.add_argument(
         "--output-scaleing-learning-rate",
         type=float,
-        default=5e-4,
+        default=1e-3,
         help="output scaleing learning rate",
     )
     parser.add_argument(
         "--output-scaleing-start", type=float, default=1.0, help="output scaleing start value"
     )
-    parser.add_argument("--seed", type=int, default=1, help="seed for random events")
+    parser.add_argument("--seed", type=int, default=1, help="seed for all random events")
     parser.add_argument(
-        "--total-timesteps", type=int, default=50000, help="length of the Training"
-    )  # 25000
+        "--total-timesteps",
+        type=int,
+        default=50000,
+        help="lenght of the Training (number of timesteps in the Environment)",
+    )
     parser.add_argument(
-        "--exp-scheduling-timesteps",
+        "--exp-scheduling-halftime",
         type=int,
         default=150000,
-        help="length of the exp-scheduling half time",
+        help="length (number of timesteps) of the exp-scheduling half time in which the exp-scheduling-qlearning-rate halves",
     )
-    parser.add_argument(
-        "--quad-scheduling-timesteps",
-        type=int,
-        default=150000,
-        help="length of the quad-scheduling Phase",
-    )
-    parser.add_argument(
-        "--lin-scheduling-timesteps",
-        type=int,
-        default=500000,
-        help="length of the lin-scheduling Phase (not executed during quad-scheduling timesteps if both are enabled)",
-    )
+    # parser.add_argument(
+    #    "--sq-scheduling-timesteps",
+    #    type=int,
+    #    default=150000,
+    #    help="length of the sq-scheduling Phase",
+    # )
+    # parser.add_argument(
+    #    "--lin-scheduling-timesteps",
+    #    type=int,
+    #    default=500000,
+    #    help="length of the lin-scheduling Phase (not executed during sq-scheduling timesteps if both are enabled)",
+    # )
     parser.add_argument(
         "--torch-deterministic",
         type=lambda x: bool(strtobool(x)),
         default=True,
         nargs="?",
         const=True,
-        help="cdnn.deterministic use /default:True",
+        help="set cdnn.deterministic /default:True",
     )
     # parser.add_argument('--cuda', type=lambda x:bool(strtobool(x)), default=False, nargs='?', const=True, help='determines if gpu shall be used /default:False')
-    parser.add_argument(
-        "--capture-video",
-        type=lambda x: bool(strtobool(x)),
-        default=False,
-        nargs="?",
-        const=True,
-        help="wether to record videos to `videos` folder",
-    )  # not working
+    # parser.add_argument(
+    #    "--capture-video",
+    #    type=lambda x: bool(strtobool(x)),
+    #    default=False,
+    #    nargs="?",
+    #    const=True,
+    #    help="wether to record videos to `videos` folder",
+    # )  # not working
 
     # Algorith specific
     parser.add_argument(
         "--num-envs",
         type=int,
         default=4,
-        help="number of environments run in parrallel in the SyncVectorEnv",
+        help="number of environments that run in parrallel in the SyncVectorEnv",
     )  # 1 Vector environment
     parser.add_argument(
         "--num-steps",
         type=int,
         default=128,
-        help="the number of steps in each environments per policy rollout phase of the multy vector env",
+        help="the number of steps that are run in each environments for each update step",
     )
     parser.add_argument(
         "--exp-qlr-scheduling",
@@ -114,39 +121,48 @@ def parse_args():
         const=True,
         help="exponential leaning rate scheduling for quantum circuits, overrides other scedulings",
     )
-    parser.add_argument(
-        "--quad-qlr-scheduling",
-        type=lambda x: bool(strtobool(x)),
-        default=False,
-        nargs="?",
-        const=True,
-        help="quadratic leaning rate scheduling for quantum circuits, executed before lin-qlr-scheduling if both are enabled",
-    )
-    parser.add_argument(
-        "--lin-qlr-scheduling",
-        type=lambda x: bool(strtobool(x)),
-        default=False,
-        nargs="?",
-        const=True,
-        help="linear leaning rate scheduling for quantum circuits, executed after exp-qlr-scheduling if both are enabled",
-    )
+    # parser.add_argument(
+    #    "--sq-qlr-scheduling",
+    #    type=lambda x: bool(strtobool(x)),
+    #    default=False,
+    #    nargs="?",
+    #    const=True,
+    #    help="sqratic leaning rate scheduling for quantum circuits, executed before lin-qlr-scheduling if both are enabled",
+    # )
+    # parser.add_argument(
+    #    "--lin-qlr-scheduling",
+    #    type=lambda x: bool(strtobool(x)),
+    #    default=False,
+    #    nargs="?",
+    #    const=True,
+    #    help="linear leaning rate scheduling for quantum circuits, executed after exp-qlr-scheduling if both are enabled",
+    # )
     parser.add_argument(
         "--gae",
         type=lambda x: bool(strtobool(x)),
         default=True,
         nargs="?",
         const=True,
-        help="GAE for Advantage computation",
-    )  # 5 general advantage estimation
+        help="select GAE for Advantage computation",
+    )
     parser.add_argument("--gamma", type=float, default=0.99, help="discount factor gamma")  # 0.98
     parser.add_argument(
-        "--gae-lambda", type=float, default=0.95, help="lsmbda for general advantage estimation"
+        "--gae-lambda",
+        type=float,
+        default=0.95,
+        help="lambda for general advantage estimation if gae is active",
     )
     parser.add_argument(
-        "--num-minibatches", type=int, default=4, help="number of minibatches"
-    )  # 6 minibatches
+        "--num-minibatches",
+        type=int,
+        default=4,
+        help="number of minibatches the batch is devided into",
+    )
     parser.add_argument(
-        "--update-epochs", type=int, default=4, help="the k epochs to update the policy"
+        "--update-epochs",
+        type=int,
+        default=4,
+        help="in every update phase the algorithm devides the batch into minibatches X times to update the policy",
     )
     parser.add_argument(
         "--norm-adv",
@@ -155,10 +171,13 @@ def parse_args():
         nargs="?",
         const=True,
         help="toggle Advantage normalisation",
-    )  # 7 Advatage Normalisation
+    )
     parser.add_argument(
-        "--clip-coef", type=float, default=0.2, help="clipping coefficient"
-    )  # 8 clipped Objektive
+        "--clip-coef",
+        type=float,
+        default=0.2,
+        help="clipping coefficient for ratio and v_loss clipping",
+    )
     parser.add_argument(
         "--clip-vloss",
         type=lambda x: bool(strtobool(x)),
@@ -166,42 +185,62 @@ def parse_args():
         nargs="?",
         const=True,
         help="toggle the use of clipped value loss",
-    )  # 9 Value loss clipping
+    )
     parser.add_argument(
         "--ent-coef",
         type=float,
         default=0.01,
-        help="coefficient for the entropy (loss), 0 = disabled",
-    )  # 10 entropy loss
-    parser.add_argument(
-        "--vf-coef", type=float, default=0.5, help="coefficient for the value function"
+        help="multiplicative weight for the entropy (loss), 0 = disabled",
     )
     parser.add_argument(
-        "--max-grad-norm", type=float, default=0.5, help="maximum norm for the gradient clipping"
-    )  # 11 global gradient clipping
+        "--vf-coef", type=float, default=0.5, help="multiplicative weight for the value function"
+    )
     parser.add_argument(
-        "--target-kl", type=float, default=None, help="the target KL divergence threshhold (0.015)"
-    )  # target KL early stopping
+        "--max-grad-norm",
+        type=float,
+        default=0.5,
+        help="maximum norm for the global gradient clipping",
+    )
 
     parser.add_argument(
         "--actor-hidden-layer-nodes",
         type=int,
         default=64,
-        help="number of nodes of the 2 hidden layers of the actor",
+        help="number of nodes for all hidden layers of the actor",
     )
+
+    parser.add_argument(
+        "--two-actor-hidden-layers",
+        type=lambda x: bool(strtobool(x)),
+        default=True,
+        nargs="?",
+        const=True,
+        help="toggle the use of two hidden layers for the actor",
+    )
+
     parser.add_argument(
         "--critic-hidden-layer-nodes",
         type=int,
         default=64,
-        help="number of nodes of the 2 hidden layers of the critic",
+        help="number of nodes for all hidden layers of the critic",
     )
+
+    parser.add_argument(
+        "--two-critic-hidden-layers",
+        type=lambda x: bool(strtobool(x)),
+        default=True,
+        nargs="?",
+        const=True,
+        help="toggle the use of two hidden layers for the critic",
+    )
+
     parser.add_argument(
         "--quantum-actor",
         type=lambda x: bool(strtobool(x)),
         default=True,
         nargs="?",
         const=True,
-        help="if True quantum actor will be used",
+        help="if True a VQC will be used as actor",
     )
     parser.add_argument(
         "--quantum-critic",
@@ -209,20 +248,20 @@ def parse_args():
         default=False,
         nargs="?",
         const=True,
-        help="if True quantum critic will be used",
+        help="if True a VQC will be used as critic",
     )
     parser.add_argument("--n-qubits", type=int, default=4, help="number of qubits of the circuit")
     parser.add_argument(
         "--n-var-layers",
         type=int,
         default=2,
-        help="gives the number of variational layers in case of the simple circuit",
+        help="gives the number of variational layers",
     )
     parser.add_argument(
         "--n-enc-layers",
         type=int,
         default=1,
-        help="gives the the number of encodeing layers in case of data reuploading (then the number of variational layers equals the number of encodeing layers + 1)",
+        help="gives the the number of encodeing layers",
     )
     parser.add_argument(
         "--circuit",
@@ -245,7 +284,7 @@ def parse_args():
         default=True,
         nargs="?",
         const=True,
-        help="toggle output scaleing",
+        help="if true onely one parameter is used for output scaleing, else one for every action",
     )
     parser.add_argument(
         "--hybrid",
@@ -261,34 +300,34 @@ def parse_args():
         default=False,
         nargs="?",
         const=False,
-        help="continue learning from checkpoint",
+        help="continue learning from checkpoint (a checkpoint wizh the same exp_name has to exist for this to work, stored args are used exept total-timesteps)",
     )
     parser.add_argument(
         "--save-location",
         type=str,
         default="qppo-slurm",
-        help="save-location/gym-id/exp-name/seed/ make the save location of the experiment (chkpt-dir)",
+        help="save-location/gym-id/exp-name/seed/ will make the save location of the experiment checkpoint, data and plots",
     )
     parser.add_argument(
         "--save-intervall",
         type=int,
         default=20,
-        help="gives the the save-intervall in number of update epochs",
+        help="gives the the checkpoint save-intervall in number of updates (batchsize = num_steps * num_envs)",
     )
-    parser.add_argument(
-        "--scheduled-output-scaleing",
-        type=lambda x: bool(strtobool(x)),
-        default=False,
-        nargs="?",
-        const=True,
-        help="toggle scheduled output scaleing or trainable output scaleing",
-    )
-    parser.add_argument(
-        "--sced-out-scale-fac",
-        type=float,
-        default=2.0,
-        help="value output scaleing is increased with every/over 100000 steps",
-    )
+    # parser.add_argument(
+    #    "--scheduled-output-scaleing",
+    #    type=lambda x: bool(strtobool(x)),
+    #    default=False,
+    #    nargs="?",
+    #    const=True,
+    #    help="toggle scheduled output scaleing or trainable output scaleing",
+    # )
+    # parser.add_argument(
+    #    "--sced-out-scale-fac",
+    #    type=float,
+    #    default=2.0,
+    #    help="value output scaleing is increased with every/over 100000 steps",
+    # )
     parser.add_argument(
         "--random-baseline",
         type=lambda x: bool(strtobool(x)),
@@ -321,13 +360,6 @@ def parse_args():
         type=str,
         default="random",
         help="the parameter initialisation that is to be used, can be one of:  random / random_clipped / gauss_distribution / allsmall / allmid / allbig",
-    )
-
-    parser.add_argument(
-        "--weight-remapping",
-        type=str,
-        default="tanh",
-        help="the weight-remapping that is to be used, can be one of:  none / clipped / pos_clipped / tanh / double_tanh / pos_tanh",
     )
 
     args = parser.parse_args()

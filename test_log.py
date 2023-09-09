@@ -915,9 +915,14 @@ exp_names = [
     "CP-ppo-ac-NN(6,6)-(lr=1.0e-5)-(86-params)",
     "CP-ppo-ac-NN(6,6)-(lr=1.0e-4)-(86-params)",
     "CP-ppo-ac-NN(6,6)-(lr=1.0e-3)-(86-params)",
+    "CP-ppo-ac-NN(6,6)-(lr=2.5e-3)-(86-params)",
     "CP-ppo-ac-NN(6,6)-(lr=0.5e-2)-(86-params)",
     "CP-ppo-ac-NN(6,6)-(lr=1.0e-2)-(86-params)",
     "CP-ppo-ac-NN(6,6)-(lr=2.5e-2)-(86-params)",
+    "CP-ppo-ac-NN(5,5)-(lr=1.0e-3)-(67-params)",
+    "CP-ppo-ac-NN(5,5)-(lr=2.5e-3)-(67-params)",
+    "CP-ppo-ac-NN(7,7)-(lr=1.0e-3)-(107-params)",
+    "CP-ppo-ac-NN(7,7)-(lr=2.5e-3)-(107-params)",
 ]
 seeds = [10, 20, 30, 40, 50]
 stepsize = 4 * 128 * 8

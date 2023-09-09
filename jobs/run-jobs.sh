@@ -5,31 +5,22 @@
 #          "Hgog" / "Hgog_reuploading" / "Hgog_reuploading_with_output_scaleing" /
 #          "Jerbi-no-reuploading-no-input-scaleing" / "Jerbi-reuploading-no-input-scaleing" / "Jerbi-reuploading"
 
-
-
-name7="CP-ppo-ac-NN(5,5)-(lr=2.5e-3)-(67-params)"
-name8="CP-ppo-ac-NN(6,6)-(lr=2.5e-3)-(86-params)"
-name9="CP-ppo-ac-NN(7,7)-(lr=2.5e-3)-(107-params)"
-name10="CP-ppo-ac-NN(5,5)-(lr=1.0e-3)-(67-params)"
-name11="CP-ppo-ac-NN(7,7)-(lr=1.0e-3)-(107-params)"
-
+name4="FL-qppo-ac-simple_reuploading-exp_sced-output_scaleing-1param-1e-3-altFLenvforBIAStest-(73-params)"
+name5="FL-qppo-ac-simple_reuploading-exp_sced-output_scaleing-4params-1e-3-altFLenvforBIAStest-(76-params)"
 
 start_seed=10
 seed_step=10
 end_seed=50
-envs=("CartPole-v1") 
-timesteps=500000
+envs=("Deterministic-ShortestPath-4x4-FrozenLake-v0-alt") 
+timesteps=150000
 
-circuits=("classic_NN_6-6")
+circuits=("simple_reuploading")
 
 for env in ${envs[@]}; do
     for circuit in ${circuits[@]}; do
         for seed in $(seq $start_seed $seed_step $end_seed); do
-            sbatch --job-name="run-$env-$name7-$seed" jobs/job.sh  --exp-name $name7  --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-3 --qlearning-rate 0 --n-qubits 0 --n-var-layers 0 --n-enc-layers 0 --actor-hidden-layer-nodes 5 --critic-hidden-layer-nodes 64 --quantum-actor False --load-chkpt False
-            sbatch --job-name="run-$env-$name8-$seed" jobs/job.sh  --exp-name $name8  --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-3 --qlearning-rate 0 --n-qubits 0 --n-var-layers 0 --n-enc-layers 0 --actor-hidden-layer-nodes 6 --critic-hidden-layer-nodes 64 --quantum-actor False --load-chkpt False
-            sbatch --job-name="run-$env-$name9-$seed" jobs/job.sh  --exp-name $name9  --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-3 --qlearning-rate 0 --n-qubits 0 --n-var-layers 0 --n-enc-layers 0 --actor-hidden-layer-nodes 7 --critic-hidden-layer-nodes 64 --quantum-actor False --load-chkpt False
-            sbatch --job-name="run-$env-$name10-$seed" jobs/job.sh --exp-name $name10 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 1.0e-3 --qlearning-rate 0 --n-qubits 0 --n-var-layers 0 --n-enc-layers 0 --actor-hidden-layer-nodes 5 --critic-hidden-layer-nodes 64 --quantum-actor False --load-chkpt False
-            sbatch --job-name="run-$env-$name11-$seed" jobs/job.sh --exp-name $name11 --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 1.0e-3 --qlearning-rate 0 --n-qubits 0 --n-var-layers 0 --n-enc-layers 0 --actor-hidden-layer-nodes 7 --critic-hidden-layer-nodes 64 --quantum-actor False --load-chkpt False
+            sbatch --job-name="run-$env-$name1-$seed" jobs/job.sh  --exp-name $name1  --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 0.1e-3 --n-qubits 4 --n-var-layers 6 --n-enc-layers 6 --load-chkpt False --exp-qlr-scheduling True  --exp-scheduling-halftime 25000 --exp-scheduling-qlearning-rate 10e-3 --output-scaleing True --output-scaleing-learning-rate 1e-3 --shared-output-scaleing-param True
+            sbatch --job-name="run-$env-$name2-$seed" jobs/job.sh  --exp-name $name2  --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 0.1e-3 --n-qubits 4 --n-var-layers 6 --n-enc-layers 6 --load-chkpt False --exp-qlr-scheduling True  --exp-scheduling-halftime 25000 --exp-scheduling-qlearning-rate 10e-3 --output-scaleing True --output-scaleing-learning-rate 1e-3 --shared-output-scaleing-param False
         done
     done
 done

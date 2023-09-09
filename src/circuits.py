@@ -96,6 +96,7 @@ def simple_reuploading_actor_circuit_with_input_scaleing(layer_params, observati
             args.gym_id == "FrozenLake-v0"
             or args.gym_id == "FrozenLake-v1"
             or args.gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0"
+            or args.gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0-alt"
         ):
             # get 1D input scaleing parameters from 3D array
             for i in range(args.n_qubits):
@@ -182,6 +183,7 @@ def Hgog_reuploading_actor_circuit_with_input_scaleing(layer_params, observation
             args.gym_id == "FrozenLake-v0"
             or args.gym_id == "FrozenLake-v1"
             or args.gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0"
+            or args.gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0-alt"
         ):
             # get 1D input scaleing parameters from 3D array
             for i in range(args.n_qubits):
@@ -240,6 +242,7 @@ def Jerbi_reuploading_actor_circuit(layer_params, observation, act_dim):
             args.gym_id == "FrozenLake-v0"
             or args.gym_id == "FrozenLake-v1"
             or args.gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0"
+            or args.gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0-alt"
         ):
             encodeing_layer(
                 tanh_remapping(layer_params),
@@ -405,6 +408,7 @@ def simple_reuploading_critic_circuit_with_input_scaleing(layer_params, observat
             args.gym_id == "FrozenLake-v0"
             or args.gym_id == "FrozenLake-v1"
             or args.gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0"
+            or args.gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0-alt"
         ):
             for i in range(args.n_qubits):
                 j = args.n_var_layers + math.floor(layer_nr / 3)
@@ -473,6 +477,7 @@ def Hgog_reuploading_critic_circuit_with_input_scaleing(layer_params, observatio
             args.gym_id == "FrozenLake-v0"
             or args.gym_id == "FrozenLake-v1"
             or args.gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0"
+            or args.gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0-alt"
         ):
             for i in range(args.n_qubits):
                 j = args.n_var_layers + math.floor(layer_nr / 3)
@@ -509,6 +514,7 @@ def Jerbi_reuploading_critic_circuit(layer_params, observation):
         args.gym_id == "FrozenLake-v0"
         or args.gym_id == "FrozenLake-v1"
         or args.gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0"
+        or args.gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0-alt"
     ):
         for layer_nr in range(1, 2 * args.n_enc_layers + 1, 2):
             encodeing_layer(

@@ -30,6 +30,7 @@ def trans_obs(observation, single_observation_space_n):
         args.gym_id == "FrozenLake-v0"
         or args.gym_id == "FrozenLake-v1"
         or args.gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0"
+        or args.gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0-alt"
     ):
         trans_obs_ = transform_obs_to_one_hot_encodeing(observation, single_observation_space_n)
     else:
@@ -66,6 +67,7 @@ def normalize_obs(observation):
         args.gym_id == "FrozenLake-v0"
         or args.gym_id == "FrozenLake-v1"
         or args.gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0"
+        or args.gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0-alt"
     ):
         norm_obs = transform_obs_to_binary(observation)
     else:

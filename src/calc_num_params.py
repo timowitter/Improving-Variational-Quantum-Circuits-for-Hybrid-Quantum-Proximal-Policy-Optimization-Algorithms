@@ -54,7 +54,7 @@ def calc_num_actor_params(envs):
         args.circuit == "Jerbi-no-reuploading-no-input-scaleing"
         or args.circuit == "Jerbi-reuploading-no-input-scaleing"
     ):
-        actor_par_count = 2 * args.n_var_layers * args.n_qubits
+        actor_par_count = 2 * (args.n_enc_layers + 1) * args.n_qubits
     elif args.quantum_actor and args.circuit == "Jerbi-reuploading":
         actor_par_count = 2 * (2 * args.n_enc_layers + 1) * args.n_qubits
     elif not args.quantum_actor:
@@ -124,7 +124,7 @@ def calc_num_critic_params(envs):
         args.circuit == "Jerbi-no-reuploading-no-input-scaleing"
         or args.circuit == "Jerbi-reuploading-no-input-scaleing"
     ):
-        critic_par_count = 2 * args.n_var_layers * args.n_qubits
+        actor_par_count = 2 * (args.n_enc_layers + 1) * args.n_qubits
     elif args.quantum_critic and args.circuit == "Jerbi-reuploading":
         critic_par_count = 2 * (2 * args.n_enc_layers + 1) * args.n_qubits
     elif not args.quantum_critic:
@@ -196,7 +196,7 @@ def manually_calc_num_params(
         circuit == "Jerbi-no-reuploading-no-input-scaleing"
         or circuit == "Jerbi-reuploading-no-input-scaleing"
     ):
-        actor_par_count = 2 * n_var_layers * n_qubits
+        actor_par_count = 2 * (n_enc_layers + 1) * n_qubits
     elif quantum and circuit == "Jerbi-reuploading":
         actor_par_count = 2 * (2 * n_enc_layers + 1) * n_qubits
     elif not quantum:

@@ -136,7 +136,7 @@ def Hgog_layer(layer_params, layer_nr):
 
     for i in range(args.n_qubits - 1):
         qml.CNOT(wires=[i, i + 1])
-    # qml.CNOT(wires=[args.n_qubits-1, 0])
+    qml.CNOT(wires=[args.n_qubits - 1, 0])
 
 
 # Variational Quantum Policy Circuit (Actor)
@@ -216,10 +216,14 @@ def variational_layer(layer_params, layer_nr):
     for i in range(args.n_qubits):
         qml.RZ(layer_params[i, layer_nr, 0], wires=i)
         qml.RY(layer_params[i, layer_nr, 1], wires=i)
-
     for i in range(args.n_qubits - 1):
-        qml.CNOT(wires=[i, i + 1])
-    qml.CNOT(wires=[args.n_qubits - 1, 0])
+        qml.CZ(wires=[i, i + 1])
+    if args.n_qubits != 2:
+        qml.CZ(wires=[args.n_qubits - 1, 0])
+
+    # for i in range(args.n_qubits - 1):
+    #    qml.CNOT(wires=[i, i + 1])
+    # qml.CNOT(wires=[args.n_qubits - 1, 0])
 
 
 def encodeing_layer(encodeing_params, layer_nr, state_vector):

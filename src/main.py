@@ -316,6 +316,7 @@ if __name__ == "__main__":
                     abs_cart_velocity = np.abs(next_ob[1])
                     abs_pole_velocity = np.abs(next_ob[3])
 
+                    """
                     print(
                         "abs_cart_velocity",
                         abs_cart_velocity,
@@ -331,17 +332,18 @@ if __name__ == "__main__":
                         args.circuit,
                         "args.seed",
                         args.seed,
-                    )
+                    )"""
 
-                    save_results.append_insider_info(
-                        abs_cart_velocity,
-                        abs_pole_velocity,
-                        global_step,
-                        args.gym_id,
-                        args.exp_name,
-                        args.circuit,
-                        args.seed,
-                    )
+                    for i in range(args.num_envs):
+                        save_results.append_insider_info(
+                            abs_cart_velocity[i],
+                            abs_pole_velocity[i],
+                            global_step,
+                            args.gym_id,
+                            args.exp_name,
+                            args.circuit,
+                            args.seed,
+                        )
                 else:
                     raise NotImplementedError()
 

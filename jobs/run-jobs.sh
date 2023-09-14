@@ -6,10 +6,9 @@
 #          "Jerbi-no-reuploading-no-input-scaleing" / "Jerbi-reuploading-no-input-scaleing" / "Jerbi-reuploading"
 
 
-name1="FL-qppo-ac-NN(4,4)-(lr=1.0e-4)-altFLenvforBIAStest-(108-params)"
-name2="FL-qppo-ac-NN(4,4)-(lr=1.0e-3)-altFLenvforBIAStest-(108-params)"
-name3="FL-qppo-ac-NN(4,4)-(lr=1.0e-2)-altFLenvforBIAStest-(108-params)"
-
+name1="FL-alt-qppo-ac-NN(4,4)-(lr=1.0e-4)-(108-params)"
+name2="FL-alt-qppo-ac-NN(4,4)-(lr=1.0e-3)-(108-params)"
+name3="FL-alt-qppo-ac-NN(4,4)-(lr=1.0e-2)-(108-params)"
 
 
 start_seed=10

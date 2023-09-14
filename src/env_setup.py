@@ -14,8 +14,8 @@ register(
 register(
     id="Deterministic-ShortestPath-4x4-FrozenLake-v0-alt",  # name given to this new environment
     entry_point="ShortestPathFrozenLake:ShortestPathFrozenLake",  # env entry point
-    kwargs={"desc": ["SFFF", "HHFF", "FGHF", "FFFF"], "map_name": "4x4", "is_slippery": False},
-)
+    kwargs={"desc": ["FSFF", "HFFF", "GHFF", "FFFF"], "map_name": "4x4", "is_slippery": False},
+)  # ["SFFF", "HHFF", "FGHF", "FFFF"]
 # register(
 #     id='Deterministic-4x4-FrozenLake-v0', # name given to this new environment
 #     entry_point='gym.envs.toy_text.frozen_lake:FrozenLakeEnv', # env entry point

@@ -315,6 +315,24 @@ if __name__ == "__main__":
                 if args.gym_id == "CartPole-v0" or args.gym_id == "CartPole-v1":
                     abs_cart_velocity = np.abs(next_ob[1])
                     abs_pole_velocity = np.abs(next_ob[3])
+
+                    print(
+                        "abs_cart_velocity",
+                        abs_cart_velocity,
+                        "abs_pole_velocity",
+                        abs_pole_velocity,
+                        "global_step",
+                        global_step,
+                        "args.gym_id",
+                        args.gym_id,
+                        "args.exp_name",
+                        args.exp_name,
+                        "args.circuit",
+                        args.circuit,
+                        "args.seed",
+                        args.seed,
+                    )
+
                     save_results.append_insider_info(
                         abs_cart_velocity,
                         abs_pole_velocity,

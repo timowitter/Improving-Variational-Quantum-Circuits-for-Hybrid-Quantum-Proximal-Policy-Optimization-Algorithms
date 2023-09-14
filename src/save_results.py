@@ -5,12 +5,13 @@ import torch.nn as nn
 
 
 class Save_results(nn.Module):
-    def __init__(self, results_dir, load_chkpt, record_grads):
+    def __init__(self, results_dir, load_chkpt, record_grads, record_insider_info):
         super(Save_results, self).__init__()
         self.results_dir = results_dir
         self.df_episode_exists = False
         self.df_update_exists = False
         self.df_gradient_exists = False
+        self.df_insider_info_exists = False
         file_pathExists = os.path.exists(self.results_dir)
         if not file_pathExists:
             os.makedirs(self.results_dir)
@@ -32,6 +33,12 @@ class Save_results(nn.Module):
                         print("ERROR gradient_results.csv can not be found")
                     self.df_gradient = pd.read_csv(self.results_dir + "/gradient_results.csv")
                     self.df_gradient_exists = True
+                if record_insider_info:
+                    df_pathExists4 = os.path.exists(self.results_dir + "/insider_info.csv")
+                    if not df_pathExists4:
+                        print("ERROR insider_info.csv can not be found")
+                    self.df_insider_info = pd.read_csv(self.results_dir + "/insider_info.csv")
+                    self.df_insider_info_exists = True
 
     def append_episode_results(
         self, episode_reward, episode_length, global_step, gym_id, exp_name, circuit, seed
@@ -136,6 +143,34 @@ class Save_results(nn.Module):
         else:
             self.df_gradient = pd.concat([self.df_gradient, df], ignore_index=True)
 
+    def append_insider_info(
+        self,
+        abs_cart_velocity,
+        abs_pole_velocity,
+        global_step,
+        gym_id,
+        exp_name,
+        circuit,
+        seed,
+    ):
+        insider_info = {
+            "abs_cart_velocity": abs_cart_velocity,
+            "abs_pole_velocity": abs_pole_velocity,
+            "global_step": global_step,
+            "gym_id": gym_id,
+            "exp_name": exp_name,
+            "circuit": circuit,
+            "seed": seed,
+        }
+
+        df = pd.DataFrame(data=insider_info, index=[0])
+
+        if not self.df_insider_info_exists:
+            self.df_insider_info = df
+            self.df_insider_info_exists = True
+        else:
+            self.df_insider_info = pd.concat([self.df_insider_info, df], ignore_index=True)
+
     def save_results(self):
         if self.df_episode_exists:
             self.df_episode.to_csv(
@@ -148,4 +183,8 @@ class Save_results(nn.Module):
         if self.df_gradient_exists:
             self.df_gradient.to_csv(
                 self.results_dir + "/gradient_results.csv", sep=",", encoding="utf-8", index=False
+            )
+        if self.df_insider_info_exists:
+            self.df_insider_info.to_csv(
+                self.results_dir + "/insider_info.csv", sep=",", encoding="utf-8", index=False
             )

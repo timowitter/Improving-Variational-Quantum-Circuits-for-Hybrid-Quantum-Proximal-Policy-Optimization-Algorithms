@@ -869,3 +869,87 @@ def plot_actor_gradients_var_by_exp_name(data, dir, smoothing_fac=0.6):
 
 
 # test if smoothing is seed/ exp_name specific
+
+
+def plot_abs_cart_velocity_by_seed(data, dir):
+    sns.relplot(
+        data=data,
+        kind="scatter",
+        x="global_step",
+        y="[abs_cart_velocity, abs_cart_velocity_mean]",
+        col="exp_name",
+        hue="seed",
+        # style="seed",
+    )
+    plot_dir = os.path.join(dir, "episode_reward_by_seed.png")
+    plt.savefig(plot_dir)
+    plt.close()
+
+
+def plot_abs_pole_velocity_by_seed(data, dir):
+    sns.relplot(
+        data=data,
+        kind="scatter",
+        x="global_step",
+        y="[abs_pole_velocity, abs_pole_velocity_mean]",
+        col="exp_name",
+        hue="seed",
+        # style="seed",
+    )
+    plot_dir = os.path.join(dir, "episode_reward_by_seed.png")
+    plt.savefig(plot_dir)
+    plt.close()
+
+
+def plot_avg_abs_cart_velocity_by_exp_name(abs_cart_velocity, dir):
+    sns.relplot(
+        data=abs_cart_velocity,
+        kind="line",
+        x="global_step",
+        y="abs_cart_velocity_mean",
+        col="gym_id",
+        hue="exp_name",
+        # style="exp_name",
+    )
+    plot_dir = os.path.join(dir, "episode_reward_by_exp_name.png")
+    plt.savefig(plot_dir)
+    plt.close()
+
+
+def plot_insider_by_seed(data, dir):
+    data["abs_cart_velocity_mean"] = data.groupby(["exp_name", "seed", "global_step"], sort=False)[
+        "abs_cart_velocity"
+    ].transform("mean")
+
+    data["abs_pole_velocity_mean"] = data.groupby(["exp_name", "seed", "global_step"], sort=False)[
+        "abs_pole_velocity"
+    ].transform("mean")
+
+    plot_abs_cart_velocity_by_seed(data, dir)
+    plot_abs_pole_velocity_by_seed(data, dir)
+
+
+def plot_insider_info(info_dir, plot_dir, gym_id, exp_names, seeds, max_steps):
+    # get all result directories
+    info_dirs = []
+    dir_seeds = []
+    dir_exp_names = []
+    for exp_name in exp_names:
+        for seed in seeds:
+            info_dirs.append(info_dir + "/" + gym_id + "/" + exp_name + "/" + str(seed))
+            dir_seeds.append(seed)
+            dir_exp_names.append(exp_name)
+
+    # load dataframes
+    df_list = [pd.read_csv(os.path.join(loc, "insider_info.csv")) for loc in info_dirs]
+
+    # concat dataframes
+    data = pd.concat(df_list, ignore_index=True)
+    data.drop(data[data["global_step"] > max_steps].index, inplace=True)
+
+    # check if plot_dir exists
+    pathExists = os.path.exists(plot_dir)
+    if not pathExists:
+        os.makedirs(plot_dir)
+
+    plot_insider_by_seed(data, plot_dir)

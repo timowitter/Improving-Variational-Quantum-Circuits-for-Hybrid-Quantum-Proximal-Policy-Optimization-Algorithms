@@ -69,7 +69,9 @@ if __name__ == "__main__":
     assert isinstance(
         envs.single_action_space, gym.spaces.Discrete
     ), "onely discrete action spaces supported"
-    save_results = Save_results(args.results_dir, args.load_chkpt, args.record_grads)
+    save_results = Save_results(
+        args.results_dir, args.load_chkpt, args.record_grads, args.record_insider_info
+    )
 
     actor_par_count = calc_num_actor_params(envs)
     critic_par_count = calc_num_critic_params(envs)
@@ -128,6 +130,7 @@ if __name__ == "__main__":
     critic_circuit = critic_circuit_selection()
 
     optimizer1 = optim.Adam(agent.parameters(), lr=args.learning_rate, eps=1e-5)
+    # agent.actor.parameters(), agent.critic.parameters(), agent.hybrid.parameters()
     if args.quantum_actor:  # 3 Different Adams epsylon
         optimizer2 = optim.Adam([actor_layer_params], lr=args.qlearning_rate, eps=1e-5)
     if (
@@ -303,10 +306,27 @@ if __name__ == "__main__":
                 logprobs[step, i] = logprob
 
             # Env step
-            # print("envs.step(actions[step].cpu().numpy())", envs.step(actions[step].cpu().numpy()))
             next_ob, reward, terminated, truncated, info = envs.step(
                 actions[step].cpu().numpy()
             )  # np.asarray(x, dtype = 'int')   #
+
+            # record insider information for insider rescaleing
+            if args.record_insider_info:
+                if args.gym_id == "CartPole-v0" or args.gym_id == "CartPole-v1":
+                    abs_cart_velocity = np.abs(next_ob[1])
+                    abs_pole_velocity = np.abs(next_ob[3])
+                    save_results.append_insider_info(
+                        abs_cart_velocity,
+                        abs_pole_velocity,
+                        global_step,
+                        args.gym_id,
+                        args.exp_name,
+                        args.circuit,
+                        args.seed,
+                    )
+                else:
+                    raise NotImplementedError()
+
             rewards[step] = torch.tensor(reward).view(-1)
             done = torch.logical_or(torch.Tensor(terminated), torch.Tensor(truncated))
             next_obs, next_done = torch.Tensor(next_ob), done

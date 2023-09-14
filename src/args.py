@@ -353,7 +353,7 @@ def parse_args():
         default=True,
         nargs="?",
         const=True,
-        help="toggle clip circuit gradient norm",
+        help="toggle clipping of circuit gradient norm",
     )
 
     parser.add_argument(
@@ -362,7 +362,16 @@ def parse_args():
         default=False,
         nargs="?",
         const=True,
-        help="toggle clip circuit gradient norm",
+        help="toggle recording of gradient mean and std",
+    )
+
+    parser.add_argument(
+        "--record-insider-info",
+        type=lambda x: bool(strtobool(x)),
+        default=False,
+        nargs="?",
+        const=True,
+        help="toggle recording of insider Information for insider rescaleing",
     )
 
     parser.add_argument(

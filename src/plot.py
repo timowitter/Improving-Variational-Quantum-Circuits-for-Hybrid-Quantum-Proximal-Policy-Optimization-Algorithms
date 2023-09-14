@@ -876,12 +876,11 @@ def plot_abs_cart_velocity_by_seed(data, dir):
         data=data,
         kind="scatter",
         x="global_step",
-        y="[abs_cart_velocity, abs_cart_velocity_mean]",
+        y="abs_cart_velocity",
         col="exp_name",
         hue="seed",
-        # style="seed",
     )
-    plot_dir = os.path.join(dir, "episode_reward_by_seed.png")
+    plot_dir = os.path.join(dir, "abs_cart_velocity_by_seed.png")
     plt.savefig(plot_dir)
     plt.close()
 
@@ -891,42 +890,63 @@ def plot_abs_pole_velocity_by_seed(data, dir):
         data=data,
         kind="scatter",
         x="global_step",
-        y="[abs_pole_velocity, abs_pole_velocity_mean]",
+        y="abs_pole_velocity",
         col="exp_name",
         hue="seed",
-        # style="seed",
     )
-    plot_dir = os.path.join(dir, "episode_reward_by_seed.png")
+    plot_dir = os.path.join(dir, "abs_pole_velocity_by_seed.png")
     plt.savefig(plot_dir)
     plt.close()
 
 
-def plot_avg_abs_cart_velocity_by_exp_name(abs_cart_velocity, dir):
+def plot_abs_cart_velocity_mean(data, dir):
     sns.relplot(
-        data=abs_cart_velocity,
+        data=data,
         kind="line",
         x="global_step",
-        y="abs_cart_velocity_mean",
+        y="abs_cart_velocity_mean_emw",
         col="gym_id",
         hue="exp_name",
-        # style="exp_name",
+        errorbar="sd",
     )
-    plot_dir = os.path.join(dir, "episode_reward_by_exp_name.png")
+    plot_dir = os.path.join(dir, "abs_cart_velocity_mean.png")
+    plt.savefig(plot_dir)
+    plt.close()
+
+
+def plot_abs_pole_velocity_mean(data, dir):
+    sns.relplot(
+        data=data,
+        kind="line",
+        x="global_step",
+        y="abs_pole_velocity_mean_emw",
+        col="gym_id",
+        hue="exp_name",
+        errorbar="sd",
+    )
+    plot_dir = os.path.join(dir, "abs_pole_velocity_mean.png")
     plt.savefig(plot_dir)
     plt.close()
 
 
 def plot_insider_by_seed(data, dir):
-    data["abs_cart_velocity_mean"] = data.groupby(["exp_name", "seed", "global_step"], sort=False)[
+    data["abs_cart_velocity_mean"] = data.groupby(["exp_name", "global_step"], sort=False)[
         "abs_cart_velocity"
     ].transform("mean")
 
-    data["abs_pole_velocity_mean"] = data.groupby(["exp_name", "seed", "global_step"], sort=False)[
+    data["abs_cart_velocity_mean_emw"] = data["abs_cart_velocity_mean"].ewm(alpha=0.6).mean()
+
+    data["abs_pole_velocity_mean"] = data.groupby(["exp_name", "global_step"], sort=False)[
         "abs_pole_velocity"
     ].transform("mean")
 
+    data["abs_pole_velocity_mean_emw"] = data["abs_pole_velocity_mean"].ewm(alpha=0.6).mean()
+
+    #
     plot_abs_cart_velocity_by_seed(data, dir)
     plot_abs_pole_velocity_by_seed(data, dir)
+    plot_abs_cart_velocity_mean(data, dir)
+    plot_abs_pole_velocity_mean(data, dir)
 
 
 def plot_insider_info(info_dir, plot_dir, gym_id, exp_names, seeds, max_steps):

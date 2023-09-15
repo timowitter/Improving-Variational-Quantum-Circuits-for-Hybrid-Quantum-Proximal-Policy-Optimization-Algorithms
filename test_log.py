@@ -877,25 +877,12 @@ plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_ste
 
 
 
-
-
-plot_dir = plots_dir + "/FL-actor-Test-1c-output-scaleing-in-alternate-Frozen-Lake-Environment"
-gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
+plot_dir = plots_dir + "/FL-actor-Test-1c-output-scaleing-in-alternate-Frozen-Lake-Environment-2"
+gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0-alt"
 exp_names = [
     "FL-qppo-ac-simple_reuploading-exp_sced-output_scaleing-1param-1e-2-altFLenvforBIAStest-(73-params)",
     "FL-qppo-ac-simple_reuploading-exp_sced-output_scaleing-4params-5e-2-altFLenvforBIAStest-(76-params)",
     "FL-qppo-ac-simple_reuploading-exp_sced-output_scaleing-4params-1e-2-altFLenvforBIAStest-(76-params)",
-]
-seeds = [10, 20, 30, 40, 50]
-stepsize = 4 * 128 * 8
-max_steps = 150000
-
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
-
-
-plot_dir = plots_dir + "/FL-actor-Test-1c-output-scaleing-in-alternate-Frozen-Lake-Environment-2"
-gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0-alt"
-exp_names = [
     "FL-qppo-ac-simple_reuploading-exp_sced-output_scaleing-1param-1e-3-altFLenvforBIAStest-(73-params)",
     "FL-qppo-ac-simple_reuploading-exp_sced-output_scaleing-4params-1e-3-altFLenvforBIAStest-(76-params)",
 ]
@@ -925,6 +912,18 @@ plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_ste
 #    "FL-qppo-ac-NN(4,4)-(lr=1.0e-3)-altFLenvforBIAStest-(108-params)",
 #    "FL-qppo-ac-NN(4,4)-(lr=1.0e-2)-altFLenvforBIAStest-(108-params)",
 
+plot_dir = plots_dir + "/FL-actor-Test-1c-output-scaleing-in-alternate-Frozen-Lake-Environment"
+gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0-alt"
+exp_names = [
+    "FL-alt-qppo-ac-simple_reuploading-exp_sced-output_scaleing-1param-1e-2-(73-params)",
+    "FL-alt-qppo-ac-simple_reuploading-exp_sced-output_scaleing-4params-1e-2-(76-params)",
+    "FL-alt-qppo-ac-simple_reuploading-exp_sced-output_scaleing-4params-5e-2-(76-params)",
+    "FL-alt-qppo-ac-NN(4,4)-(lr=1.0e-2)-(108-params)",
+]
+seeds = [10, 20, 30, 40, 50]
+stepsize = 4 * 128 * 8
+max_steps = 150000
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
 
 """
 
@@ -958,6 +957,7 @@ max_steps = 50000
 
 
 plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+
 
 
 
@@ -996,7 +996,7 @@ stepsize = 4 * 128 * 8
 max_steps = 150000
 
 plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
-"""
+
 
 plot_dir = plots_dir + "/CP-actor-Hyperparameter-Test-0b-PPO-lr-NN-size"
 gym_id = "CartPole-v1"
@@ -1024,3 +1024,4 @@ max_steps = 150000
 
 # plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
 plot_insider_info(results_dir, plot_dir, gym_id, exp_names, seeds, max_steps)
+"""

@@ -144,7 +144,7 @@ def parse_args():
         default=False,
         nargs="?",
         const=True,
-        help="exponential leaning rate scheduling for quantum circuits, overrides other scedulings",
+        help="uses insider input rescaleing for cartpole environment if no trainable input rescaleing is used",
     )
 
     parser.add_argument(

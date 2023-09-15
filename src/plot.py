@@ -907,7 +907,8 @@ def plot_abs_cart_velocity_mean(data, dir):
         y="abs_cart_velocity_mean_emw",
         col="gym_id",
         hue="exp_name",
-        errorbar="sd",
+        # errorbar="sd",
+        # err_style='band',
     )
     plot_dir = os.path.join(dir, "abs_cart_velocity_mean.png")
     plt.savefig(plot_dir)
@@ -922,7 +923,8 @@ def plot_abs_pole_velocity_mean(data, dir):
         y="abs_pole_velocity_mean_emw",
         col="gym_id",
         hue="exp_name",
-        errorbar="sd",
+        # errorbar="sd",
+        # err_style='band',
     )
     plot_dir = os.path.join(dir, "abs_pole_velocity_mean.png")
     plt.savefig(plot_dir)
@@ -941,6 +943,18 @@ def plot_insider_by_seed(data, dir):
     ].transform("mean")
 
     data["abs_pole_velocity_mean_emw"] = data["abs_pole_velocity_mean"].ewm(alpha=0.6).mean()
+
+    avg_abs_cart_velocity = data.groupby(["exp_name"], sort=False)["abs_cart_velocity"].transform(
+        "mean"
+    )
+
+    print(avg_abs_cart_velocity)
+
+    avg_abs_pole_velocity = data.groupby(["exp_name"], sort=False)["abs_pole_velocity"].transform(
+        "mean"
+    )
+
+    print(avg_abs_pole_velocity)
 
     #
     plot_abs_cart_velocity_by_seed(data, dir)

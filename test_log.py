@@ -911,7 +911,7 @@ plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_ste
 #    "FL-qppo-ac-NN(4,4)-(lr=1.0e-4)-altFLenvforBIAStest-(108-params)",
 #    "FL-qppo-ac-NN(4,4)-(lr=1.0e-3)-altFLenvforBIAStest-(108-params)",
 #    "FL-qppo-ac-NN(4,4)-(lr=1.0e-2)-altFLenvforBIAStest-(108-params)",
-
+"""
 plot_dir = plots_dir + "/FL-actor-Test-1c-output-scaleing-in-alternate-Frozen-Lake-Environment"
 gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0-alt"
 exp_names = [
@@ -925,7 +925,7 @@ stepsize = 4 * 128 * 8
 max_steps = 150000
 plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
 
-"""
+
 
 plot_dir = plots_dir + "/FL-actor-Test-2-reuploading"
 gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
@@ -1025,3 +1025,21 @@ max_steps = 150000
 # plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
 plot_insider_info(results_dir, plot_dir, gym_id, exp_names, seeds, max_steps)
 """
+
+
+plot_dir = plots_dir + "/CP-actor-Hyperparameter-Test-1-qlr"
+gym_id = "CartPole-v1"
+exp_names = [
+    "CP-qppo-ac-simple_reuploading-exp_sced-ht15000-start-qlr1e-2-end-qlr1e-4-(72-params)",
+    "CP-qppo-ac-simple_reuploading-exp_sced-ht25000-start-qlr1e-2-end-qlr1e-4-(72-params)",
+    "CP-qppo-ac-simple_reuploading-exp_sced-ht35000-start-qlr1e-2-end-qlr1e-4-(72-params)",
+    "CP-qppo-ac-simple_reuploading-qlr2.5e-3-(72-params)",
+    "CP-qppo-ac-simple_reuploading-qlr1.0e-2-(72-params)",
+    "CP-random-baseline-(0-params)",
+    "CP-ppo-ac-NN(6,6)-(lr=1.0e-3)-(86-params)",
+]
+seeds = [10, 20, 30]
+stepsize = 4 * 128 * 8
+max_steps = 150000
+
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)

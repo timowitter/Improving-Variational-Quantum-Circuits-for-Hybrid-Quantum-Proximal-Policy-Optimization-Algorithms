@@ -56,12 +56,12 @@ def make_env(gym_id, seed, env_num, num_envs, chkpt_dir, load_chkpt, store_envs)
         if load_chkpt and store_envs.restore_envs[env_num]:
             env.reset()
             store_envs.load_envs(chkpt_dir, num_envs)
-            checkpoint_aktions = store_envs.get_storage(env_num)
-            if checkpoint_aktions.size == 1:
-                env.step(int(checkpoint_aktions))
+            checkpoint_actions = store_envs.get_storage(env_num)
+            if checkpoint_actions.size == 1:
+                env.step(int(checkpoint_actions))
             else:
-                for j in range(checkpoint_aktions.size):
-                    env.step(checkpoint_aktions[j])
+                for j in range(checkpoint_actions.size):
+                    env.step(int(checkpoint_actions[j]))
             store_envs.restore_envs[env_num] = False
         return env
 

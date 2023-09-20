@@ -17,7 +17,7 @@ class Store_envs(nn.Module):
     def get_storage(self, i):
         if i == -1:
             return self.np_random_state
-        if i == 0:
+        elif i == 0:
             return self.storage_0
         elif i == 1:
             return self.storage_1
@@ -32,7 +32,7 @@ class Store_envs(nn.Module):
     def set_storage(self, i, x):
         if i == -1:
             self.np_random_state = x
-        if i == 0:
+        elif i == 0:
             self.storage_0 = x
         elif i == 1:
             self.storage_1 = x
@@ -47,7 +47,7 @@ class Store_envs(nn.Module):
     def get_storage_file(self, i, chkpt_dir):
         if i == -1:
             return os.path.join(chkpt_dir, "np_random_state.txt")
-        if i == 0:
+        elif i == 0:
             return os.path.join(chkpt_dir, "envs_0.txt")
         elif i == 1:
             return os.path.join(chkpt_dir, "envs_1.txt")

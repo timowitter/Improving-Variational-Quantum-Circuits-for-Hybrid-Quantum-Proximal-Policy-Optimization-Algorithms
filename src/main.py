@@ -50,7 +50,12 @@ if __name__ == "__main__":
     torch.backends.cudnn.deterministic = args.torch_deterministic
 
     # Setup env
-    store_envs = Store_envs()
+    store_envs = Store_envs(np.random.get_state())
+    if args.load_chkpt:
+        store_envs.load_envs(args.chkpt_dir, args.num_envs)
+        np_random_state = store_envs.get_storage(-1)
+        np.random.set_state(np_random_state)
+
     envs = gym.vector.SyncVectorEnv(
         [
             make_env(
@@ -628,7 +633,9 @@ if __name__ == "__main__":
                 args.circuit,
                 args.seed,
             )
-            store_envs.store_envs(actions, dones, args.num_steps, args.num_envs)
+            store_envs.store_envs(
+                actions, dones, args.num_steps, args.num_envs, np.random.get_state()
+            )
 
             # if save intervall save everything to file
             if update % args.save_intervall == 0:

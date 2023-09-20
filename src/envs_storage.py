@@ -5,8 +5,9 @@ import torch.nn as nn
 
 
 class Store_envs(nn.Module):
-    def __init__(self):
+    def __init__(self, np_random_state):
         super(Store_envs, self).__init__()
+        self.np_random_state = np_random_state
         self.storage_0 = np.array([])
         self.storage_1 = np.array([])
         self.storage_2 = np.array([])
@@ -14,6 +15,8 @@ class Store_envs(nn.Module):
         self.restore_envs = np.array([True, True, True, True])
 
     def get_storage(self, i):
+        if i == -1:
+            return self.np_random_state
         if i == 0:
             return self.storage_0
         elif i == 1:
@@ -27,6 +30,8 @@ class Store_envs(nn.Module):
             raise NotImplementedError()
 
     def set_storage(self, i, x):
+        if i == -1:
+            self.np_random_state = x
         if i == 0:
             self.storage_0 = x
         elif i == 1:
@@ -40,6 +45,8 @@ class Store_envs(nn.Module):
             raise NotImplementedError()
 
     def get_storage_file(self, i, chkpt_dir):
+        if i == -1:
+            return os.path.join(chkpt_dir, "np_random_state.txt")
         if i == 0:
             return os.path.join(chkpt_dir, "envs_0.txt")
         elif i == 1:
@@ -55,26 +62,31 @@ class Store_envs(nn.Module):
     def append_storage(self, i, x):
         self.set_storage(i, np.append(self.get_storage(i), x))
 
-    def store_envs(self, actions, dones, num_steps, num_envs):
+    def store_envs(self, actions, dones, num_steps, num_envs, np_random_state):
         action = actions.cpu().detach().numpy()
         done = dones
+        self.set_storage(-1, np_random_state)
         for j in range(num_steps):
             for i in range(num_envs):
                 if done[j, i] == 1.0:
                     self.set_storage(i, [action[j, i]])
                 else:
                     self.append_storage(i, action[j, i])
-        # print("storage.storage_0", self.storage_0)
-        # print("storage.storage_1", self.storage_1)
-        # print("storage.storage_2", self.storage_2)
-        # print("storage.storage_3", self.storage_3)
 
-    def save_envs(self, chkpt_dir, num_envs):
+    def save_envs(
+        self,
+        chkpt_dir,
+        num_envs,
+    ):
         for i in range(num_envs):
             np.savetxt(
                 self.get_storage_file(i, chkpt_dir), self.get_storage(i), delimiter=" ", fmt="%i"
             )
+        np.savetxt(
+            self.get_storage_file(-1, chkpt_dir), self.get_storage(-1), delimiter=" ", fmt="%i"
+        )
 
     def load_envs(self, chkpt_dir, num_envs):
         for i in range(num_envs):
             self.set_storage(i, np.loadtxt(self.get_storage_file(i, chkpt_dir), delimiter=" "))
+        self.set_storage(-1, np.loadtxt(self.get_storage_file(-1, chkpt_dir), delimiter=" "))

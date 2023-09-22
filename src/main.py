@@ -167,12 +167,21 @@ if __name__ == "__main__":
 
     if args.load_chkpt:
         global_step, next_obs, next_done = save_params.load_state(args.chkpt_dir)
+        if not (
+            args.gym_id == "FrozenLake-v0"
+            or args.gym_id == "FrozenLake-v1"
+            or args.gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0"
+            or args.gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0-alt"
+        ):  # returning to the old env state after restart onely works in Frozen Lake
+            obs_tmp, _ = envs.reset()
+            next_obs = torch.Tensor(obs_tmp)
+            next_done = torch.zeros(args.num_envs)
+
         # updates_remaining = (args.total_timesteps - global_step) // args.batch_size
         done_updates = (global_step) // args.batch_size
     else:
         global_step = 0
         obs_tmp, _ = envs.reset()
-        # print(obs_tmp)
         next_obs = torch.Tensor(obs_tmp)
         next_done = torch.zeros(args.num_envs)
         done_updates = 0

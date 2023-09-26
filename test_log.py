@@ -1098,7 +1098,7 @@ stepsize = 4 * 128 * 8
 max_steps = 150000
 
 plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
-"""
+
 
 plot_dir = plots_dir + "/CP-actor-Hyperparameter-Test-1b-outscale-lr-plot-2"
 gym_id = "CartPole-v1"
@@ -1115,5 +1115,26 @@ exp_names = [
 seeds = [10, 20, 30]
 stepsize = 4 * 128 * 8
 max_steps = 500000
+
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+"""
+
+
+plot_dir = plots_dir + "/CP-actor-Hyperparameter-Test-1b-outscale-lr-plot-3"
+gym_id = "CartPole-v1"
+exp_names = [
+    "CP-qppo-ac-simple_reuploading-qlr2.5e-3-output_scaleing-1param-1e-4-(73-params)",
+    "CP-qppo-ac-simple_reuploading-qlr2.5e-3-output_scaleing-1param-1e-3-(73-params)",
+    "CP-qppo-ac-simple_reuploading-qlr5.0e-3-output_scaleing-1param-1e-3-(73-params)",
+    "CP-qppo-ac-simple_reuploading-qlr1.0e-2-output_scaleing-1param-1e-3-(73-params)",
+    "CP-qppo-ac-simple_reuploading-qlr1.0e-2-output_scaleing-1param-1e-2-(73-params)",
+    "CP-qppo-ac-simple_reuploading-qlr5.0e-2-output_scaleing-1param-1e-3-(73-params)",
+    "CP-qppo-ac-simple_reuploading-qlr5.0e-2-output_scaleing-1param-1e-2-(73-params)",
+    "CP-random-baseline-(0-params)",
+    "CP-ppo-ac-NN(6,6)-(lr=1.0e-3)-(86-params)",
+]
+seeds = [10, 20, 30]
+stepsize = 4 * 128 * 8
+max_steps = 150000
 
 plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)

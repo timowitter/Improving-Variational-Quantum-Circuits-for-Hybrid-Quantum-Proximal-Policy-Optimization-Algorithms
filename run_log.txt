@@ -1465,7 +1465,7 @@ seed_step=10
 end_seed=30
 
 envs=("CartPole-v1") 
-timesteps=500000
+timesteps=150000
 
 circuits=("simple_reuploading")
 for env in ${envs[@]}; do

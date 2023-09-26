@@ -21,17 +21,17 @@ seed_step=10
 end_seed=30
 
 envs=("CartPole-v1") 
-timesteps=150000
+timesteps=500000
 
 circuits=("simple_reuploading")
 for env in ${envs[@]}; do
     for circuit in ${circuits[@]}; do
         for seed in $(seq $start_seed $seed_step $end_seed); do
-            sbatch --job-name="run-$env-$name6-$seed" jobs/job.sh  --exp-name $name6  --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 5.0e-3 --n-qubits 4 --n-var-layers 6 --n-enc-layers 6 --load-chkpt False --exp-qlr-scheduling False --output-scaleing True --output-scaleing-learning-rate 1e-3 --shared-output-scaleing-param True
-            sbatch --job-name="run-$env-$name7-$seed" jobs/job.sh  --exp-name $name7  --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 1.0e-2 --n-qubits 4 --n-var-layers 6 --n-enc-layers 6 --load-chkpt False --exp-qlr-scheduling False --output-scaleing True --output-scaleing-learning-rate 1e-3 --shared-output-scaleing-param True
-            sbatch --job-name="run-$env-$name8-$seed" jobs/job.sh  --exp-name $name8  --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 1.0e-2 --n-qubits 4 --n-var-layers 6 --n-enc-layers 6 --load-chkpt False --exp-qlr-scheduling False --output-scaleing True --output-scaleing-learning-rate 1e-2 --shared-output-scaleing-param True
-            sbatch --job-name="run-$env-$name9-$seed" jobs/job.sh  --exp-name $name9  --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 5.0e-2 --n-qubits 4 --n-var-layers 6 --n-enc-layers 6 --load-chkpt False --exp-qlr-scheduling False --output-scaleing True --output-scaleing-learning-rate 1e-3 --shared-output-scaleing-param True
-            sbatch --job-name="run-$env-$name0-$seed" jobs/job.sh  --exp-name $name0  --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 5.0e-2 --n-qubits 4 --n-var-layers 6 --n-enc-layers 6 --load-chkpt False --exp-qlr-scheduling False --output-scaleing True --output-scaleing-learning-rate 1e-2 --shared-output-scaleing-param True
+            sbatch --job-name="run-$env-$name6-$seed" jobs/job.sh  --exp-name $name6  --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 5.0e-3 --n-qubits 4 --n-var-layers 6 --n-enc-layers 6 --load-chkpt True --exp-qlr-scheduling False --output-scaleing True --output-scaleing-learning-rate 1e-3 --shared-output-scaleing-param True
+            sbatch --job-name="run-$env-$name7-$seed" jobs/job.sh  --exp-name $name7  --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 1.0e-2 --n-qubits 4 --n-var-layers 6 --n-enc-layers 6 --load-chkpt True --exp-qlr-scheduling False --output-scaleing True --output-scaleing-learning-rate 1e-3 --shared-output-scaleing-param True
+            sbatch --job-name="run-$env-$name8-$seed" jobs/job.sh  --exp-name $name8  --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 1.0e-2 --n-qubits 4 --n-var-layers 6 --n-enc-layers 6 --load-chkpt True --exp-qlr-scheduling False --output-scaleing True --output-scaleing-learning-rate 1e-2 --shared-output-scaleing-param True
+            sbatch --job-name="run-$env-$name9-$seed" jobs/job.sh  --exp-name $name9  --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 5.0e-2 --n-qubits 4 --n-var-layers 6 --n-enc-layers 6 --load-chkpt True --exp-qlr-scheduling False --output-scaleing True --output-scaleing-learning-rate 1e-3 --shared-output-scaleing-param True
+            sbatch --job-name="run-$env-$name0-$seed" jobs/job.sh  --exp-name $name0  --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 5.0e-2 --n-qubits 4 --n-var-layers 6 --n-enc-layers 6 --load-chkpt True --exp-qlr-scheduling False --output-scaleing True --output-scaleing-learning-rate 1e-2 --shared-output-scaleing-param True
         done
     done
 done

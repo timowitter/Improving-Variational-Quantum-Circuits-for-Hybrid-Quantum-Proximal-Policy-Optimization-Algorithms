@@ -102,9 +102,18 @@ class Agent(nn.Module):
     def load_classical_network_params(self):
         self.load_state_dict(torch.load(self.checkpoint_file))
 
-    def get_value(self, observation, obs_dim, critic_circuit, critic_layer_params):
+    def get_value(
+        self,
+        observation,
+        obs_dim,
+        critic_circuit,
+        critic_layer_params,
+        critic_input_scaleing_params,
+    ):
         if args.quantum_critic:  # quantum critic
-            crit_tmp = critic_circuit(critic_layer_params, observation)
+            crit_tmp = critic_circuit(
+                critic_layer_params, critic_input_scaleing_params, observation
+            )
 
             if args.hybrid:  # hybrid output rescaleing
                 crit = self.hybrid_critic(crit_tmp.float())
@@ -134,8 +143,10 @@ class Agent(nn.Module):
         observation,
         actor_circuit,
         actor_layer_params,
+        actor_input_scaleing_params,
         critic_circuit,
         critic_layer_params,
+        critic_input_scaleing_params,
         output_scaleing_params,
         obs_dim,
         acts_dim,
@@ -143,7 +154,7 @@ class Agent(nn.Module):
     ):
         if args.quantum_actor:
             logits_uncat = actor_circuit(
-                actor_layer_params, observation, acts_dim
+                actor_layer_params, actor_input_scaleing_params, observation, acts_dim
             )  # logits_uncat is a list, logits needs to be a tensor
 
             if args.hybrid:  # hybrid output postprocessing
@@ -209,7 +220,13 @@ class Agent(nn.Module):
             action,
             logprobs,
             entropy,
-            self.get_value(observation, obs_dim, critic_circuit, critic_layer_params),
+            self.get_value(
+                observation,
+                obs_dim,
+                critic_circuit,
+                critic_layer_params,
+                critic_input_scaleing_params,
+            ),
         )
 
     def get_random_action_and_value(self, acts_dim, action=None):

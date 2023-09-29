@@ -83,7 +83,10 @@ if __name__ == "__main__":
 
     # Declare Quantum Circuit Parameters and agent
     agent = Agent(envs)
-    actor_layer_params = (
+    (
+        actor_layer_params,
+        actor_input_scaleing_params,
+    ) = (
         make_actor_layer_params()
     )  # alternative: layer_params = np.random.normal(0, np.tan(0.5), (args.n_qubits, (2 * args.n_var_layers) + 2, 2))
     if not args.shared_output_scaleing_param:  # and not args.scheduled_output_scaleing
@@ -92,13 +95,16 @@ if __name__ == "__main__":
         )
     else:
         output_scaleing_params = np.ones(1) * args.output_scaleing_start
-    critic_layer_params = make_critic_layer_params()
+    critic_layer_params, critic_input_scaleing_params = make_critic_layer_params()
 
     if args.load_chkpt:  # load Parameters from checkpoint
         if not args.quantum_actor or not args.quantum_critic:
             agent.load_classical_network_params()
         if args.quantum_actor:
             actor_layer_params = save_params.load_actor_circuit_params(args.chkpt_dir)
+            actor_input_scaleing_params = save_params.load_actor_input_scaleing_params(
+                args.chkpt_dir
+            )
         if (
             args.quantum_actor
             and not args.hybrid
@@ -112,8 +118,15 @@ if __name__ == "__main__":
             )
         if args.quantum_critic:
             critic_layer_params = save_params.load_critic_circuit_params(args.chkpt_dir)
+            actor_input_scaleing_params = save_params.load_critic_input_scaleing_params(
+                args.chkpt_dir
+            )
+
     else:  # make existing Parameters trainable
         actor_layer_params = Variable(torch.tensor(actor_layer_params), requires_grad=True)
+        actor_input_scaleing_params = Variable(
+            torch.tensor(actor_input_scaleing_params), requires_grad=True
+        )
         if (
             args.quantum_actor
             and not args.hybrid
@@ -128,25 +141,48 @@ if __name__ == "__main__":
                 torch.tensor(output_scaleing_params), requires_grad=False
             )
         critic_layer_params = Variable(torch.tensor(critic_layer_params), requires_grad=True)
+        critic_input_scaleing_params = Variable(
+            torch.tensor(critic_input_scaleing_params), requires_grad=True
+        )
 
     actor_circuit = actor_circuit_selection()
     critic_circuit = critic_circuit_selection()
 
-    optimizer1 = optim.Adam(agent.parameters(), lr=args.learning_rate, eps=1e-5)
+    agent_optimizer = optim.Adam(agent.parameters(), lr=args.learning_rate, eps=1e-5)
     # agent.actor.parameters(), agent.critic.parameters(), agent.hybrid.parameters()
     if args.quantum_actor:  # 3 Different Adams epsylon
-        optimizer2 = optim.Adam([actor_layer_params], lr=args.qlearning_rate, eps=1e-5)
+        quantum_actor_optimizer = optim.Adam(
+            [actor_layer_params], lr=args.qlearning_rate, eps=1e-5
+        )
     if (
         args.quantum_actor
         and not args.hybrid
         and args.output_scaleing
         # and not args.scheduled_output_scaleing
     ):
-        optimizer3 = optim.Adam(
+        output_scaleing_optimizer = optim.Adam(
             [output_scaleing_params], lr=args.output_scaleing_learning_rate, eps=1e-5
         )
+
     if args.quantum_critic:
-        optimizer4 = optim.Adam([critic_layer_params], lr=args.qlearning_rate, eps=1e-5)
+        quantum_critic_optimizer = optim.Adam(
+            [critic_layer_params], lr=args.qlearning_rate, eps=1e-5
+        )
+
+    if (
+        args.gym_id == "simple_reuploading_with_shared_input_scaleing"
+        or args.gym_id == "simple_reuploading_with_input_scaleing"
+        or args.gym_id == "Hgog_reuploading_with_input_scaleing"
+        or args.gym_id == "Jerbi-reuploading"
+    ):
+        if args.quantum_actor:
+            actor_input_scaleing_optimizer = optim.Adam(
+                [actor_input_scaleing_params], lr=args.input_scaleing_learning_rate, eps=1e-5
+            )
+        if args.quantum_critic:
+            critic_input_scaleing_optimizer = optim.Adam(
+                [critic_input_scaleing_params], lr=args.input_scaleing_learning_rate, eps=1e-5
+            )
 
     # Storage setup
     obs = torch.zeros((args.num_steps, args.num_envs) + envs.single_observation_space.shape)
@@ -279,9 +315,9 @@ if __name__ == "__main__":
         """
         if args.exp_qlr_scheduling:  # or args.sq_qlr_scheduling or args.lin_qlr_scheduling
             if args.quantum_actor:
-                optimizer2.param_groups[0]["lr"] = lrnow_circuit
+                quantum_actor_optimizer.param_groups[0]["lr"] = lrnow_circuit
             if args.quantum_critic:
-                optimizer4.param_groups[0]["lr"] = lrnow_circuit
+                quantum_critic_optimizer.param_groups[0]["lr"] = lrnow_circuit
 
         # if args.output_scaleing and args.scheduled_output_scaleing:
         #    sced_out_scale_bonus = ((global_step) / 100000) * args.sced_out_scale_fac
@@ -307,8 +343,10 @@ if __name__ == "__main__":
                             next_obs[i],
                             actor_circuit,
                             actor_layer_params,
+                            actor_input_scaleing_params,
                             critic_circuit,
                             critic_layer_params,
+                            critic_input_scaleing_params,
                             output_scaleing_params,
                             get_obs_dim(envs.single_observation_space),
                             get_act_dim(envs.single_action_space),
@@ -393,6 +431,7 @@ if __name__ == "__main__":
                         get_obs_dim(envs.single_observation_space),
                         critic_circuit,
                         critic_layer_params,
+                        critic_input_scaleing_params,
                     )
                 next_value = next_value_i.reshape(1, -1)
                 if args.gae:
@@ -453,8 +492,10 @@ if __name__ == "__main__":
                             b_obs[mb_inds[i]],
                             actor_circuit,
                             actor_layer_params,
+                            actor_input_scaleing_params,
                             critic_circuit,
                             critic_layer_params,
+                            critic_input_scaleing_params,
                             output_scaleing_params,
                             get_obs_dim(envs.single_observation_space),
                             get_act_dim(envs.single_action_space),
@@ -512,17 +553,28 @@ if __name__ == "__main__":
                     # Overall loss
                     loss = pg_loss - args.ent_coef * entropy_loss + args.vf_coef * v_loss
 
-                    optimizer1.zero_grad()
+                    agent_optimizer.zero_grad()
                     if args.quantum_actor:
-                        optimizer2.zero_grad()
+                        quantum_actor_optimizer.zero_grad()
                         if (
                             not args.hybrid
                             and args.output_scaleing
                             # and not args.scheduled_output_scaleing
                         ):
-                            optimizer3.zero_grad()
+                            output_scaleing_optimizer.zero_grad()
                     if args.quantum_critic:
-                        optimizer4.zero_grad()
+                        quantum_critic_optimizer.zero_grad()
+                    if (
+                        args.gym_id == "simple_reuploading_with_shared_input_scaleing"
+                        or args.gym_id == "simple_reuploading_with_input_scaleing"
+                        or args.gym_id == "Hgog_reuploading_with_input_scaleing"
+                        or args.gym_id == "Jerbi-reuploading"
+                    ):
+                        if args.quantum_actor:
+                            actor_input_scaleing_optimizer.zero_grad()
+                        if args.quantum_critic:
+                            critic_input_scaleing_optimizer.zero_grad()
+
                     loss.backward()
 
                     # logging of gradients var and mean for plotting
@@ -563,17 +615,27 @@ if __name__ == "__main__":
                         nn.utils.clip_grad_norm_([actor_layer_params], args.max_grad_norm)
                     if args.quantum_critic and args.clip_circuit_grad_norm:
                         nn.utils.clip_grad_norm_([critic_layer_params], args.max_grad_norm)
-                    optimizer1.step()
+                    agent_optimizer.step()
                     if args.quantum_actor:
-                        optimizer2.step()
+                        quantum_actor_optimizer.step()
                         if (
                             not args.hybrid
                             and args.output_scaleing
                             # and not args.scheduled_output_scaleing
                         ):
-                            optimizer3.step()
+                            output_scaleing_optimizer.step()
                     if args.quantum_critic:
-                        optimizer4.step()
+                        quantum_critic_optimizer.step()
+                    if (
+                        args.gym_id == "simple_reuploading_with_shared_input_scaleing"
+                        or args.gym_id == "simple_reuploading_with_input_scaleing"
+                        or args.gym_id == "Hgog_reuploading_with_input_scaleing"
+                        or args.gym_id == "Jerbi-reuploading"
+                    ):
+                        if args.quantum_actor:
+                            actor_input_scaleing_optimizer.step()
+                        if args.quantum_critic:
+                            critic_input_scaleing_optimizer.step()
 
             # debug variables (info)
             y_pred, y_true = b_values.cpu().numpy(), b_returns.cpu().numpy()
@@ -584,19 +646,23 @@ if __name__ == "__main__":
 
             # record rewards for plotting purposes
             writer.add_scalar(
-                "charts/learning_rate", optimizer1.param_groups[0]["lr"], global_step
+                "charts/learning_rate", agent_optimizer.param_groups[0]["lr"], global_step
             )
             qlearning_rate = 0
             if args.quantum_actor:
                 writer.add_scalar(
-                    "charts/qlearning_rate", optimizer2.param_groups[0]["lr"], global_step
+                    "charts/qlearning_rate",
+                    quantum_actor_optimizer.param_groups[0]["lr"],
+                    global_step,
                 )
-                qlearning_rate = optimizer2.param_groups[0]["lr"]
+                qlearning_rate = quantum_actor_optimizer.param_groups[0]["lr"]
             elif args.quantum_critic:
                 writer.add_scalar(
-                    "charts/qlearning_rate", optimizer4.param_groups[0]["lr"], global_step
+                    "charts/qlearning_rate",
+                    quantum_critic_optimizer.param_groups[0]["lr"],
+                    global_step,
                 )
-                qlearning_rate = optimizer4.param_groups[0]["lr"]
+                qlearning_rate = quantum_critic_optimizer.param_groups[0]["lr"]
             writer.add_scalar("losses/value_loss", v_loss.item(), global_step)
             writer.add_scalar("losses/policy_loss", pg_loss.item(), global_step)
             writer.add_scalar("losses/entropy", entropy_loss.item(), global_step)
@@ -622,7 +688,7 @@ if __name__ == "__main__":
 
             # store data of update
             save_results.append_update_results(
-                optimizer1.param_groups[0]["lr"],
+                agent_optimizer.param_groups[0]["lr"],
                 qlearning_rate,
                 v_loss.item(),
                 pg_loss.item(),
@@ -649,6 +715,9 @@ if __name__ == "__main__":
                     agent.save_classical_network_params()
                 if args.quantum_actor:
                     save_params.save_actor_circuit_params(args.chkpt_dir, actor_layer_params)
+                    save_params.save_actor_input_scaleing_params(
+                        args.chkpt_dir, actor_input_scaleing_params
+                    )
                 if (
                     args.quantum_actor
                     and not args.hybrid
@@ -658,6 +727,9 @@ if __name__ == "__main__":
                     save_params.save_output_scaleing_params(args.chkpt_dir, output_scaleing_params)
                 if args.quantum_critic:
                     save_params.save_critic_circuit_params(args.chkpt_dir, critic_layer_params)
+                    save_params.save_critic_input_scaleing_params(
+                        args.chkpt_dir, critic_input_scaleing_params
+                    )
                 save_params.save_state(args.chkpt_dir, global_step, next_obs, next_done)
                 store_envs.save_envs(args.chkpt_dir, args.num_envs)
 
@@ -692,6 +764,9 @@ if __name__ == "__main__":
             agent.save_classical_network_params()
         if args.quantum_actor:
             save_params.save_actor_circuit_params(args.chkpt_dir, actor_layer_params)
+            save_params.save_actor_input_scaleing_params(
+                args.chkpt_dir, actor_input_scaleing_params
+            )
         if (
             args.quantum_actor
             and not args.hybrid
@@ -701,6 +776,9 @@ if __name__ == "__main__":
             save_params.save_output_scaleing_params(args.chkpt_dir, output_scaleing_params)
         if args.quantum_critic:
             save_params.save_critic_circuit_params(args.chkpt_dir, critic_layer_params)
+            save_params.save_critic_input_scaleing_params(
+                args.chkpt_dir, critic_input_scaleing_params
+            )
         save_params.save_state(args.chkpt_dir, global_step, next_obs, next_done)
         store_envs.save_envs(args.chkpt_dir, args.num_envs)
         plot.plot_training_results(

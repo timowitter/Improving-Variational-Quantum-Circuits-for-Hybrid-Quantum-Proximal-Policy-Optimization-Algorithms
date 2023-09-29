@@ -34,21 +34,21 @@ def simple_layer(layer_params, layer_nr):
         qml.RY(layer_params[i, layer_nr, 1], wires=i)
         qml.RZ(layer_params[i, layer_nr, 2], wires=i)
 
-    # if (
-    #    (layer_nr == args.n_var_layers - 1)
-    #    and (args.gym_id == "CartPole-v0" or args.gym_id == "CartPole-v1")
-    #    and args.n_qubits == 4
-    # ):
-    #    qml.CNOT(wires=[0, 2])
-    #    qml.CNOT(wires=[1, 3])
-    # else:
-    for i in range(args.n_qubits - 1):
-        qml.CNOT(wires=[i, i + 1])
+    if (
+        (layer_nr == args.n_var_layers - 1)
+        and (args.gym_id == "CartPole-v0" or args.gym_id == "CartPole-v1")
+        and args.n_qubits == 4
+    ):
+        qml.CNOT(wires=[0, 2])
+        qml.CNOT(wires=[1, 3])
+    else:
+        for i in range(args.n_qubits - 1):
+            qml.CNOT(wires=[i, i + 1])
 
 
 # Variational Quantum Policy Circuit (Actor)
 @qml.qnode(dev, interface="torch", diff_method="backprop")
-def simple_actor_circuit(layer_params, observation, act_dim):
+def simple_actor_circuit(layer_params, input_scaleing_params, observation, act_dim):
     norm_obs = normalize_obs(observation)
 
     # Input Encoding
@@ -68,7 +68,7 @@ def simple_actor_circuit(layer_params, observation, act_dim):
 
 
 @qml.qnode(dev, interface="torch", diff_method="backprop")
-def simple_reuploading_actor_circuit(layer_params, observation, act_dim):
+def simple_reuploading_actor_circuit(layer_params, input_scaleing_params, observation, act_dim):
     norm_obs = normalize_obs(observation)
 
     # Variational Quantum Circuit
@@ -88,7 +88,9 @@ def simple_reuploading_actor_circuit(layer_params, observation, act_dim):
 
 
 @qml.qnode(dev, interface="torch", diff_method="backprop")
-def simple_reuploading_actor_circuit_with_input_scaleing(layer_params, observation, act_dim):
+def simple_reuploading_actor_circuit_with_shared_input_scaleing(
+    layer_params, input_scaleing_params, observation, act_dim
+):
     for layer_nr in range(args.n_var_layers):
         # Encodeing layer
         # for discrete states transform obs to binary
@@ -98,21 +100,59 @@ def simple_reuploading_actor_circuit_with_input_scaleing(layer_params, observati
             or args.gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0"
             or args.gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0-alt"
         ):
-            # get 1D input scaleing parameters from 3D array
             for i in range(args.n_qubits):
-                j = args.n_var_layers + math.floor(layer_nr / 3)
-                k = layer_nr % 3
                 qml.RY(
                     np.pi
-                    * torch.tanh(layer_params[i, j, k] * transform_obs_to_binary(observation)[i]),
+                    * torch.tanh(
+                        input_scaleing_params[i] * transform_obs_to_binary(observation)[i]
+                    ),
                     wires=i,
                 )
         else:
-            # get 1D input scaleing parameters from 3D array
             for i in range(args.n_qubits):
-                j = args.n_var_layers + math.floor(layer_nr / 3)
-                k = layer_nr % 3
-                qml.RY(np.pi * torch.tanh(layer_params[i, j, k] * observation[i]), wires=i)
+                qml.RY(
+                    np.pi * torch.tanh(input_scaleing_params[i] * observation[i]),
+                    wires=i,
+                )
+        # Variational Layer
+        simple_layer(tanh_remapping(layer_params), layer_nr)
+
+    if args.hybrid:
+        return [qml.expval(qml.PauliZ(ind)) for ind in range(args.n_qubits)]
+    else:
+        return [
+            qml.expval(qml.PauliZ(ind)) for ind in range((args.n_qubits - act_dim), args.n_qubits)
+        ]
+
+
+@qml.qnode(dev, interface="torch", diff_method="backprop")
+def simple_reuploading_actor_circuit_with_input_scaleing(
+    layer_params, input_scaleing_params, observation, act_dim
+):
+    for layer_nr in range(args.n_var_layers):
+        # Encodeing layer
+        # for discrete states transform obs to binary
+        if (
+            args.gym_id == "FrozenLake-v0"
+            or args.gym_id == "FrozenLake-v1"
+            or args.gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0"
+            or args.gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0-alt"
+        ):
+            for i in range(args.n_qubits):
+                qml.RY(
+                    np.pi
+                    * torch.tanh(
+                        input_scaleing_params[i, layer_nr]
+                        * transform_obs_to_binary(observation)[i]
+                    ),
+                    wires=i,
+                )
+        else:
+            for i in range(args.n_qubits):
+                qml.RY(
+                    np.pi * torch.tanh(input_scaleing_params[i, layer_nr] * observation[i]),
+                    wires=i,
+                )
         # Variational Layer
         simple_layer(tanh_remapping(layer_params), layer_nr)
 
@@ -141,7 +181,7 @@ def Hgog_layer(layer_params, layer_nr):
 
 # Variational Quantum Policy Circuit (Actor)
 @qml.qnode(dev, interface="torch", diff_method="backprop")
-def Hgog_actor_circuit(layer_params, observation, act_dim):
+def Hgog_actor_circuit(layer_params, input_scaleing_params, observation, act_dim):
     norm_obs = normalize_obs(observation)
     # Input Encoding
     for i in range(args.n_qubits):
@@ -158,7 +198,7 @@ def Hgog_actor_circuit(layer_params, observation, act_dim):
 
 
 @qml.qnode(dev, interface="torch", diff_method="backprop")
-def Hgog_reuploading_actor_circuit(layer_params, observation, act_dim):
+def Hgog_reuploading_actor_circuit(layer_params, input_scaleing_params, observation, act_dim):
     norm_obs = normalize_obs(observation)
 
     for layer_nr in range(args.n_var_layers):
@@ -175,7 +215,9 @@ def Hgog_reuploading_actor_circuit(layer_params, observation, act_dim):
 
 
 @qml.qnode(dev, interface="torch", diff_method="backprop")
-def Hgog_reuploading_actor_circuit_with_input_scaleing(layer_params, observation, act_dim):
+def Hgog_reuploading_actor_circuit_with_input_scaleing(
+    layer_params, input_scaleing_params, observation, act_dim
+):
     for layer_nr in range(args.n_var_layers):
         # Encodeing layer
         # for discrete states transform obs to binary
@@ -187,19 +229,21 @@ def Hgog_reuploading_actor_circuit_with_input_scaleing(layer_params, observation
         ):
             # get 1D input scaleing parameters from 3D array
             for i in range(args.n_qubits):
-                j = args.n_var_layers + math.floor(layer_nr / 3)
-                k = layer_nr % 3
                 qml.RX(
                     np.pi
-                    * torch.tanh(layer_params[i, j, k] * transform_obs_to_binary(observation)[i]),
+                    * torch.tanh(
+                        input_scaleing_params[i, layer_nr]
+                        * transform_obs_to_binary(observation)[i]
+                    ),
                     wires=i,
                 )
         else:
             # get 1D input scaleing parameters from 3D array
             for i in range(args.n_qubits):
-                j = args.n_var_layers + math.floor(layer_nr / 3)
-                k = layer_nr % 3
-                qml.RX(np.pi * torch.tanh(layer_params[i, j, k] * observation[i]), wires=i)
+                qml.RX(
+                    np.pi * torch.tanh(input_scaleing_params[i, layer_nr] * observation[i]),
+                    wires=i,
+                )
         # Variational Layer
         Hgog_layer(tanh_remapping(layer_params), layer_nr)
 
@@ -233,14 +277,14 @@ def encodeing_layer(encodeing_params, layer_nr, state_vector):
 
 
 @qml.qnode(dev, interface="torch", diff_method="backprop")
-def Jerbi_reuploading_actor_circuit(layer_params, observation, act_dim):
+def Jerbi_reuploading_actor_circuit(layer_params, input_scaleing_params, observation, act_dim):
     # wire preparation
     for i in range(args.n_qubits):
         qml.Hadamard(wires=i)
 
     variational_layer(tanh_remapping(layer_params), 0)
 
-    for layer_nr in range(1, 2 * args.n_enc_layers + 1, 2):
+    for layer_nr in range(args.n_var_layers - 1):
         # for envs with discrete states transform obs to binary
         if (
             args.gym_id == "FrozenLake-v0"
@@ -249,12 +293,12 @@ def Jerbi_reuploading_actor_circuit(layer_params, observation, act_dim):
             or args.gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0-alt"
         ):
             encodeing_layer(
-                tanh_remapping(layer_params),
+                tanh_remapping(input_scaleing_params),
                 layer_nr,
                 transform_obs_to_binary(observation),
             )
         else:
-            encodeing_layer(tanh_remapping(layer_params), layer_nr, observation)
+            encodeing_layer(tanh_remapping(input_scaleing_params), layer_nr, observation)
         variational_layer(tanh_remapping(layer_params), layer_nr + 1)
 
     if args.hybrid:
@@ -264,7 +308,9 @@ def Jerbi_reuploading_actor_circuit(layer_params, observation, act_dim):
 
 
 @qml.qnode(dev, interface="torch", diff_method="backprop")
-def Jerbi_actor_circuit_no_reuploading_no_input_scaleing(layer_params, observation, act_dim):
+def Jerbi_actor_circuit_no_reuploading_no_input_scaleing(
+    layer_params, input_scaleing_params, observation, act_dim
+):
     norm_obs = normalize_obs(observation)
 
     for i in range(args.n_qubits):
@@ -286,7 +332,9 @@ def Jerbi_actor_circuit_no_reuploading_no_input_scaleing(layer_params, observati
 
 
 @qml.qnode(dev, interface="torch", diff_method="backprop")
-def Jerbi_reuploading_actor_circuit_without_input_scaleing(layer_params, observation, act_dim):
+def Jerbi_reuploading_actor_circuit_without_input_scaleing(
+    layer_params, input_scaleing_params, observation, act_dim
+):
     norm_obs = normalize_obs(observation)
     # layer_params: Variable Layer Parameters, observation: State Variable
     for i in range(args.n_qubits):
@@ -325,6 +373,9 @@ def actor_circuit_selection():
     elif args.quantum_actor and args.circuit == "simple_reuploading":
         actor_circuit = simple_reuploading_actor_circuit
         print("useing simple reuploading Quantum Circuit as actor")
+    elif args.quantum_actor and args.circuit == "simple_reuploading_with_shared_input_scaleing":
+        actor_circuit = simple_reuploading_actor_circuit_with_shared_input_scaleing
+        print("useing simple reuploading Quantum Circuit with input scaleing as actor")
     elif args.quantum_actor and args.circuit == "simple_reuploading_with_input_scaleing":
         actor_circuit = simple_reuploading_actor_circuit_with_input_scaleing
         print("useing simple reuploading Quantum Circuit with input scaleing as actor")
@@ -373,7 +424,7 @@ def actor_circuit_selection():
 
 # Variational Quantum Policy Circuit (Critic)
 @qml.qnode(dev, interface="torch", diff_method="backprop")
-def simple_critic_circuit(layer_params, observation):
+def simple_critic_circuit(layer_params, input_scaleing_params, observation):
     norm_obs = normalize_obs(observation)
 
     # Input Encoding
@@ -391,7 +442,7 @@ def simple_critic_circuit(layer_params, observation):
 
 
 @qml.qnode(dev, interface="torch", diff_method="backprop")
-def simple_reuploading_critic_circuit(layer_params, observation):
+def simple_reuploading_critic_circuit(layer_params, input_scaleing_params, observation):
     norm_obs = normalize_obs(observation)
 
     for layer_nr in range(args.n_var_layers):
@@ -406,7 +457,9 @@ def simple_reuploading_critic_circuit(layer_params, observation):
 
 
 @qml.qnode(dev, interface="torch", diff_method="backprop")
-def simple_reuploading_critic_circuit_with_input_scaleing(layer_params, observation):
+def simple_reuploading_critic_circuit_with_shared_input_scaleing(
+    layer_params, input_scaleing_params, observation
+):
     for layer_nr in range(args.n_var_layers):
         if (
             args.gym_id == "FrozenLake-v0"
@@ -415,18 +468,50 @@ def simple_reuploading_critic_circuit_with_input_scaleing(layer_params, observat
             or args.gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0-alt"
         ):
             for i in range(args.n_qubits):
-                j = args.n_var_layers + math.floor(layer_nr / 3)
-                k = layer_nr % 3
                 qml.RY(
                     np.pi
-                    * torch.tanh(layer_params[i, j, k] * transform_obs_to_binary(observation)[i]),
+                    * torch.tanh(
+                        input_scaleing_params[i] * transform_obs_to_binary(observation)[i]
+                    ),
                     wires=i,
                 )
         else:
             for i in range(args.n_qubits):
-                j = args.n_var_layers + math.floor(layer_nr / 3)
-                k = layer_nr % 3
-                qml.RY(np.pi * torch.tanh(layer_params[i, j, k] * observation[i]), wires=i)
+                qml.RY(np.pi * torch.tanh(input_scaleing_params[i] * observation[i]), wires=i)
+        simple_layer(tanh_remapping(layer_params), layer_nr)
+
+    if args.hybrid:
+        return [qml.expval(qml.PauliZ(ind)) for ind in range(args.n_qubits)]
+    else:
+        return [qml.expval(qml.PauliZ(args.n_qubits - 1))]
+
+
+@qml.qnode(dev, interface="torch", diff_method="backprop")
+def simple_reuploading_critic_circuit_with_input_scaleing(
+    layer_params, input_scaleing_params, observation
+):
+    for layer_nr in range(args.n_var_layers):
+        if (
+            args.gym_id == "FrozenLake-v0"
+            or args.gym_id == "FrozenLake-v1"
+            or args.gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0"
+            or args.gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0-alt"
+        ):
+            for i in range(args.n_qubits):
+                qml.RY(
+                    np.pi
+                    * torch.tanh(
+                        input_scaleing_params[i, layer_nr]
+                        * transform_obs_to_binary(observation)[i]
+                    ),
+                    wires=i,
+                )
+        else:
+            for i in range(args.n_qubits):
+                qml.RY(
+                    np.pi * torch.tanh(input_scaleing_params[i, layer_nr] * observation[i]),
+                    wires=i,
+                )
         simple_layer(tanh_remapping(layer_params), layer_nr)
 
     if args.hybrid:
@@ -440,7 +525,7 @@ def simple_reuploading_critic_circuit_with_input_scaleing(layer_params, observat
 
 # Variational Quantum Policy Circuit (Actor)
 @qml.qnode(dev, interface="torch", diff_method="backprop")
-def Hgog_critic_circuit(layer_params, observation):
+def Hgog_critic_circuit(layer_params, input_scaleing_params, observation):
     norm_obs = normalize_obs(observation)
     # Input Encoding
     for i in range(args.n_qubits):
@@ -457,7 +542,7 @@ def Hgog_critic_circuit(layer_params, observation):
 
 
 @qml.qnode(dev, interface="torch", diff_method="backprop")
-def Hgog_reuploading_critic_circuit(layer_params, observation):
+def Hgog_reuploading_critic_circuit(layer_params, input_scaleing_params, observation):
     norm_obs = normalize_obs(observation)
 
     # Variational Quantum Circuit
@@ -475,7 +560,9 @@ def Hgog_reuploading_critic_circuit(layer_params, observation):
 
 
 @qml.qnode(dev, interface="torch", diff_method="backprop")
-def Hgog_reuploading_critic_circuit_with_input_scaleing(layer_params, observation):
+def Hgog_reuploading_critic_circuit_with_input_scaleing(
+    layer_params, input_scaleing_params, observation
+):
     for layer_nr in range(args.n_var_layers):
         if (
             args.gym_id == "FrozenLake-v0"
@@ -484,18 +571,20 @@ def Hgog_reuploading_critic_circuit_with_input_scaleing(layer_params, observatio
             or args.gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0-alt"
         ):
             for i in range(args.n_qubits):
-                j = args.n_var_layers + math.floor(layer_nr / 3)
-                k = layer_nr % 3
                 qml.RX(
                     np.pi
-                    * torch.tanh(layer_params[i, j, k] * transform_obs_to_binary(observation)[i]),
+                    * torch.tanh(
+                        input_scaleing_params[i, layer_nr]
+                        * transform_obs_to_binary(observation)[i]
+                    ),
                     wires=i,
                 )
         else:
             for i in range(args.n_qubits):
-                j = args.n_var_layers + math.floor(layer_nr / 3)
-                k = layer_nr % 3
-                qml.RX(np.pi * torch.tanh(layer_params[i, j, k] * observation[i]), wires=i)
+                qml.RX(
+                    np.pi * torch.tanh(input_scaleing_params[i, layer_nr] * observation[i]),
+                    wires=i,
+                )
         Hgog_layer(tanh_remapping(layer_params), layer_nr)
 
     if args.hybrid:
@@ -508,7 +597,7 @@ def Hgog_reuploading_critic_circuit_with_input_scaleing(layer_params, observatio
 
 
 @qml.qnode(dev, interface="torch", diff_method="backprop")
-def Jerbi_reuploading_critic_circuit(layer_params, observation):
+def Jerbi_reuploading_critic_circuit(layer_params, input_scaleing_params, observation):
     for i in range(args.n_qubits):
         qml.Hadamard(wires=i)
 
@@ -520,16 +609,16 @@ def Jerbi_reuploading_critic_circuit(layer_params, observation):
         or args.gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0"
         or args.gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0-alt"
     ):
-        for layer_nr in range(1, 2 * args.n_enc_layers + 1, 2):
+        for layer_nr in range(args.n_var_layers - 1):
             encodeing_layer(
-                tanh_remapping(layer_params),
+                tanh_remapping(input_scaleing_params),
                 layer_nr,
                 transform_obs_to_binary(observation),
             )
             variational_layer(tanh_remapping(layer_params), layer_nr + 1)
     else:
-        for layer_nr in range(1, 2 * args.n_enc_layers + 1, 2):
-            encodeing_layer(tanh_remapping(layer_params), layer_nr, observation)
+        for layer_nr in range(args.n_var_layers - 1):
+            encodeing_layer(tanh_remapping(input_scaleing_params), layer_nr, observation)
             variational_layer(tanh_remapping(layer_params), layer_nr + 1)
 
     if args.hybrid:
@@ -540,7 +629,9 @@ def Jerbi_reuploading_critic_circuit(layer_params, observation):
 
 # Variational Quantum Policy Circuit (Actor)
 @qml.qnode(dev, interface="torch", diff_method="backprop")
-def Jerbi_critic_circuit_no_reuploading_no_input_scaleing(layer_params, observation):
+def Jerbi_critic_circuit_no_reuploading_no_input_scaleing(
+    layer_params, input_scaleing_params, observation
+):
     norm_obs = normalize_obs(observation)
 
     for i in range(args.n_qubits):
@@ -562,7 +653,9 @@ def Jerbi_critic_circuit_no_reuploading_no_input_scaleing(layer_params, observat
 
 
 @qml.qnode(dev, interface="torch", diff_method="backprop")
-def Jerbi_reuploading_critic_circuit_without_input_scaleing(layer_params, observation):
+def Jerbi_reuploading_critic_circuit_without_input_scaleing(
+    layer_params, input_scaleing_params, observation
+):
     norm_obs = normalize_obs(observation)
 
     for i in range(args.n_qubits):
@@ -591,10 +684,13 @@ def critic_circuit_selection():
     if args.quantum_critic and args.circuit == "simple":
         critic_circuit = simple_critic_circuit
         print("useing simple Quantum Circuit as critic")
-    if args.quantum_critic and args.circuit == "simple_reuploading":
+    elif args.quantum_critic and args.circuit == "simple_reuploading":
         critic_circuit = simple_reuploading_critic_circuit
         print("useing simple reuploading Quantum Circuit as critic")
-    if args.quantum_critic and args.circuit == "simple_reuploading_with_input_scaleing":
+    elif args.quantum_critic and args.circuit == "simple_reuploading_with_shared_input_scaleing":
+        critic_circuit = simple_reuploading_critic_circuit_with_shared_input_scaleing
+        print("useing simple reuploading Quantum Circuit with shared input scaleing as critic")
+    elif args.quantum_critic and args.circuit == "simple_reuploading_with_input_scaleing":
         critic_circuit = simple_reuploading_critic_circuit_with_input_scaleing
         print("useing simple reuploading Quantum Circuit with input scaleing as critic")
 

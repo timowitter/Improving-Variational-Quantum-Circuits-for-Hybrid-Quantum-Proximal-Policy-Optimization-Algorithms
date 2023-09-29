@@ -55,6 +55,12 @@ def parse_args():
         help="output scaleing learning rate",
     )
     parser.add_argument(
+        "--input-scaleing-learning-rate",
+        type=float,
+        default=1e-3,
+        help="input scaleing learning rate",
+    )
+    parser.add_argument(
         "--output-scaleing-start", type=float, default=1.0, help="output scaleing start value"
     )
     parser.add_argument("--seed", type=int, default=1, help="seed for all random events")
@@ -271,13 +277,13 @@ def parse_args():
         "--n-enc-layers",
         type=int,
         default=1,
-        help="gives the the number of encodeing layers",
+        help="gives the the number of encodeing layers (currently onely used for calculation of the number of parameters for info, in circuits the number of enc layers is given by the number of var layers)",
     )
     parser.add_argument(
         "--circuit",
         type=str,
         default="simple",
-        help="the circuit that is to be used, can be one of:  simple / simple_reuploading / simple_reuploading_with_input_scaleing / Hgog / Hgog_reuploading / Hgog_reuploading_with_input_scaleing / Jerbi-no-reuploading-no-input-scaleing / Jerbi-reuploading-no-input-scaleing / Jerbi-reuploading",
+        help="the circuit that is to be used, can be one of:  simple / simple_reuploading / simple_reuploading_with_shared_input_scaleing / simple_reuploading_with_input_scaleing / Hgog / Hgog_reuploading / Hgog_reuploading_with_input_scaleing / Jerbi-no-reuploading-no-input-scaleing / Jerbi-reuploading-no-input-scaleing / Jerbi-reuploading",
     )
     parser.add_argument(
         "--output-scaleing",

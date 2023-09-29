@@ -43,6 +43,8 @@ def calc_num_actor_params(envs):
         or args.circuit == "Hgog_reuploading"
     ):
         actor_par_count = 3 * args.n_var_layers * args.n_qubits
+    elif args.quantum_actor and (args.circuit == "simple_reuploading_with_shared_input_scaleing"):
+        actor_par_count = 3 * args.n_var_layers * args.n_qubits + 1 * args.n_qubits
     elif args.quantum_actor and (
         args.circuit == "simple_reuploading_with_input_scaleing"
         or args.circuit == "Hgog_reuploading_with_input_scaleing"
@@ -113,7 +115,9 @@ def calc_num_critic_params(envs):
         or args.circuit == "Hgog_reuploading"
     ):
         critic_par_count = 3 * args.n_var_layers * args.n_qubits
-    elif args.quantum_actor and (
+    elif args.quantum_critic and (args.circuit == "simple_reuploading_with_shared_input_scaleing"):
+        critic_par_count = 3 * args.n_var_layers * args.n_qubits + 1 * args.n_qubits
+    elif args.quantum_critic and (
         args.circuit == "simple_reuploading_with_input_scaleing"
         or args.circuit == "Hgog_reuploading_with_input_scaleing"
     ):
@@ -187,6 +191,8 @@ def manually_calc_num_params(
         or circuit == "Hgog_reuploading"
     ):
         actor_par_count = 3 * n_var_layers * n_qubits
+    elif quantum and (circuit == "simple_reuploading_with_shared_input_scaleing"):
+        actor_par_count = 3 * n_var_layers * n_qubits + 1 * n_qubits
     elif quantum and (
         circuit == "simple_reuploading_with_input_scaleing"
         or circuit == "Hgog_reuploading_with_input_scaleing"

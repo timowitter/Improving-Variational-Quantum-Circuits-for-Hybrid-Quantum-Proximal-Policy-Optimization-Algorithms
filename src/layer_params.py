@@ -167,23 +167,19 @@ def make_actor_layer_params():
     ):
         # choose parameter initialisation method
         layer_params = choose_init(args.n_qubits, args.n_var_layers, 3)
+        input_scaleing_params = np.ones(0)
+
+    elif args.quantum_actor and (args.circuit == "simple_reuploading_with_shared_input_scaleing"):
+        layer_params = choose_init(args.n_qubits, args.n_var_layers, 3)
+        input_scaleing_params = np.ones(args.n_qubits)
 
     elif args.quantum_actor and (
         args.circuit == "simple_reuploading_with_input_scaleing"
-        or args.circuit == "Hgog_reuploading_with_output_scaleing"
+        or args.circuit == "Hgog_reuploading_with_input_scaleing"
     ):
-        # enc layers have onely one dim per layer (1 enc layer per var layer)
-        num_enc_dims = math.ceil(args.n_var_layers / 3)
-        # we put them in the same array, so we dont need an additional optimizer
-
         # choose parameter initialisation method
-        layer_params = choose_init(args.n_qubits, args.n_var_layers + num_enc_dims, 3)
-
-        # set input scaleing to 1 at start
-        for i in range(args.n_qubits):
-            for layer_nr in range(args.n_var_layers, args.n_var_layers + num_enc_dims):
-                for k in range(3):
-                    layer_params[i, layer_nr, k] = 1
+        layer_params = choose_init(args.n_qubits, args.n_var_layers, 3)
+        input_scaleing_params = np.ones((args.n_qubits, args.n_var_layers))
 
     elif args.quantum_actor and (
         args.circuit == "Jerbi-no-reuploading-no-input-scaleing"
@@ -191,21 +187,18 @@ def make_actor_layer_params():
     ):
         # choose parameter initialisation method
         layer_params = choose_init(args.n_qubits, args.n_var_layers, 2)
+        input_scaleing_params = np.ones(0)
 
     elif args.quantum_actor and args.circuit == "Jerbi-reuploading":
         # choose parameter initialisation method
-        layer_params = choose_init(args.n_qubits, (2 * args.n_enc_layers) + 1, 2)
-
-        # set input scaleing to 1 at start
-        for i in range(args.n_qubits):
-            for layer_nr in range(1, 2 * args.n_enc_layers + 1, 2):
-                for k in range(2):
-                    layer_params[i, layer_nr, k] = 1
+        layer_params = choose_init(args.n_qubits, args.n_var_layers, 2)
+        input_scaleing_params = np.ones((args.n_qubits, args.n_var_layers - 1, 2))
 
     else:
         layer_params = np.random.rand(0)
+        input_scaleing_params = np.ones(0)
         print("no actor_layer_params needed")
-    return layer_params
+    return layer_params, input_scaleing_params
 
 
 def make_critic_layer_params():
@@ -217,23 +210,19 @@ def make_critic_layer_params():
     ):
         # choose parameter initialisation method
         layer_params = choose_init(args.n_qubits, args.n_var_layers, 3)
+        input_scaleing_params = np.ones(0)
+
+    elif args.quantum_actor and (args.circuit == "simple_reuploading_with_shared_input_scaleing"):
+        layer_params = choose_init(args.n_qubits, args.n_var_layers, 3)
+        input_scaleing_params = np.ones(args.n_qubits)
 
     elif args.quantum_actor and (
         args.circuit == "simple_reuploading_with_input_scaleing"
-        or args.circuit == "Hgog_reuploading_with_output_scaleing"
+        or args.circuit == "Hgog_reuploading_with_input_scaleing"
     ):
-        # enc layers have onely one dim per layer (1 enc layer per var layer)
-        num_enc_dims = math.ceil(args.n_var_layers / 3)
-        # we put them in the same array, so we dont need an additional optimizer
-
         # choose parameter initialisation method
-        layer_params = choose_init(args.n_qubits, args.n_var_layers + num_enc_dims, 3)
-
-        # set input scaleing to 1 at start
-        for i in range(args.n_qubits):
-            for layer_nr in range(args.n_var_layers, args.n_var_layers + num_enc_dims):
-                for k in range(3):
-                    layer_params[i, layer_nr, k] = 1
+        layer_params = choose_init(args.n_qubits, args.n_var_layers, 3)
+        input_scaleing_params = np.ones((args.n_qubits, args.n_var_layers))
 
     elif args.quantum_critic and (
         args.circuit == "Jerbi-no-reuploading-no-input-scaleing"
@@ -241,18 +230,15 @@ def make_critic_layer_params():
     ):
         # choose parameter initialisation method
         layer_params = choose_init(args.n_qubits, args.n_var_layers, 2)
+        input_scaleing_params = np.ones(0)
 
     elif args.quantum_critic and args.circuit == "Jerbi-reuploading":
         # choose parameter initialisation method
-        layer_params = choose_init(args.n_qubits, (2 * args.n_enc_layers) + 1, 2)
-
-        # set input scaleing to 1 at start
-        for i in range(args.n_qubits):
-            for layer_nr in range(1, 2 * args.n_enc_layers + 1, 2):
-                for k in range(2):
-                    layer_params[i, layer_nr, k] = 1
+        layer_params = choose_init(args.n_qubits, args.n_var_layers, 2)
+        input_scaleing_params = np.ones((args.n_qubits, args.n_var_layers - 1, 2))
 
     else:
         layer_params = np.random.rand(0)
+        input_scaleing_params = np.ones(0)
         print("no critic_layer_params needed")
-    return layer_params
+    return layer_params, input_scaleing_params

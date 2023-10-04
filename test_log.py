@@ -1153,7 +1153,7 @@ exp_names = [
     "CP-ppo-ac-NN(6,6)-(lr=1.0e-3)-(86-params)",
 ]
 seeds = [10, 20, 30]
-stepsize = 4 * 128 * 8
-max_steps = 150000
+stepsize = 4 * 128 * 20
+max_steps = 500000
 
 plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)

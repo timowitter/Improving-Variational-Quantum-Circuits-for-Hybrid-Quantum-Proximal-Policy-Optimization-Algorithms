@@ -384,7 +384,7 @@ def parse_args():
         "--param-init",
         type=str,
         default="random",
-        help="the parameter initialisation that is to be used, can be one of:  random / random_clipped / gauss_distribution / allsmall / allmid / allbig",
+        help="the parameter initialisation that is to be used, can be one of:  random / random_clipped / unclipped_gauss_distribution / gauss_distribution / rescaled_gauss_distribution / allverysmall / allsmall / allmid / allbig",
     )
 
     args = parser.parse_args()

@@ -130,12 +130,39 @@ def make_gauss_init(n_qubits, n_layers, n_dims):
     return layer_params
 
 
+def make_unclipped_gauss_init(n_qubits, n_layers, n_dims):
+    layer_params = np.random.normal(0, 1, (n_qubits, n_layers, n_dims))
+    return layer_params
+
+
+def make_rescaled_gauss_init(n_qubits, n_layers, n_dims):
+    layer_params = np.random.normal(0, 0.1, (n_qubits, n_layers, n_dims))
+    # could be initialised at 0 so we clip it to avoid vanishing gradients
+    for i in range(n_qubits):
+        for j in range(n_layers):
+            for k in range(n_dims):
+                if layer_params[i, j, k] >= 0:
+                    layer_params[i, j, k] = layer_params[i, j, k] + a
+                else:
+                    layer_params[i, j, k] = layer_params[i, j, k] - a
+                # ~68% of values shoud be in the intervall [-0.11, -0.01[ & [0.01, 0.11[,
+                # ~95% of values shoud be in the intervall [-0.21, -0.01[ & [0.01, 0.21[,
+                # ~99% of values shoud be in the intervall [-0.31, -0.01[ & [0.01, 0.31[,
+    return layer_params
+
+
 def choose_init(n_qubits, n_layers, n_dims):
     if args.param_init == "random_clipped":
         layer_params = make_clipped_random_init(n_qubits, n_layers, n_dims)
         print("useing clipped random init")
     elif args.param_init == "gauss_distribution":
         layer_params = make_gauss_init(n_qubits, n_layers, n_dims)
+        print("useing gauss init")
+    elif args.param_init == "unclipped_gauss_distribution":
+        layer_params = make_unclipped_gauss_init(n_qubits, n_layers, n_dims)
+        print("useing gauss init")
+    elif args.param_init == "rescaled_gauss_distribution":
+        layer_params = make_rescaled_gauss_init(n_qubits, n_layers, n_dims)
         print("useing gauss init")
     elif args.param_init == "alltoosmall":
         layer_params = make_all_toosmall_random_init(n_qubits, n_layers, n_dims)

@@ -3,7 +3,7 @@ from src.plot_grads import plot_gradient_avg, plot_insider_info
 from src.plot_old import plot_training_results
 
 results_dir = "qppo-slurm/results"
-plots_dir = "final-plots"
+plots_dir = "plots"
 test_plots_dir = "test-plots"
 
 
@@ -13,10 +13,10 @@ plot_dir = plots_dir + "/Test_0"
 gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
 exp_names = ["ppo_default_lr2.5e-4"]
 seeds = [10, 20, 30, 40, 50]
-stepsize = 4*128
+batchsize = 4*128
 max_steps = 300000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 
 
@@ -41,10 +41,10 @@ exp_names = [
     # "ppo_default_lr250.0e-4",
 ]
 seeds = [10, 20, 30, 40, 50]
-stepsize = 4 * 128 * 4
+batchsize = 4 * 128 * 4
 max_steps = 300000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 # Hyperparameter Test 2: find optimal learning rate and clip_coef for qppo: (failed due to error in scheduling)
 
@@ -57,10 +57,10 @@ exp_names = [
     "qppo_Jerbi-no-reuploading-no-input-scaleing_lr-sceduling_qlr2.5e-3",
 ]
 seeds = [10, 20, 30]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 500000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 
 # Hyperparameter Test 2b: find optimal learning rate and clip_coef for qppo: scheduled output scaleing and no clip_grad_norm for circuit parameters (failed due to error in scheduling)
@@ -72,10 +72,10 @@ exp_names = [
     "qppo_Jerbi-no-reuploading-no-input-scaleing_lrANDoutpScl-sceduling_no-clip-grad-norm_qlr2.5e-3",
 ]
 seeds = [10, 20]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 500000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 
 # Hyperparameter Test 2c: 2b in default Frozen Lake (failed due to error in scheduling)
@@ -87,10 +87,10 @@ exp_names = [
     "qppo_Jerbi-no-reuploading-no-input-scaleing_default-FrozenLake_lrANDoutpScl-sceduling_no-clip-grad-norm_qlr2.5e-3",
 ]
 seeds = [10, 20]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 500000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 
 
@@ -103,10 +103,10 @@ exp_names = [
     "qppo-Jerbi_1enc_layer_no_input_scaleing-lrANDoutpScl_sceduling-qlr2.5e-3",
 ]
 seeds = [10, 20]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 500000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 
 
@@ -135,10 +135,10 @@ exp_names = [
     "qppo-Jerbi_2enc_layer_no_input_scaleing-lrANDoutpSclx3.0_sceduling-qlr2.5e-3",
 ]
 seeds = [10, 20]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 500000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 
 
@@ -159,10 +159,10 @@ exp_names = [
     "random-baseline",
 ]
 seeds = [10, 20, 30]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 1000000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 
 # Hyperparameter Test 3a-outscale:
@@ -175,10 +175,10 @@ exp_names = [
     "random-baseline",
 ]
 seeds = [10, 20, 30]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 1000000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 
 # Hyperparameter Test 3b: find minimum number of layers needed for simple circuit to have a good learning performance (without output scaleing)
@@ -193,10 +193,10 @@ exp_names = [
     "random-baseline",
 ]
 seeds = [10, 20, 30]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 500000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 
 plot_dir = plots_dir + "/Hyperparameter-Test-3b_QPPO-with-outscale"
@@ -208,10 +208,10 @@ exp_names = [
     "random-baseline",
 ]
 seeds = [10, 20, 30]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 500000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 
 
@@ -227,10 +227,10 @@ exp_names = [
     "random-baseline",
 ]
 seeds = [10, 20, 30]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 500000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 
 plot_dir = plots_dir + "/Hyperparameter-Test-3c_QPPO-reuploading-more-steps"
@@ -240,10 +240,10 @@ exp_names = [
     "random-baseline",
 ]
 seeds = [10, 20, 30]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 1000000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 # Hyperparameter Test 3d: test reuploading more layers
 plot_dir = plots_dir + "/Hyperparameter-Test-3d_QPPO-reuploading-more-layers"
@@ -255,10 +255,10 @@ exp_names = [
     "random-baseline",
 ]
 seeds = [10, 20, 30]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 200000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 
 # Hyperparameter Test 4a: test prob circuit output vs logprob output with and without output scaleing
@@ -271,10 +271,10 @@ exp_names = [
     "random-baseline",
 ]
 seeds = [10, 20, 30]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 200000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 
 
@@ -292,10 +292,10 @@ exp_names = [
     "random-baseline",
 ]
 seeds = [10, 20, 30]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 200000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 
 # Hyperparameter Test 4c: test different parameter initialisation methods and record gradient mean and var
@@ -309,10 +309,10 @@ exp_names = [
     "random-baseline",
 ]
 seeds = [10, 20, 30]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 350000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 exp_names = [
     "qppo-simple_reuploading-qlr0.5e-3-6varlayers-nologoutput-random-init-recordgrads-(72-params)",
@@ -336,10 +336,10 @@ exp_names = [
     "random-baseline",
 ]
 seeds = [10, 20, 30]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 500000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 exp_names = [
     "qppo-simple_reuploading-qlr0.5e-3-6varlayers-nologoutput-clippedinit-recordgrads-(72-params)",
@@ -369,10 +369,10 @@ exp_names = [
     "random-baseline",
 ]
 seeds = [10, 20]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 200000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 exp_names = [
     "qppo-simple_reuploading-qlr0.5e-3-6varlayers-nologoutput-allsmall-recordgrads-(72-params)",
@@ -404,10 +404,10 @@ exp_names = [
     "random-baseline",
 ]
 seeds = [10, 20]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 200000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 exp_names = [
     "qppo-simple_reuploading-qlr0.5e-3-lr0.5e-4-clipcoef0.20-fixed",
@@ -440,10 +440,10 @@ exp_names = [
     "random-baseline",
 ]
 seeds = [10, 20, 30]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 150000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 
 
@@ -458,10 +458,10 @@ exp_names = [
     "random-baseline",
 ]
 seeds = [10, 20, 30]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 150000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 
 plot_dir = plots_dir + "/FL-Hyperparameter-Test-1b_qlr"
@@ -473,10 +473,10 @@ exp_names = [
     "random-baseline",
 ]
 seeds = [10, 20, 30]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 150000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 
 plot_dir = plots_dir + "/FL-Hyperparameter-Test-1c_qlr"
@@ -488,10 +488,10 @@ exp_names = [
     "random-baseline",
 ]
 seeds = [10, 20, 30]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 150000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 
 plot_dir = plots_dir + "/FL-Hyperparameter-Test-1d_lr"
@@ -505,10 +505,10 @@ exp_names = [
     "random-baseline",
 ]
 seeds = [10, 20, 30]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 150000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 
 plot_dir = plots_dir + "/FL-Hyperparameter-Test-1e_lr"
@@ -520,10 +520,10 @@ exp_names = [
     "random-baseline",
 ]
 seeds = [10, 20, 30]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 150000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 
 plot_dir = plots_dir + "/FL-Hyperparameter-Test-1f_lr"
@@ -535,10 +535,10 @@ exp_names = [
     "random-baseline",
 ]
 seeds = [10, 20, 30]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 150000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 
 plot_dir = plots_dir + "/FL-Hyperparameter-Test-1g_sced_qlr"
@@ -554,10 +554,10 @@ exp_names = [
     "ppo_default_lr100.0e-4",
 ]
 seeds = [10, 20, 30]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 150000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 
 
@@ -576,10 +576,10 @@ exp_names = [
     "ppo_default_lr100.0e-4",
 ]
 seeds = [10, 20, 30]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 150000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 
 
@@ -599,10 +599,10 @@ exp_names = [
     "ppo_default_lr100.0e-4",
 ]
 seeds = [10, 20, 30]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 150000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 
 
@@ -618,10 +618,10 @@ exp_names = [
     "random-baseline",
 ]
 seeds = [10, 20, 30]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 150000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 
 plot_dir = plots_dir + "/FL-actor-Hyperparameter-Test-1b-lr"
@@ -635,10 +635,10 @@ exp_names = [
     "random-baseline",
 ]
 seeds = [10, 20, 30]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 150000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 
 plot_dir = plots_dir + "/FL-actor-Hyperparameter-Test-1c-lin-sced"
@@ -652,10 +652,10 @@ exp_names = [
     "ppo_default_lr100.0e-4",
 ]
 seeds = [10, 20, 30]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 150000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 
 plot_dir = plots_dir + "/FL-actor-Hyperparameter-Test-1c-sq-sced"
@@ -668,10 +668,10 @@ exp_names = [
     "random-baseline",
 ]
 seeds = [10, 20, 30]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 150000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 
 plot_dir = plots_dir + "/FL-actor-Hyperparameter-Test-1c-double-sced"
@@ -686,10 +686,10 @@ exp_names = [
     "ppo_default_lr100.0e-4",
 ]
 seeds = [10, 20, 30]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 150000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 
 plot_dir = plots_dir + "/FL-actor-Hyperparameter-Test-1d-double-sced-lr"
@@ -701,10 +701,10 @@ exp_names = [
     "random-baseline",
 ]
 seeds = [10, 20, 30]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 150000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 
 
@@ -721,10 +721,10 @@ exp_names = [
     "ppo_default_lr100.0e-4",
 ]
 seeds = [10, 20, 30, 40, 50]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 300000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 plot_dir = plots_dir + "/FL-actor-Hyperparameter-Test-1c-exp-sced"
 gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
@@ -742,10 +742,10 @@ exp_names = [
     "ppo_default_lr100.0e-4",
 ]
 seeds = [10, 20, 30, 40, 50]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 150000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 
 
@@ -761,10 +761,10 @@ exp_names = [
     "ppo_default_lr100.0e-4",
 ]
 seeds = [10, 20, 30]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 150000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 
 plot_dir = plots_dir + "/FL-actor-Hyperparameter-Test-2b-number-of-layers-fixed-qlr"
@@ -778,10 +778,10 @@ exp_names = [
     "ppo_default_lr100.0e-4",
 ]
 seeds = [10, 20, 30]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 150000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 
 plot_dir = plots_dir + "/FL-actor-Hyperparameter-Test-3-init"
@@ -797,10 +797,10 @@ exp_names = [
     "ppo_default_lr100.0e-4",
 ]
 seeds = [10, 20, 30]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 150000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 
 plot_dir = plots_dir + "/FL-actor-Test-1-output-scaleing"
@@ -817,10 +817,10 @@ exp_names = [
     "random-baseline",
 ]
 seeds = [10, 20, 30]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 150000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 
 plot_dir = plots_dir + "/FL-actor-Test-1a-output-scaleing-1-param"
@@ -836,10 +836,10 @@ exp_names = [
     "ppo_default_lr100.0e-4",
 ]
 seeds = [10, 20, 30]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 150000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 
 plot_dir = plots_dir + "/FL-actor-Test-1a-output-scaleing-4-params"
@@ -855,10 +855,10 @@ exp_names = [
     "ppo_default_lr100.0e-4",
 ]
 seeds = [10, 20, 30]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 150000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 
 plot_dir = plots_dir + "/FL-actor-Test-1b-output-scaleing"
@@ -871,10 +871,10 @@ exp_names = [
     "ppo_default_lr100.0e-4",
 ]
 seeds = [10, 20, 30]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 150000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 
 
@@ -890,10 +890,10 @@ exp_names = [
     "FL-qppo-ac-simple_reuploading-exp_sced-output_scaleing-4params-1e-3-altFLenvforBIAStest-(76-params)",
 ]
 seeds = [10, 20, 30, 40, 50]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 150000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 """
 
 
@@ -906,10 +906,10 @@ exp_names = [
     "FL-alt-qppo-ac-NN(4,4)-(lr=1.0e-2)-(108-params)",
 ]
 seeds = [10, 20, 30, 40, 50]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 150000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 """
 #    "FL-qppo-ac-NN(4,4)-(lr=1.0e-4)-altFLenvforBIAStest-(108-params)",
 #    "FL-qppo-ac-NN(4,4)-(lr=1.0e-3)-altFLenvforBIAStest-(108-params)",
@@ -924,9 +924,9 @@ exp_names = [
     "FL-alt-qppo-ac-NN(4,4)-(lr=1.0e-2)-(108-params)",
 ]
 seeds = [10, 20, 30, 40, 50]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 150000
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 
 
@@ -939,10 +939,10 @@ exp_names = [
     "ppo_default_lr100.0e-4",
 ]
 seeds = [10, 20, 30]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 150000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 
 plot_dir = plots_dir + "/FL-actor-Test-2-alternate-circuit-architecture"
@@ -955,11 +955,11 @@ exp_names = [
     "ppo_default_lr100.0e-4",
 ]
 seeds = [10, 20, 30, 40, 50]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 50000
 
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 
 
@@ -979,10 +979,10 @@ exp_names = [
     "CP-ppo-ac-NN(6,6)-(lr=2.5e-2)-(86-params)",
 ]
 seeds = [10, 20, 30, 40, 50]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 500000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 
 plot_dir = plots_dir + "/CP-actor-Hyperparameter-Test-0-PPO-NN(6,6)-lr-plot2"
@@ -995,10 +995,10 @@ exp_names = [
     "CP-ppo-ac-NN(6,6)-(lr=1.0e-2)-(86-params)",
 ]
 seeds = [10, 20, 30, 40, 50]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 150000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 
 plot_dir = plots_dir + "/CP-actor-Hyperparameter-Test-0b-PPO-lr-NN-size"
@@ -1012,24 +1012,24 @@ exp_names = [
     "CP-ppo-ac-NN(7,7)-(lr=2.5e-3)-(107-params)",
 ]
 seeds = [10, 20, 30, 40, 50]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 150000
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 
 
 plot_dir = plots_dir + "/CP-actor-Hyperparameter-Test-00-insider_info"
 gym_id = "CartPole-v1"
 exp_names = ["CP-ppo-ac-NN(6,6)-(lr=2.5e-3)-(86-params)-record-insider-info"]
 seeds = [10, 20, 30, 40, 50]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128 * 8
 max_steps = 150000
 
-# plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+# plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, batchsize, max_steps)
 plot_insider_info(results_dir, plot_dir, gym_id, exp_names, seeds, max_steps)
 
 
-plot_dir = plots_dir + "/CP-actor-Hyperparameter-Test-1-qlr"
+plot_dir = plots_dir + "/CP-actor-Hyperparameter-Test-1a-qlr-no_output_scale"
 gym_id = "CartPole-v1"
 exp_names = [
     "CP-qppo-ac-simple_reuploading-exp_sced-ht15000-start-qlr1e-2-end-qlr1e-4-(72-params)",
@@ -1041,13 +1041,14 @@ exp_names = [
     "CP-ppo-ac-NN(6,6)-(lr=1.0e-3)-(86-params)",
 ]
 seeds = [10, 20, 30]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128
 max_steps = 500000
+alpha = 0.1
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps)
 
 
-plot_dir = plots_dir + "/CP-actor-Hyperparameter-Test-1-qlr-plot-2"
+plot_dir = plots_dir + "/CP-actor-Hyperparameter-Test-1b-qlr-no_output_scale2"
 gym_id = "CartPole-v1"
 exp_names = [
     "CP-qppo-ac-simple_reuploading-exp_sced-ht15000-start-qlr1e-2-end-qlr1e-4-(72-params)",
@@ -1061,13 +1062,14 @@ exp_names = [
     "CP-ppo-ac-NN(6,6)-(lr=1.0e-3)-(86-params)",
 ]
 seeds = [10, 20, 30]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128
 max_steps = 150000
+alpha = 0.05
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps)
 
 
-plot_dir = plots_dir + "/CP-actor-Hyperparameter-Test-1-qlr-plot-3"
+plot_dir = plots_dir + "/CP-actor-Hyperparameter-Test-1c-qlr-no_output_scale3"
 gym_id = "CartPole-v1"
 exp_names = [
     "CP-qppo-ac-simple_reuploading-qlr0.5e-3-(72-params)",
@@ -1078,13 +1080,14 @@ exp_names = [
     "CP-ppo-ac-NN(6,6)-(lr=1.0e-3)-(86-params)",
 ]
 seeds = [10, 20, 30]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128
 max_steps = 150000
+alpha = 0.1
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps)
 
 
-plot_dir = plots_dir + "/CP-actor-Hyperparameter-Test-1b-outscale-lr"
+plot_dir = plots_dir + "/CP-actor-Hyperparameter-Test-2a-outscale-lr"
 gym_id = "CartPole-v1"
 exp_names = [
     "CP-qppo-ac-simple_reuploading-qlr2.5e-3-(72-params)",
@@ -1097,33 +1100,14 @@ exp_names = [
     "CP-ppo-ac-NN(6,6)-(lr=1.0e-3)-(86-params)",
 ]
 seeds = [10, 20, 30]
-stepsize = 4 * 128 * 8
-max_steps = 150000
-
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
-
-
-plot_dir = plots_dir + "/CP-actor-Hyperparameter-Test-1b-outscale-lr-plot-2"
-gym_id = "CartPole-v1"
-exp_names = [
-    "CP-qppo-ac-simple_reuploading-qlr2.5e-3-(72-params)",
-    "CP-qppo-ac-simple_reuploading-qlr2.5e-3-output_scaleing-1param-1e-5-(73-params)",
-    "CP-qppo-ac-simple_reuploading-qlr2.5e-3-output_scaleing-1param-1e-4-(73-params)",
-    "CP-qppo-ac-simple_reuploading-qlr2.5e-3-output_scaleing-1param-1e-3-(73-params)",
-    "CP-qppo-ac-simple_reuploading-qlr2.5e-3-output_scaleing-1param-1e-2-(73-params)",
-    "CP-qppo-ac-simple_reuploading-qlr2.5e-3-output_scaleing-1param-1e-1-(73-params)",
-    "CP-random-baseline-(0-params)",
-    "CP-ppo-ac-NN(6,6)-(lr=1.0e-3)-(86-params)",
-]
-seeds = [10, 20, 30]
-stepsize = 4 * 128 * 8
+batchsize = 4 * 128
 max_steps = 500000
+alpha = 0.1
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps)
 
 
-
-plot_dir = plots_dir + "/CP-actor-Hyperparameter-Test-1b-outscale-lr-plot-3"
+plot_dir = plots_dir + "/CP-actor-Hyperparameter-Test-2b-qlr_x_outscale-lr"
 gym_id = "CartPole-v1"
 exp_names = [
     "CP-qppo-ac-simple_reuploading-qlr2.5e-3-output_scaleing-1param-1e-4-(73-params)",
@@ -1137,13 +1121,14 @@ exp_names = [
     "CP-ppo-ac-NN(6,6)-(lr=1.0e-3)-(86-params)",
 ]
 seeds = [10, 20, 30]
-stepsize = 4 * 128 * 20
+batchsize = 4 * 128
 max_steps = 500000
+alpha = 0.05
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps)
 
 
-plot_dir = plots_dir + "/CP-actor-Hyperparameter-Test-1b-outscale-lr-plot-4"
+plot_dir = plots_dir + "/CP-actor-Hyperparameter-Test-2c-outscale-lr-fixedlastentanglement"
 gym_id = "CartPole-v1"
 exp_names = [
     "CP-qppo-ac-simple_reuploading-qlr2.5e-3-output_scaleing-1param-1e-4-(73-params)",
@@ -1156,18 +1141,19 @@ exp_names = [
     "CP-ppo-ac-NN(6,6)-(lr=1.0e-3)-(86-params)",
 ]
 seeds = [10, 20, 30]
-stepsize = 4 * 128 * 20
+batchsize = 4 * 128
 max_steps = 500000
+alpha = 0.05
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps)
 
 
-plot_dir = plots_dir + "/CP-actor-Hyperparameter-Test-1c-init"
+plot_dir = plots_dir + "/CP-actor-Hyperparameter-Test-3a-random-inits"
 gym_id = "CartPole-v1"
 exp_names = [
-    "CP-qppo-ac-simple_reuploading-qlr2.5e-3-output_scaleing-1param-1e-4-(73-params)-fixedlastentanglement",
+    "CP-qppo-ac-simple_reuploading-qlr2.5e-3-output_scaleing-1param-1e-4-(73-params)-fixedlastentanglement",  # fully radom init
     "CP-qppo-ac-simple_reuploading-qlr2.5e-3-output_scaleing-1param-1e-4-(73-params)-clippedrandominit",
-    "CP-qppo-ac-simple_reuploading-qlr2.5e-3-output_scaleing-1param-1e-4-(73-params)-gaussinit",
+    "CP-qppo-ac-simple_reuploading-qlr2.5e-3-output_scaleing-1param-1e-4-(73-params)-allverysmall",
     "CP-qppo-ac-simple_reuploading-qlr2.5e-3-output_scaleing-1param-1e-4-(73-params)-allsmallinit",
     "CP-qppo-ac-simple_reuploading-qlr2.5e-3-output_scaleing-1param-1e-4-(73-params)-allmidinit",
     "CP-qppo-ac-simple_reuploading-qlr2.5e-3-output_scaleing-1param-1e-4-(73-params)-allbiginit",
@@ -1175,28 +1161,44 @@ exp_names = [
     "CP-ppo-ac-NN(6,6)-(lr=1.0e-3)-(86-params)",
 ]
 seeds = [10, 20, 30]
-stepsize = 4 * 128 * 10
+batchsize = 4 * 128
 max_steps = 150000
+alpha = 0.05
 
-plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps)
 
-"""
 
-plot_dir = test_plots_dir + "/CP-actor-Hyperparameter-Test-1c-init-alpha-0.1"
+plot_dir = plots_dir + "/CP-actor-Hyperparameter-Test-3b-gaussinits"
 gym_id = "CartPole-v1"
 exp_names = [
     "CP-qppo-ac-simple_reuploading-qlr2.5e-3-output_scaleing-1param-1e-4-(73-params)-fixedlastentanglement",
-    "CP-qppo-ac-simple_reuploading-qlr2.5e-3-output_scaleing-1param-1e-4-(73-params)-clippedrandominit",
+    "CP-qppo-ac-simple_reuploading-qlr2.5e-3-output_scaleing-1param-1e-4-(73-params)-unclipped_gaussinit",
     "CP-qppo-ac-simple_reuploading-qlr2.5e-3-output_scaleing-1param-1e-4-(73-params)-gaussinit",
-    "CP-qppo-ac-simple_reuploading-qlr2.5e-3-output_scaleing-1param-1e-4-(73-params)-allsmallinit",
-    "CP-qppo-ac-simple_reuploading-qlr2.5e-3-output_scaleing-1param-1e-4-(73-params)-allmidinit",
-    "CP-qppo-ac-simple_reuploading-qlr2.5e-3-output_scaleing-1param-1e-4-(73-params)-allbiginit",
+    "CP-qppo-ac-simple_reuploading-qlr2.5e-3-output_scaleing-1param-1e-4-(73-params)-rescaled_gaussinit",
     "CP-random-baseline-(0-params)",
     "CP-ppo-ac-NN(6,6)-(lr=1.0e-3)-(86-params)",
 ]
 seeds = [10, 20, 30]
-batchsize = 512
+batchsize = 4 * 128
 max_steps = 150000
+alpha = 0.05
+
+
+plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps)
+
+plot_dir = plots_dir + "/CP-actor-Hyperparameter-Test-3c-best-inits"
+gym_id = "CartPole-v1"
+exp_names = [
+    "CP-qppo-ac-simple_reuploading-qlr2.5e-3-output_scaleing-1param-1e-4-(73-params)-fixedlastentanglement",
+    "CP-qppo-ac-simple_reuploading-qlr2.5e-3-output_scaleing-1param-1e-4-(73-params)-gaussinit",
+    "CP-qppo-ac-simple_reuploading-qlr2.5e-3-output_scaleing-1param-1e-4-(73-params)-allsmallinit",
+    "CP-random-baseline-(0-params)",
+    "CP-ppo-ac-NN(6,6)-(lr=1.0e-3)-(86-params)",
+]
+seeds = [10, 20, 30]
+batchsize = 4 * 128
+max_steps = 500000
 alpha = 0.1
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps)
+"""

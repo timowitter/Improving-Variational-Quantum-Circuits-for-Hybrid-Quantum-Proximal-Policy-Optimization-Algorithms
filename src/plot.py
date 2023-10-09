@@ -20,23 +20,118 @@ sns.set_theme()
 # palette = itertools.cycle(sns.color_palette("colorblind"))  # type: ignore
 
 
-def avg_episode_results_of_update(episode_results_df, gym_id, exp_name, seed, stepsize, max_steps):
-    # make avg over update for plotting
-    avg_rewards = []
-    avg_lengths = []
+# plot final results
+
+
+def plot_test_avg_final(
+    results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, batchsize=512
+):
+    # get all result directories
+    results_dirs = []
+    dir_seeds = []
+    dir_exp_names = []
+    for exp_name in exp_names:
+        for seed in seeds:
+            results_dirs.append(results_dir + "/" + gym_id + "/" + exp_name + "/" + str(seed))
+            dir_seeds.append(seed)
+            dir_exp_names.append(exp_name)
+
+    # load dataframes
+    ep_res_df_list = [
+        pd.read_csv(os.path.join(loc, "episode_results.csv")) for loc in results_dirs
+    ]
+    for df in ep_res_df_list:
+        df.drop(df[df["global_step"] > max_steps].index, inplace=True)
+
+    up_res_df_list = [pd.read_csv(os.path.join(loc, "update_results.csv")) for loc in results_dirs]
+    # make average of update for episode specific data
+    for df in up_res_df_list:
+        df.drop(df[df["global_step"] > max_steps].index, inplace=True)
+
+    ep_res_by_seed_list = [
+        avg_over_update_of_episodic_results(df, gym_id, exp_name, seed, batchsize, max_steps)
+        for df, seed, exp_name in zip(ep_res_df_list, dir_seeds, dir_exp_names)
+    ]
+
+    ep_res_by_seed_emw_list = [
+        emw_for_plotting_by_seed_of_episodic_results(df, alpha) for df in ep_res_by_seed_list
+    ]
+
+    ep_res_by_seed = pd.concat(ep_res_by_seed_emw_list, ignore_index=True)
+
+    up_res_by_seed_emw_list = [
+        emw_for_plotting_by_seed_of_update_results(df, alpha) for df in up_res_df_list
+    ]
+
+    up_res_by_seed = pd.concat(up_res_by_seed_emw_list, ignore_index=True)
+
+    ep_res_by_exp_name_list = [
+        avg_over_seeds_of_avg_over_update_of_episodic_results(
+            df, gym_id, exp_name, 512, max_steps, alpha
+        )
+        for df, exp_name in zip(ep_res_by_seed_list, dir_exp_names)
+    ]
+    ep_res_by_exp_name = pd.concat(ep_res_by_exp_name_list, ignore_index=True)
+
+    up_res_by_exp_name_list = [
+        avg_over_seeds_of_update_results(df, gym_id, exp_name, batchsize, max_steps, alpha)
+        for df, exp_name in zip(up_res_df_list, dir_exp_names)
+    ]
+
+    up_res_by_exp_name = pd.concat(up_res_by_exp_name_list, ignore_index=True)
+
+    # check if plot_dir exists
+    pathExists = os.path.exists(plot_dir)
+    if not pathExists:
+        os.makedirs(plot_dir)
+
+    # plotting
+
+    plot_avg_episode_reward_by_seed(ep_res_by_seed, plot_dir)
+    plot_avg_episode_reward_by_exp_name(ep_res_by_exp_name, plot_dir)
+    plot_avg_episode_length_by_seed(ep_res_by_seed, plot_dir)
+    plot_avg_episode_length_by_exp_name(ep_res_by_exp_name, plot_dir)
+
+    plot_learning_rate_by_exp_name(up_res_by_exp_name, plot_dir)
+    plot_qlearning_rate_by_exp_name(up_res_by_exp_name, plot_dir)
+    plot_value_loss_by_exp_name(up_res_by_exp_name, plot_dir)
+    plot_policy_loss_by_exp_name(up_res_by_exp_name, plot_dir)
+    plot_entropy_by_seed(up_res_by_seed, plot_dir)
+    plot_entropy_by_exp_name(up_res_by_exp_name, plot_dir)
+    plot_loss_by_exp_name(up_res_by_exp_name, plot_dir)
+    plot_old_approx_kl_by_seed(up_res_by_seed, plot_dir)
+    plot_approx_kl_by_seed(up_res_by_seed, plot_dir)
+    plot_clipfrac_by_seed(up_res_by_seed, plot_dir)
+    plot_explained_variance_by_seed(up_res_by_seed, plot_dir)
+    plot_SPS_by_seed(up_res_by_seed, plot_dir)
+    plot_output_scaleing_by_seed(up_res_by_seed, plot_dir)
+    plot_output_scaleing_by_exp_name(up_res_by_exp_name, plot_dir)
+
+
+##################################################################################
+##################################################################################
+##################################################################################
+
+
+def avg_over_update_of_episodic_results(
+    episode_results_df, gym_id, exp_name, seed, batchsize, max_steps
+):
+    # make avg over update for makeing the mean over different seeds
+    avg_reward_per_updates = []
+    avg_episode_length_per_updates = []
     avg_global_step = []
     avg_gym_id = []
     avg_exp_name = []
     # avg_circuit = []
     avg_seed = []
 
-    for i in range(stepsize, max_steps, stepsize):
+    for i in range(batchsize, max_steps, batchsize):
         df_tmp = episode_results_df[
             (episode_results_df.global_step <= i)
-            & (episode_results_df.global_step > (i - stepsize))
+            & (episode_results_df.global_step > (i - batchsize))
         ]
-        avg_rewards.append(df_tmp["episode_reward"].mean())
-        avg_lengths.append(df_tmp["episode_length"].mean())
+        avg_reward_per_updates.append(df_tmp["episode_reward"].mean())
+        avg_episode_length_per_updates.append(df_tmp["episode_length"].mean())
         avg_global_step.append(i)
         avg_gym_id.append(gym_id)
         avg_exp_name.append(exp_name)
@@ -44,8 +139,8 @@ def avg_episode_results_of_update(episode_results_df, gym_id, exp_name, seed, st
         avg_seed.append(seed)
 
     avg_results = {
-        "avg_rewards": avg_rewards,
-        "avg_lengths": avg_lengths,
+        "avg_reward_per_update": avg_reward_per_updates,
+        "avg_episode_length_per_update": avg_episode_length_per_updates,
         "global_step": avg_global_step,
         "gym_id": gym_id,
         "exp_name": avg_exp_name,
@@ -56,178 +151,159 @@ def avg_episode_results_of_update(episode_results_df, gym_id, exp_name, seed, st
     return pd.DataFrame(data=avg_results)
 
 
-def avg_episode_results_of_update_by_exp_name(df, gym_id, exp_names, stepsize, max_steps):
+def emw_for_plotting_by_seed_of_episodic_results(df, alpha):
+    df["reward"] = df["avg_reward_per_update"].ewm(alpha=alpha).mean()
+    df["episode_length"] = df["avg_episode_length_per_update"].ewm(alpha=alpha).mean()
+    return df
+
+
+def avg_over_seeds_of_avg_over_update_of_episodic_results(
+    df, gym_id, exp_name, batchsize, max_steps, alpha
+):
     avg_rewards = []
     avg_lengths = []
     avg_global_step = []
     avg_gym_id = []
     avg_exp_name = []
 
-    for exp_name in exp_names:
-        df_tmp1 = df[(df.exp_name == exp_name)]
-        for i in range(stepsize, max_steps, stepsize):
-            df_tmp2 = df_tmp1[(df_tmp1.global_step == i)]
-            avg_rewards.append(df_tmp2["avg_rewards"].mean())
-            avg_lengths.append(df_tmp2["avg_lengths"].mean())
-            avg_global_step.append(i)
-            avg_gym_id.append(gym_id)
-            avg_exp_name.append(exp_name)
+    df_tmp1 = df[(df.exp_name == exp_name)]
+    for i in range(batchsize, max_steps, batchsize):
+        df_tmp2 = df_tmp1[(df_tmp1.global_step == i)]
+        avg_rewards.append(df_tmp2["avg_reward_per_update"].mean())
+        avg_lengths.append(df_tmp2["avg_episode_length_per_update"].mean())
+        avg_global_step.append(i)
+        avg_gym_id.append(gym_id)
+        avg_exp_name.append(exp_name)
 
     avg_results = {
-        "avg_rewards": avg_rewards,
-        "avg_lengths": avg_lengths,
+        "avg_reward_no_emw": avg_rewards,
+        "avg_length_no_emw": avg_lengths,
         "global_step": avg_global_step,
         "gym_id": avg_gym_id,
         "exp_name": avg_exp_name,
     }
+    avg_ep_res_avg = pd.DataFrame(data=avg_results)
+    avg_ep_res_avg["reward"] = avg_ep_res_avg["avg_reward_no_emw"].ewm(alpha=alpha).mean()
+    avg_ep_res_avg["episode_length"] = avg_ep_res_avg["avg_length_no_emw"].ewm(alpha=alpha).mean()
 
-    return pd.DataFrame(data=avg_results)
+    return avg_ep_res_avg
 
 
-def avg_update_results(df, gym_id, exp_names, stepsize, max_steps):
+def emw_for_plotting_by_seed_of_update_results(df, alpha):
+    df["value_loss_emw"] = df["value_loss"].ewm(alpha=alpha).mean()
+    df["policy_loss_emw"] = df["policy_loss"].ewm(alpha=alpha).mean()
+    df["entropy_emw"] = df["entropy"].ewm(alpha=alpha).mean()
+    df["loss_emw"] = df["loss"].ewm(alpha=alpha).mean()
+    return df
+
+
+def avg_over_seeds_of_update_results(df, gym_id, exp_name, batchsize, max_steps, alpha):
     avg_learning_rate = []
     avg_qlearning_rate = []
     avg_value_loss = []
     avg_policy_loss = []
     avg_entropy = []
     avg_loss = []
-    avg_SPS = []
     avg_output_scaleing = []
 
     avg_global_step = []
     avg_gym_id = []
     avg_exp_name = []
 
-    for exp_name in exp_names:
-        df_tmp1 = df[(df.exp_name == exp_name)]
-        for i in range(stepsize, max_steps, stepsize):
-            df_tmp = df_tmp1[(df_tmp1.global_step <= i) & (df_tmp1.global_step > (i - stepsize))]
-            avg_learning_rate.append(df_tmp["learning_rate"].mean())
-            avg_qlearning_rate.append(df_tmp["qlearning_rate"].mean())
-            avg_value_loss.append(df_tmp["value_loss"].mean())
-            avg_policy_loss.append(df_tmp["policy_loss"].mean())
-            avg_entropy.append(df_tmp["entropy"].mean())
-            avg_loss.append(df_tmp["loss"].mean())
-            avg_SPS.append(df_tmp["SPS"].mean())
-            avg_output_scaleing.append(df_tmp["output_scaleing"].mean())
+    df_tmp1 = df[(df.exp_name == exp_name)]
+    for i in range(batchsize, max_steps, batchsize):
+        df_tmp = df_tmp1[(df_tmp1.global_step <= i) & (df_tmp1.global_step > (i - batchsize))]
+        avg_learning_rate.append(df_tmp["learning_rate"].mean())
+        avg_qlearning_rate.append(df_tmp["qlearning_rate"].mean())
+        avg_value_loss.append(df_tmp["value_loss"].mean())
+        avg_policy_loss.append(df_tmp["policy_loss"].mean())
+        avg_entropy.append(df_tmp["entropy"].mean())
+        avg_loss.append(df_tmp["loss"].mean())
+        avg_output_scaleing.append(df_tmp["output_scaleing"].mean())
 
-            avg_global_step.append(i)
-            avg_gym_id.append(gym_id)
-            avg_exp_name.append(exp_name)
+        avg_global_step.append(i)
+        avg_gym_id.append(gym_id)
+        avg_exp_name.append(exp_name)
 
     avg_results = {
-        "learning_rate": avg_learning_rate,
-        "qlearning_rate": avg_qlearning_rate,
-        "value_loss": avg_value_loss,
-        "policy_loss": avg_policy_loss,
-        "entropy": avg_entropy,
-        "loss": avg_loss,
-        "SPS": avg_SPS,
-        "output_scaleing": avg_output_scaleing,
+        "avg_learning_rate": avg_learning_rate,
+        "avg_qlearning_rate": avg_qlearning_rate,
+        "avg_value_loss": avg_value_loss,
+        "avg_policy_loss": avg_policy_loss,
+        "avg_entropy": avg_entropy,
+        "avg_loss": avg_loss,
+        "avg_output_scaleing": avg_output_scaleing,
         "global_step": avg_global_step,
         "gym_id": avg_gym_id,
         "exp_name": avg_exp_name,
     }
 
-    return pd.DataFrame(data=avg_results)
+    avg_up_res_avg = pd.DataFrame(data=avg_results)
+    avg_up_res_avg["value_loss_emw"] = avg_up_res_avg["avg_value_loss"].ewm(alpha=alpha).mean()
+    avg_up_res_avg["policy_loss_emw"] = avg_up_res_avg["avg_policy_loss"].ewm(alpha=alpha).mean()
+    avg_up_res_avg["entropy_emw"] = avg_up_res_avg["avg_entropy"].ewm(alpha=alpha).mean()
+    avg_up_res_avg["loss_emw"] = avg_up_res_avg["avg_loss"].ewm(alpha=alpha).mean()
+
+    return avg_up_res_avg
 
 
-def plot_training_results(
-    results_dir, plot_dir, gym_id, exp_name, circuit, seed, stepsize, max_steps
-):
-    pathExists = os.path.exists(plot_dir)
-    if not pathExists:
-        os.makedirs(plot_dir)
-
-    episode_results_dir = os.path.join(results_dir, "episode_results.csv")
-    episode_results = pd.read_csv(episode_results_dir)
-
-    update_results_dir = os.path.join(results_dir, "update_results.csv")
-    update_results = pd.read_csv(update_results_dir)
-
-    avg_episode_results = avg_episode_results_of_update(
-        episode_results, gym_id, exp_name, seed, stepsize, max_steps
-    )
-
-    # plotting over update
-    plot_avg_episode_reward_by_seed(avg_episode_results, plot_dir)
-    plot_avg_episode_length_by_seed(avg_episode_results, plot_dir)
-
-    plot_learning_rate_by_seed(update_results, plot_dir)
-    plot_qlearning_rate_by_seed(update_results, plot_dir)
-    plot_value_loss_by_seed(update_results, plot_dir)
-    plot_policy_loss_by_seed(update_results, plot_dir)
-    plot_entropy_by_seed(update_results, plot_dir)
-    plot_loss_by_seed(update_results, plot_dir)
-    plot_old_approx_kl_by_seed(update_results, plot_dir)
-    plot_approx_kl_by_seed(update_results, plot_dir)
-    plot_clipfrac_by_seed(update_results, plot_dir)
-    plot_explained_variance_by_seed(update_results, plot_dir)
-    plot_SPS_by_seed(update_results, plot_dir)
-    plot_output_scaleing_by_seed(update_results, plot_dir)
-
-
-def plot_avg_episode_reward_by_seed(episode_results, dir):
+def plot_avg_episode_reward_by_seed(episode_results, plot_dir):
     sns.relplot(
         data=episode_results,
         kind="line",
         x="global_step",
-        y="avg_rewards",
+        y="reward",
         col="exp_name",
         hue="seed",
-        # style="seed",
     )
-    plot_dir = os.path.join(dir, "episode_reward_by_seed.png")
+    plot_dir = os.path.join(plot_dir, "episode_reward_by_seed.png")
     plt.savefig(plot_dir)
     plt.close()
 
 
-def plot_avg_episode_reward_by_exp_name(episode_results, dir):
+def plot_avg_episode_reward_by_exp_name(episode_results, plot_dir):
     sns.relplot(
         data=episode_results,
         kind="line",
         x="global_step",
-        y="avg_rewards",
+        y="reward",
         col="gym_id",
         hue="exp_name",
-        # style="exp_name",
     )
-    plot_dir = os.path.join(dir, "episode_reward_by_exp_name.png")
+    plot_dir = os.path.join(plot_dir, "episode_reward_by_exp_name.png")
     plt.savefig(plot_dir)
     plt.close()
 
 
-def plot_avg_episode_length_by_seed(episode_results, dir):
+def plot_avg_episode_length_by_seed(episode_results, plot_dir):
     sns.relplot(
         data=episode_results,
         kind="line",
         x="global_step",
-        y="avg_lengths",
+        y="episode_length",
         col="exp_name",
         hue="seed",
-        # style="seed",
     )
-    plot_dir = os.path.join(dir, "episode_lenght_by_seed.png")
+    plot_dir = os.path.join(plot_dir, "episode_lenght_by_seed.png")
     plt.savefig(plot_dir)
     plt.close()
 
 
-def plot_avg_episode_length_by_exp_name(episode_results, dir):
+def plot_avg_episode_length_by_exp_name(episode_results, plot_dir):
     sns.relplot(
         data=episode_results,
         kind="line",
         x="global_step",
-        y="avg_lengths",
+        y="episode_length",
         col="gym_id",
         hue="exp_name",
-        # style="exp_name",
     )
-    plot_dir = os.path.join(dir, "episode_lenght_by_exp_name.png")
+    plot_dir = os.path.join(plot_dir, "episode_lenght_by_exp_name.png")
     plt.savefig(plot_dir)
     plt.close()
 
 
-def plot_learning_rate_by_seed(update_results, dir):
+def plot_learning_rate_by_seed(update_results, plot_dir):
     sns.relplot(
         data=update_results,
         kind="line",
@@ -235,29 +311,27 @@ def plot_learning_rate_by_seed(update_results, dir):
         y="learning_rate",
         col="exp_name",
         hue="seed",
-        # style="seed",
     )
-    plot_dir = os.path.join(dir, "learning_rate_by_seed.png")
+    plot_dir = os.path.join(plot_dir, "learning_rate_by_seed.png")
     plt.savefig(plot_dir)
     plt.close()
 
 
-def plot_learning_rate_by_exp_name(update_results, dir):
+def plot_learning_rate_by_exp_name(update_results, plot_dir):
     sns.relplot(
         data=update_results,
         kind="line",
         x="global_step",
-        y="learning_rate",
+        y="avg_learning_rate",
         col="gym_id",
         hue="exp_name",
-        # style="exp_name",
     )
-    plot_dir = os.path.join(dir, "learning_rate_by_exp_name.png")
+    plot_dir = os.path.join(plot_dir, "learning_rate_by_exp_name.png")
     plt.savefig(plot_dir)
     plt.close()
 
 
-def plot_qlearning_rate_by_seed(update_results, dir):
+def plot_qlearning_rate_by_seed(update_results, plot_dir):
     sns.relplot(
         data=update_results,
         kind="line",
@@ -265,149 +339,139 @@ def plot_qlearning_rate_by_seed(update_results, dir):
         y="qlearning_rate",
         col="exp_name",
         hue="seed",
-        # style="seed",
     )
-    plot_dir = os.path.join(dir, "qlearning_rate_by_seed.png")
+    plot_dir = os.path.join(plot_dir, "qlearning_rate_by_seed.png")
     plt.savefig(plot_dir)
     plt.close()
 
 
-def plot_qlearning_rate_by_exp_name(update_results, dir):
+def plot_qlearning_rate_by_exp_name(update_results, plot_dir):
     sns.relplot(
         data=update_results,
         kind="line",
         x="global_step",
-        y="qlearning_rate",
+        y="avg_qlearning_rate",
         col="gym_id",
         hue="exp_name",
-        # style="exp_name",
     )
-    plot_dir = os.path.join(dir, "qlearning_rate_by_exp_name.png")
+    plot_dir = os.path.join(plot_dir, "qlearning_rate_by_exp_name.png")
     plt.savefig(plot_dir)
     plt.close()
 
 
-def plot_value_loss_by_seed(update_results, dir):
+def plot_value_loss_by_seed(update_results, plot_dir):
     sns.relplot(
         data=update_results,
         kind="line",
         x="global_step",
-        y="value_loss",
+        y="value_loss_emw",
         col="exp_name",
         hue="seed",
-        # style="seed",
     )
-    plot_dir = os.path.join(dir, "value_loss_by_seed.png")
+    plot_dir = os.path.join(plot_dir, "value_loss_by_seed.png")
     plt.savefig(plot_dir)
     plt.close()
 
 
-def plot_value_loss_by_exp_name(update_results, dir):
+def plot_value_loss_by_exp_name(update_results, plot_dir):
     sns.relplot(
         data=update_results,
         kind="line",
         x="global_step",
-        y="value_loss",
+        y="value_loss_emw",
         col="gym_id",
         hue="exp_name",
-        # style="exp_name",
     )
-    plot_dir = os.path.join(dir, "value_loss_by_exp_name.png")
+    plot_dir = os.path.join(plot_dir, "value_loss_by_exp_name.png")
     plt.savefig(plot_dir)
     plt.close()
 
 
-def plot_policy_loss_by_seed(update_results, dir):
+def plot_policy_loss_by_seed(update_results, plot_dir):
     sns.relplot(
         data=update_results,
         kind="line",
         x="global_step",
-        y="policy_loss",
+        y="policy_loss_emw",
         col="exp_name",
         hue="seed",
-        # style="seed",
     )
-    plot_dir = os.path.join(dir, "policy_loss_by.png")
+    plot_dir = os.path.join(plot_dir, "policy_loss_by.png")
     plt.savefig(plot_dir)
     plt.close()
 
 
-def plot_policy_loss_by_exp_name(update_results, dir):
+def plot_policy_loss_by_exp_name(update_results, plot_dir):
     sns.relplot(
         data=update_results,
         kind="line",
         x="global_step",
-        y="policy_loss",
+        y="policy_loss_emw",
         col="gym_id",
         hue="exp_name",
-        # style="exp_name",
     )
-    plot_dir = os.path.join(dir, "policy_loss_by_exp_name.png")
+    plot_dir = os.path.join(plot_dir, "policy_loss_by_exp_name.png")
     plt.savefig(plot_dir)
     plt.close()
 
 
-def plot_entropy_by_seed(update_results, dir):
+def plot_entropy_by_seed(update_results, plot_dir):
     sns.relplot(
         data=update_results,
         kind="line",
         x="global_step",
-        y="entropy",
+        y="entropy_emw",
         col="exp_name",
         hue="seed",
-        # style="seed",
     )
-    plot_dir = os.path.join(dir, "entropy_by_seed.png")
+    plot_dir = os.path.join(plot_dir, "entropy_by_seed.png")
     plt.savefig(plot_dir)
     plt.close()
 
 
-def plot_entropy_by_exp_name(update_results, dir):
+def plot_entropy_by_exp_name(update_results, plot_dir):
     sns.relplot(
         data=update_results,
         kind="line",
         x="global_step",
-        y="entropy",
+        y="entropy_emw",
         col="gym_id",
         hue="exp_name",
-        # style="exp_name",
     )
-    plot_dir = os.path.join(dir, "entropy_by_exp_name.png")
+    plot_dir = os.path.join(plot_dir, "entropy_by_exp_name.png")
     plt.savefig(plot_dir)
     plt.close()
 
 
-def plot_loss_by_seed(update_results, dir):
+def plot_loss_by_seed(update_results, plot_dir):
     sns.relplot(
         data=update_results,
         kind="line",
         x="global_step",
-        y="loss",
+        y="loss_emw",
         col="exp_name",
         hue="seed",
-        # style="seed",
     )
-    plot_dir = os.path.join(dir, "loss_by_seed.png")
+    plot_dir = os.path.join(plot_dir, "loss_by_seed.png")
     plt.savefig(plot_dir)
     plt.close()
 
 
-def plot_loss_by_exp_name(update_results, dir):
+def plot_loss_by_exp_name(update_results, plot_dir):
     sns.relplot(
         data=update_results,
         kind="line",
         x="global_step",
-        y="loss",
+        y="loss_emw",
         col="gym_id",
         hue="exp_name",
-        # style="exp_name",
     )
-    plot_dir = os.path.join(dir, "loss_by_exp_name.png")
+    plot_dir = os.path.join(plot_dir, "loss_by_exp_name.png")
     plt.savefig(plot_dir)
     plt.close()
 
 
-def plot_old_approx_kl_by_seed(update_results, dir):
+def plot_old_approx_kl_by_seed(update_results, plot_dir):
     sns.relplot(
         data=update_results,
         kind="line",
@@ -415,14 +479,13 @@ def plot_old_approx_kl_by_seed(update_results, dir):
         y="old_approx_kl",
         col="exp_name",
         hue="seed",
-        # style="seed",
     )
-    plot_dir = os.path.join(dir, "old_approx_kl_by_seed.png")
+    plot_dir = os.path.join(plot_dir, "old_approx_kl_by_seed.png")
     plt.savefig(plot_dir)
     plt.close()
 
 
-def plot_approx_kl_by_seed(update_results, dir):
+def plot_approx_kl_by_seed(update_results, plot_dir):
     sns.relplot(
         data=update_results,
         kind="line",
@@ -430,14 +493,13 @@ def plot_approx_kl_by_seed(update_results, dir):
         y="approx_kl",
         col="exp_name",
         hue="seed",
-        # style="seed",
     )
-    plot_dir = os.path.join(dir, "approx_kl_by_seed.png")
+    plot_dir = os.path.join(plot_dir, "approx_kl_by_seed.png")
     plt.savefig(plot_dir)
     plt.close()
 
 
-def plot_clipfrac_by_seed(update_results, dir):
+def plot_clipfrac_by_seed(update_results, plot_dir):
     sns.relplot(
         data=update_results,
         kind="line",
@@ -445,14 +507,13 @@ def plot_clipfrac_by_seed(update_results, dir):
         y="clipfrac",
         col="exp_name",
         hue="seed",
-        # style="seed",
     )
-    plot_dir = os.path.join(dir, "clipfrac_by_seed.png")
+    plot_dir = os.path.join(plot_dir, "clipfrac_by_seed.png")
     plt.savefig(plot_dir)
     plt.close()
 
 
-def plot_explained_variance_by_seed(update_results, dir):
+def plot_explained_variance_by_seed(update_results, plot_dir):
     sns.relplot(
         data=update_results,
         kind="line",
@@ -460,14 +521,13 @@ def plot_explained_variance_by_seed(update_results, dir):
         y="explained_variance",
         col="exp_name",
         hue="seed",
-        # style="seed",
     )
-    plot_dir = os.path.join(dir, "explained_variance_by_seed.png")
+    plot_dir = os.path.join(plot_dir, "explained_variance_by_seed.png")
     plt.savefig(plot_dir)
     plt.close()
 
 
-def plot_SPS_by_seed(update_results, dir):
+def plot_SPS_by_seed(update_results, plot_dir):
     sns.relplot(
         data=update_results,
         kind="line",
@@ -475,29 +535,13 @@ def plot_SPS_by_seed(update_results, dir):
         y="SPS",
         col="exp_name",
         hue="seed",
-        # style="seed",
     )
-    plot_dir = os.path.join(dir, "SPS_by_seed.png")
+    plot_dir = os.path.join(plot_dir, "SPS_by_seed.png")
     plt.savefig(plot_dir)
     plt.close()
 
 
-def plot_SPS_by_exp_name(update_results, dir):
-    sns.relplot(
-        data=update_results,
-        kind="line",
-        x="global_step",
-        y="SPS",
-        col="gym_id",
-        hue="exp_name",
-        # style="exp_name",
-    )
-    plot_dir = os.path.join(dir, "SPS_by_exp_name.png")
-    plt.savefig(plot_dir)
-    plt.close()
-
-
-def plot_output_scaleing_by_seed(update_results, dir):
+def plot_output_scaleing_by_seed(update_results, plot_dir):
     sns.relplot(
         data=update_results,
         kind="line",
@@ -505,485 +549,21 @@ def plot_output_scaleing_by_seed(update_results, dir):
         y="output_scaleing",
         col="exp_name",
         hue="seed",
-        # style="seed",
     )
-    plot_dir = os.path.join(dir, "output_scaleing_by_seed.png")
+    plot_dir = os.path.join(plot_dir, "output_scaleing_by_seed.png")
     plt.savefig(plot_dir)
     plt.close()
 
 
-def plot_output_scaleing_by_exp_name(update_results, dir):
+def plot_output_scaleing_by_exp_name(update_results, plot_dir):
     sns.relplot(
         data=update_results,
         kind="line",
         x="global_step",
-        y="output_scaleing",
+        y="avg_output_scaleing",
         col="gym_id",
         hue="exp_name",
-        # style="exp_name",
     )
-    plot_dir = os.path.join(dir, "output_scaleing_by_exp_name.png")
+    plot_dir = os.path.join(plot_dir, "output_scaleing_by_exp_name.png")
     plt.savefig(plot_dir)
     plt.close()
-
-
-def plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps):
-    # get all result directories
-    results_dirs = []
-    dir_seeds = []
-    dir_exp_names = []
-    for exp_name in exp_names:
-        for seed in seeds:
-            # tmp = f"{results_dir}/{gym_id}/{exp_name}/{seed}"
-            results_dirs.append(results_dir + "/" + gym_id + "/" + exp_name + "/" + str(seed))
-            dir_seeds.append(seed)
-            dir_exp_names.append(exp_name)
-
-    # load dataframes
-    ep_res_df_list = [
-        pd.read_csv(os.path.join(loc, "episode_results.csv")) for loc in results_dirs
-    ]
-    up_res_df_list = [pd.read_csv(os.path.join(loc, "update_results.csv")) for loc in results_dirs]
-    # make average of update for episode specific data
-    ep_res_avg_list = [
-        avg_episode_results_of_update(df, gym_id, exp_name, seed, stepsize, max_steps)
-        for df, seed, exp_name in zip(ep_res_df_list, dir_seeds, dir_exp_names)
-    ]
-    # concat dataframes
-    ep_res = pd.concat(ep_res_avg_list, ignore_index=True)
-    up_res = pd.concat(up_res_df_list, ignore_index=True)
-    # make average over the different seeds of one experiment
-    ep_res_avg = avg_episode_results_of_update_by_exp_name(
-        ep_res, gym_id, exp_names, stepsize, max_steps
-    )
-    up_res_avg = avg_update_results(up_res, gym_id, exp_names, stepsize, max_steps)
-
-    # check if plot_dir exists
-    pathExists = os.path.exists(plot_dir)
-    if not pathExists:
-        os.makedirs(plot_dir)
-
-    # plotting
-
-    plot_avg_episode_reward_by_seed(ep_res, plot_dir)
-    plot_avg_episode_reward_by_exp_name(ep_res_avg, plot_dir)
-    plot_avg_episode_length_by_seed(ep_res, plot_dir)
-    plot_avg_episode_length_by_exp_name(ep_res_avg, plot_dir)
-
-    plot_learning_rate_by_exp_name(up_res_avg, plot_dir)
-    plot_qlearning_rate_by_exp_name(up_res_avg, plot_dir)
-    plot_value_loss_by_exp_name(up_res_avg, plot_dir)
-    plot_policy_loss_by_exp_name(up_res_avg, plot_dir)
-    plot_entropy_by_seed(up_res, plot_dir)
-    plot_entropy_by_exp_name(up_res_avg, plot_dir)
-    plot_loss_by_exp_name(up_res_avg, plot_dir)
-    plot_old_approx_kl_by_seed(up_res, plot_dir)
-    plot_approx_kl_by_seed(up_res, plot_dir)
-    plot_clipfrac_by_seed(up_res, plot_dir)
-    plot_explained_variance_by_seed(up_res, plot_dir)
-    plot_SPS_by_seed(up_res, plot_dir)
-    plot_SPS_by_exp_name(up_res_avg, plot_dir)
-    plot_output_scaleing_by_seed(up_res, plot_dir)
-    plot_output_scaleing_by_exp_name(up_res_avg, plot_dir)
-
-
-def plot_test_avg3(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps):
-    # get all result directories
-    results_dirs = []
-    dir_seeds = []
-    dir_exp_names = []
-    for exp_name in exp_names:
-        for seed in seeds:
-            # tmp = f"{results_dir}/{gym_id}/{exp_name}/{seed}"
-            results_dirs.append(results_dir + "/" + gym_id + "/" + exp_name + "/" + str(seed))
-            dir_seeds.append(seed)
-            dir_exp_names.append(exp_name)
-
-    # load dataframes
-    up_res_df_list = [pd.read_csv(os.path.join(loc, "update_results.csv")) for loc in results_dirs]
-    # make average of update for episode specific data
-
-    # concat dataframes
-    up_res = pd.concat(up_res_df_list, ignore_index=True)
-    # value_loss_exp_name = up_res.groupby(['exp_name', 'global_step'])['value_loss'].mean()
-    up_res["value_loss_mean"] = up_res.groupby(["exp_name", "global_step"], sort=False)[
-        "value_loss"
-    ].transform("mean")
-    up_res["value_loss_mean_emw"] = up_res["value_loss_mean"].ewm(alpha=0.6).mean()
-    # print(value_loss_exp_name)
-    # value_loss_seed = up_res.groupby(["exp_name", "seed", "global_step"])["value_loss"].mean()
-    up_res["value_loss_seed_mean"] = up_res.groupby(
-        ["exp_name", "seed", "global_step"], sort=False
-    )["value_loss"].transform("mean")
-    # make average over the different seeds of one experiment
-
-    # up_res_avg = avg_update_results(up_res, gym_id, exp_names, stepsize, max_steps)
-
-    # check if plot_dir exists
-    pathExists = os.path.exists(plot_dir)
-    if not pathExists:
-        os.makedirs(plot_dir)
-
-    # sns.lineplot(x="global_step", y="value_loss_mean",
-    #         hue="exp_name", errorbar='sd',
-    #         data=up_res)
-
-    # plotting
-    sns.relplot(
-        data=up_res,
-        kind="line",
-        x="global_step",
-        y="value_loss_mean_emw",
-        col="gym_id",
-        hue="exp_name",
-        errorbar="sd",
-        err_style="band",
-        # style="exp_name",
-    )
-    plot_dir2 = os.path.join(plot_dir, "value_loss_by_exp_name.png")
-    plt.savefig(plot_dir2)
-    plt.close()
-
-    sns.relplot(
-        data=up_res,
-        kind="line",
-        x="global_step",
-        y="value_loss_seed_mean",
-        col="exp_name",
-        hue="seed",
-        errorbar="sd",
-        err_style="band",
-        # style="seed",
-    )
-    plot_dir2 = os.path.join(plot_dir, "value_loss_by_seed.png")
-    plt.savefig(plot_dir2)
-    plt.close()
-
-
-def plot_gradient_avg(results_dir, plot_dir, gym_id, exp_names, seeds, max_steps):
-    # get all result directories
-    results_dirs = []
-    dir_seeds = []
-    dir_exp_names = []
-    for exp_name in exp_names:
-        for seed in seeds:
-            # tmp = f"{results_dir}/{gym_id}/{exp_name}/{seed}"
-            results_dirs.append(results_dir + "/" + gym_id + "/" + exp_name + "/" + str(seed))
-            dir_seeds.append(seed)
-            dir_exp_names.append(exp_name)
-
-    # load dataframes
-    gr_res_df_list = [
-        pd.read_csv(os.path.join(loc, "gradient_results.csv")) for loc in results_dirs
-    ]
-
-    # concat dataframes
-    gr_res = pd.concat(gr_res_df_list, ignore_index=True)
-    gr_res.drop(gr_res[gr_res["global_step"] > max_steps].index, inplace=True)
-
-    # check if plot_dir exists
-    pathExists = os.path.exists(plot_dir)
-    if not pathExists:
-        os.makedirs(plot_dir)
-
-    plot_actor_grads_abs_mean_by_seed(gr_res, plot_dir, exp_names, seeds)
-    plot_actor_grads_abs_mean_by_exp_name(gr_res, plot_dir, exp_names)
-    plot_actor_gradients_var_by_seed(gr_res, plot_dir)
-    plot_actor_gradients_var_by_exp_name(gr_res, plot_dir)
-
-
-def lower(row):
-    row["lower"] = row["actor_grads_abs_mean"] - row["actor_gradients_std"]
-    return row
-
-
-def upper(row):
-    row["upper"] = row["actor_grads_abs_mean"] + row["actor_gradients_std"]
-    return row
-
-
-def lower_exp_name(row):
-    row["lower"] = row["actor_grads_abs_mean_exp_name"] - row["actor_gradients_std_exp_name"]
-    return row
-
-
-def upper_exp_name(row):
-    row["upper"] = row["actor_grads_abs_mean_exp_name"] + row["actor_gradients_std_exp_name"]
-    return row
-
-
-def plot_actor_grads_abs_mean_by_seed(data, dir, exp_names, seeds, smoothing_fac=0.6):
-    dataset = data.drop(
-        columns=[
-            "actor_gradients_var",
-            "critic_grads_abs_mean",
-            "critic_gradients_var",
-            "critic_gradients_std",
-            "circuit",
-        ]
-    )
-
-    dataset_tmp = dataset.groupby(["exp_name", "seed", "global_step"], sort=False).apply(lower)
-    dataset_tmp.reset_index(drop=True, inplace=True)
-    dataset_plt = dataset_tmp.groupby(["exp_name", "seed", "global_step"], sort=False).apply(upper)
-
-    # smoothing
-    # dataset_plt["actor_grads_abs_mean"] = (
-    #    dataset_plt["actor_grads_abs_mean"].ewm(alpha=smoothing_fac).mean()
-    # )
-    # dataset_plt["lower"] = dataset_plt["lower"].ewm(alpha=smoothing_fac).mean()
-    # dataset_plt["upper"] = dataset_plt["upper"].ewm(alpha=smoothing_fac).mean()
-
-    ax = sns.lineplot(
-        data=dataset_plt,
-        x="global_step",
-        y="actor_grads_abs_mean",
-        style="exp_name",
-        hue="seed",
-        errorbar=None,
-    )
-    for exp_name in exp_names:
-        for seed in seeds:
-            dataset_seed = dataset_plt[
-                (dataset_plt.exp_name == exp_name) & (dataset_plt.seed == seed)
-            ]
-            ax.fill_between(
-                dataset_seed.global_step, dataset_seed.lower, dataset_seed.upper, alpha=0.2
-            )
-    plot_dir = os.path.join(dir, "actor_grads_abs_mean_by_seed.png")
-    plt.savefig(plot_dir)
-    plt.close()
-
-
-def plot_actor_grads_abs_mean_by_exp_name(data, dir, exp_names, smoothing_fac=0.6):
-    dataset = data.drop(
-        columns=[
-            "actor_gradients_var",
-            "critic_grads_abs_mean",
-            "critic_gradients_var",
-            "critic_gradients_std",
-            "circuit",
-        ]
-    )
-    dataset["actor_grads_abs_mean_exp_name"] = dataset.groupby(
-        ["exp_name", "global_step"], sort=False
-    )["actor_grads_abs_mean"].transform("mean")
-
-    dataset["actor_gradients_std_exp_name"] = dataset.groupby(
-        ["exp_name", "global_step"], sort=False
-    )["actor_gradients_std"].transform("mean")
-
-    dataset_tmp = (
-        dataset.groupby(["exp_name", "global_step"], sort=False)
-        .apply(lower_exp_name)
-        .drop(columns=["actor_grads_abs_mean", "actor_gradients_std"])
-    )
-    dataset_tmp.reset_index(drop=True, inplace=True)
-    dataset_plt = (
-        dataset_tmp.groupby(["exp_name", "global_step"], sort=False)
-        .apply(upper_exp_name)
-        .drop(columns=["actor_gradients_std_exp_name"])
-    )
-
-    # smoothing
-    # dataset_plt["actor_grads_abs_mean_exp_name"] = (
-    #    dataset_plt["actor_grads_abs_mean_exp_name"].ewm(alpha=smoothing_fac).mean()
-    # )
-    # dataset_plt["lower"] = dataset_plt["lower"].ewm(alpha=smoothing_fac).mean()
-    # dataset_plt["upper"] = dataset_plt["upper"].ewm(alpha=smoothing_fac).mean()
-
-    ax = sns.lineplot(
-        data=dataset_plt,
-        x="global_step",
-        y="actor_grads_abs_mean_exp_name",
-        hue="exp_name",
-        errorbar=None,
-    )
-    for exp_name in exp_names:
-        dataset_exp_name = dataset_plt[(dataset_plt.exp_name == exp_name)]
-        ax.fill_between(
-            dataset_exp_name.global_step, dataset_exp_name.lower, dataset_exp_name.upper, alpha=0.2
-        )
-    plot_dir = os.path.join(dir, "actor_grads_abs_mean_by_exp_name.png")
-    plt.savefig(plot_dir)
-    plt.close()
-
-
-def plot_actor_gradients_var_by_seed(data, dir, smoothing_fac=0.6):
-    dataset = data.drop(
-        columns=[
-            "actor_gradients_std",
-            "critic_grads_abs_mean",
-            "critic_gradients_var",
-            "critic_gradients_std",
-            "circuit",
-        ]
-    )
-    # smoothing
-    # dataset["actor_gradients_var"] = dataset["actor_gradients_var"].ewm(alpha=smoothing_fac).mean()
-
-    sns.lineplot(
-        data=dataset,
-        x="global_step",
-        y="actor_gradients_var",
-        style="exp_name",
-        hue="seed",
-        errorbar=None,
-    )
-
-    plot_dir = os.path.join(dir, "actor_gradients_var_by_seed.png")
-    plt.savefig(plot_dir)
-    plt.close()
-
-
-def plot_actor_gradients_var_by_exp_name(data, dir, smoothing_fac=0.6):
-    dataset = data.drop(
-        columns=[
-            "actor_gradients_std",
-            "critic_grads_abs_mean",
-            "critic_gradients_var",
-            "critic_gradients_std",
-            "circuit",
-        ]
-    )
-    dataset["actor_gradients_var_exp_name"] = dataset.groupby(
-        ["exp_name", "global_step"], sort=False
-    )["actor_gradients_var"].transform("mean")
-
-    # smoothing
-    # dataset["actor_gradients_var_exp_name"] = (
-    #    dataset["actor_gradients_var_exp_name"].ewm(alpha=smoothing_fac).mean()
-    # )
-
-    sns.lineplot(
-        data=dataset,
-        x="global_step",
-        y="actor_gradients_var_exp_name",
-        hue="exp_name",
-        errorbar="sd",
-    )
-
-    plot_dir = os.path.join(dir, "actor_gradients_var_by_exp_name.png")
-    plt.savefig(plot_dir)
-    plt.close()
-
-
-# test if smoothing is seed/ exp_name specific
-
-
-def plot_abs_cart_velocity_by_seed(data, dir):
-    sns.relplot(
-        data=data,
-        kind="scatter",
-        x="global_step",
-        y="abs_cart_velocity",
-        col="exp_name",
-        hue="seed",
-    )
-    plot_dir = os.path.join(dir, "abs_cart_velocity_by_seed.png")
-    plt.savefig(plot_dir)
-    plt.close()
-
-
-def plot_abs_pole_velocity_by_seed(data, dir):
-    sns.relplot(
-        data=data,
-        kind="scatter",
-        x="global_step",
-        y="abs_pole_velocity",
-        col="exp_name",
-        hue="seed",
-    )
-    plot_dir = os.path.join(dir, "abs_pole_velocity_by_seed.png")
-    plt.savefig(plot_dir)
-    plt.close()
-
-
-def plot_abs_cart_velocity_mean(data, dir):
-    sns.relplot(
-        data=data,
-        kind="line",
-        x="global_step",
-        y="abs_cart_velocity_mean_emw",
-        col="gym_id",
-        hue="exp_name",
-        # errorbar="sd",
-        # err_style='band',
-    )
-    plot_dir = os.path.join(dir, "abs_cart_velocity_mean.png")
-    plt.savefig(plot_dir)
-    plt.close()
-
-
-def plot_abs_pole_velocity_mean(data, dir):
-    sns.relplot(
-        data=data,
-        kind="line",
-        x="global_step",
-        y="abs_pole_velocity_mean_emw",
-        col="gym_id",
-        hue="exp_name",
-        # errorbar="sd",
-        # err_style='band',
-    )
-    plot_dir = os.path.join(dir, "abs_pole_velocity_mean.png")
-    plt.savefig(plot_dir)
-    plt.close()
-
-
-def plot_insider_by_seed(data, dir):
-    data["abs_cart_velocity_mean"] = data.groupby(["exp_name", "global_step"], sort=False)[
-        "abs_cart_velocity"
-    ].transform("mean")
-
-    data["abs_cart_velocity_mean_emw"] = data["abs_cart_velocity_mean"].ewm(alpha=0.6).mean()
-
-    data["abs_pole_velocity_mean"] = data.groupby(["exp_name", "global_step"], sort=False)[
-        "abs_pole_velocity"
-    ].transform("mean")
-
-    data["abs_pole_velocity_mean_emw"] = data["abs_pole_velocity_mean"].ewm(alpha=0.6).mean()
-
-    avg_abs_cart_velocity = data.groupby(["exp_name"], sort=False)["abs_cart_velocity"].transform(
-        "mean"
-    )
-
-    print(avg_abs_cart_velocity)
-
-    avg_abs_pole_velocity = data.groupby(["exp_name"], sort=False)["abs_pole_velocity"].transform(
-        "mean"
-    )
-
-    print(avg_abs_pole_velocity)
-
-    #
-    plot_abs_cart_velocity_by_seed(data, dir)
-    plot_abs_pole_velocity_by_seed(data, dir)
-    plot_abs_cart_velocity_mean(data, dir)
-    plot_abs_pole_velocity_mean(data, dir)
-
-
-def plot_insider_info(info_dir, plot_dir, gym_id, exp_names, seeds, max_steps):
-    # get all result directories
-    info_dirs = []
-    dir_seeds = []
-    dir_exp_names = []
-    for exp_name in exp_names:
-        for seed in seeds:
-            info_dirs.append(info_dir + "/" + gym_id + "/" + exp_name + "/" + str(seed))
-            dir_seeds.append(seed)
-            dir_exp_names.append(exp_name)
-
-    # load dataframes
-    df_list = [pd.read_csv(os.path.join(loc, "insider_info.csv")) for loc in info_dirs]
-
-    # concat dataframes
-    data = pd.concat(df_list, ignore_index=True)
-    data.drop(data[data["global_step"] > max_steps].index, inplace=True)
-
-    # check if plot_dir exists
-    pathExists = os.path.exists(plot_dir)
-    if not pathExists:
-        os.makedirs(plot_dir)
-
-    plot_insider_by_seed(data, plot_dir)

@@ -1,7 +1,10 @@
-from src.plot import plot_gradient_avg, plot_insider_info, plot_test_avg
+from src.plot import plot_test_avg_final
+from src.plot_grads import plot_gradient_avg, plot_insider_info
+from src.plot_old import plot_training_results
 
 results_dir = "qppo-slurm/results"
 plots_dir = "final-plots"
+test_plots_dir = "test-plots"
 
 
 # Test 0 - ppo default:
@@ -1138,7 +1141,7 @@ stepsize = 4 * 128 * 20
 max_steps = 500000
 
 plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
-"""
+
 
 plot_dir = plots_dir + "/CP-actor-Hyperparameter-Test-1b-outscale-lr-plot-4"
 gym_id = "CartPole-v1"
@@ -1176,3 +1179,24 @@ stepsize = 4 * 128 * 10
 max_steps = 150000
 
 plot_test_avg(results_dir, plot_dir, gym_id, exp_names, seeds, stepsize, max_steps)
+
+"""
+
+plot_dir = test_plots_dir + "/CP-actor-Hyperparameter-Test-1c-init-alpha-0.1"
+gym_id = "CartPole-v1"
+exp_names = [
+    "CP-qppo-ac-simple_reuploading-qlr2.5e-3-output_scaleing-1param-1e-4-(73-params)-fixedlastentanglement",
+    "CP-qppo-ac-simple_reuploading-qlr2.5e-3-output_scaleing-1param-1e-4-(73-params)-clippedrandominit",
+    "CP-qppo-ac-simple_reuploading-qlr2.5e-3-output_scaleing-1param-1e-4-(73-params)-gaussinit",
+    "CP-qppo-ac-simple_reuploading-qlr2.5e-3-output_scaleing-1param-1e-4-(73-params)-allsmallinit",
+    "CP-qppo-ac-simple_reuploading-qlr2.5e-3-output_scaleing-1param-1e-4-(73-params)-allmidinit",
+    "CP-qppo-ac-simple_reuploading-qlr2.5e-3-output_scaleing-1param-1e-4-(73-params)-allbiginit",
+    "CP-random-baseline-(0-params)",
+    "CP-ppo-ac-NN(6,6)-(lr=1.0e-3)-(86-params)",
+]
+seeds = [10, 20, 30]
+batchsize = 512
+max_steps = 150000
+alpha = 0.1
+
+plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps)

@@ -11,7 +11,6 @@ import torch.optim as optim
 from torch.autograd import Variable
 from torch.utils.tensorboard import SummaryWriter
 
-import plot
 import save_params
 from agent import Agent
 from args import parse_args, save_args
@@ -20,6 +19,7 @@ from circuits import actor_circuit_selection, critic_circuit_selection
 from env_setup import make_env
 from envs_storage import Store_envs
 from layer_params import make_actor_layer_params, make_critic_layer_params
+from plot_old import plot_training_results
 from save_results import Save_results
 from utils import get_act_dim, get_obs_dim
 
@@ -781,7 +781,7 @@ if __name__ == "__main__":
             )
         save_params.save_state(args.chkpt_dir, global_step, next_obs, next_done)
         store_envs.save_envs(args.chkpt_dir, args.num_envs)
-        plot.plot_training_results(
+        plot_training_results(
             args.results_dir,
             args.plot_dir,
             args.gym_id,

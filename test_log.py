@@ -1217,7 +1217,7 @@ exp_names = [
 ]
 seeds = [10, 20, 30]
 batchsize = 4 * 128
-max_steps = 150000
+max_steps = 500000
 alpha = 0.05
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps)

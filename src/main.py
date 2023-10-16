@@ -169,19 +169,28 @@ if __name__ == "__main__":
             [critic_layer_params], lr=args.qlearning_rate, eps=1e-5
         )
 
+    if args.gym_id == "simple_reuploading_with_shared_input_scaleing":
+        if args.quantum_actor:
+            actor_input_scaleing_optimizer = optim.Adam(
+                [actor_input_scaleing_params], lr=args.output_scaleing_learning_rate, eps=1e-5
+            )
+        if args.quantum_critic:
+            critic_input_scaleing_optimizer = optim.Adam(
+                [critic_input_scaleing_params], lr=args.output_scaleing_learning_rate, eps=1e-5
+            )
+
     if (
-        args.gym_id == "simple_reuploading_with_shared_input_scaleing"
-        or args.gym_id == "simple_reuploading_with_input_scaleing"
+        args.gym_id == "simple_reuploading_with_input_scaleing"
         or args.gym_id == "Hgog_reuploading_with_input_scaleing"
         or args.gym_id == "Jerbi-reuploading"
     ):
         if args.quantum_actor:
             actor_input_scaleing_optimizer = optim.Adam(
-                [actor_input_scaleing_params], lr=args.input_scaleing_learning_rate, eps=1e-5
+                [actor_input_scaleing_params], lr=args.qlearning_rate, eps=1e-5
             )
         if args.quantum_critic:
             critic_input_scaleing_optimizer = optim.Adam(
-                [critic_input_scaleing_params], lr=args.input_scaleing_learning_rate, eps=1e-5
+                [critic_input_scaleing_params], lr=args.qlearning_rate, eps=1e-5
             )
 
     # Storage setup
@@ -318,6 +327,16 @@ if __name__ == "__main__":
                 quantum_actor_optimizer.param_groups[0]["lr"] = lrnow_circuit
             if args.quantum_critic:
                 quantum_critic_optimizer.param_groups[0]["lr"] = lrnow_circuit
+            if (
+                args.gym_id == "simple_reuploading_with_input_scaleing"
+                or args.gym_id == "Hgog_reuploading_with_input_scaleing"
+                or args.gym_id == "Jerbi-reuploading"
+            ):
+                if args.quantum_actor:
+                    actor_input_scaleing_optimizer.param_groups[0]["lr"] = lrnow_circuit
+
+                if args.quantum_critic:
+                    critic_input_scaleing_optimizer.param_groups[0]["lr"] = lrnow_circuit
 
         # if args.output_scaleing and args.scheduled_output_scaleing:
         #    sced_out_scale_bonus = ((global_step) / 100000) * args.sced_out_scale_fac

@@ -1,3 +1,4 @@
+import numpy as np
 import torch
 
 from args import parse_args
@@ -46,12 +47,29 @@ def normalize_obs(observation):
         if args.insider_input_rescale:
             alpha = 2
             beta = 2
+            """
             norm_obs = torch.Tensor(
                 [
                     torch.clamp((norm_obs[0] / 3.2), -1.0, 1.0),
                     torch.tanh(alpha * norm_obs[1]),
                     torch.clamp((norm_obs[2] / 0.279), -1.0, 1.0),
                     torch.tanh(beta * norm_obs[3]),
+                ]
+            )
+            norm_obs = torch.Tensor(
+                [
+                    torch.clamp((norm_obs[0] / 4.8), -1.0, 1.0),
+                    torch.tanh(2 * norm_obs[1]),
+                    torch.clamp((norm_obs[2] / 0.418), -1.0, 1.0),
+                    torch.tanh(2 * norm_obs[3]),
+                ]
+            )"""
+            norm_obs = torch.Tensor(
+                [
+                    torch.clamp((norm_obs[0] / 4.8), -1.0, 1.0),
+                    2 * torch.arctan(2 * norm_obs[1]) / np.pi,
+                    torch.clamp((norm_obs[2] / 0.418), -1.0, 1.0),
+                    2 * torch.arctan(2 * norm_obs[3]) / np.pi,
                 ]
             )
         else:

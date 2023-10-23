@@ -169,7 +169,8 @@ if __name__ == "__main__":
             [critic_layer_params], lr=args.qlearning_rate, eps=1e-5
         )
 
-    if args.gym_id == "simple_reuploading_with_shared_input_scaleing":
+    if args.circuit == "simple_reuploading_with_shared_input_scaleing":
+        # input_scaleing_learning_rate=output_scaleing_learning_rate
         if args.quantum_actor:
             actor_input_scaleing_optimizer = optim.Adam(
                 [actor_input_scaleing_params], lr=args.output_scaleing_learning_rate, eps=1e-5
@@ -180,10 +181,11 @@ if __name__ == "__main__":
             )
 
     if (
-        args.gym_id == "simple_reuploading_with_input_scaleing"
-        or args.gym_id == "Hgog_reuploading_with_input_scaleing"
-        or args.gym_id == "Jerbi-reuploading"
+        args.circuit == "simple_reuploading_with_input_scaleing"
+        or args.circuit == "Hgog_reuploading_with_input_scaleing"
+        or args.circuit == "Jerbi-reuploading"
     ):
+        # input_scaleing_learning_rate=qlearning_rate (inclusive scheduling)
         if args.quantum_actor:
             actor_input_scaleing_optimizer = optim.Adam(
                 [actor_input_scaleing_params], lr=args.qlearning_rate, eps=1e-5
@@ -328,9 +330,9 @@ if __name__ == "__main__":
             if args.quantum_critic:
                 quantum_critic_optimizer.param_groups[0]["lr"] = lrnow_circuit
             if (
-                args.gym_id == "simple_reuploading_with_input_scaleing"
-                or args.gym_id == "Hgog_reuploading_with_input_scaleing"
-                or args.gym_id == "Jerbi-reuploading"
+                args.circuit == "simple_reuploading_with_input_scaleing"
+                or args.circuit == "Hgog_reuploading_with_input_scaleing"
+                or args.circuit == "Jerbi-reuploading"
             ):
                 if args.quantum_actor:
                     actor_input_scaleing_optimizer.param_groups[0]["lr"] = lrnow_circuit
@@ -584,10 +586,10 @@ if __name__ == "__main__":
                     if args.quantum_critic:
                         quantum_critic_optimizer.zero_grad()
                     if (
-                        args.gym_id == "simple_reuploading_with_shared_input_scaleing"
-                        or args.gym_id == "simple_reuploading_with_input_scaleing"
-                        or args.gym_id == "Hgog_reuploading_with_input_scaleing"
-                        or args.gym_id == "Jerbi-reuploading"
+                        args.circuit == "simple_reuploading_with_shared_input_scaleing"
+                        or args.circuit == "simple_reuploading_with_input_scaleing"
+                        or args.circuit == "Hgog_reuploading_with_input_scaleing"
+                        or args.circuit == "Jerbi-reuploading"
                     ):
                         if args.quantum_actor:
                             actor_input_scaleing_optimizer.zero_grad()
@@ -646,10 +648,10 @@ if __name__ == "__main__":
                     if args.quantum_critic:
                         quantum_critic_optimizer.step()
                     if (
-                        args.gym_id == "simple_reuploading_with_shared_input_scaleing"
-                        or args.gym_id == "simple_reuploading_with_input_scaleing"
-                        or args.gym_id == "Hgog_reuploading_with_input_scaleing"
-                        or args.gym_id == "Jerbi-reuploading"
+                        args.circuit == "simple_reuploading_with_shared_input_scaleing"
+                        or args.circuit == "simple_reuploading_with_input_scaleing"
+                        or args.circuit == "Hgog_reuploading_with_input_scaleing"
+                        or args.circuit == "Jerbi-reuploading"
                     ):
                         if args.quantum_actor:
                             actor_input_scaleing_optimizer.step()

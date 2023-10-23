@@ -1265,7 +1265,6 @@ max_steps = 150000
 alpha = 0.05
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps)
-"""
 
 
 plot_dir = plots_dir + "/CP-actor-Hyperparameter-Test-5a-insider-input-rescaleing-qlrs"
@@ -1320,6 +1319,26 @@ exp_names = [
     "CP-qppo-ac-simple_reuploading_with_input_scaleing-qlr0.5e-3-output_scaleing-1param-1e-4-(97-params)",
     "CP-qppo-ac-simple_reuploading_with_input_scaleing-qlr2.5e-3-output_scaleing-1param-1e-4-(97-params)",
     "CP-qppo-ac-simple_reuploading_with_input_scaleing-qlr10.e-3-output_scaleing-1param-1e-4-(97-params)",
+    "CP-random-baseline-(0-params)",
+    "CP-ppo-ac-NN(6,6)-(lr=1.0e-3)-(86-params)",
+]
+seeds = [10, 20, 30]
+batchsize = 4 * 128
+max_steps = 150000
+alpha = 0.05
+
+plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps)
+"""
+
+
+plot_dir = plots_dir + "/CP-actor-Hyperparameter-Test-5a-insider-input-rescaleing-qlrs"
+gym_id = "CartPole-v1"
+exp_names = [
+    "CP-qppo-ac-simple_reuploading-qlr0.5e-3-output_scaleing-1param-1e-4-(73-params)-allsmallinit",
+    "CP-qppo-ac-simple_reuploading-qlr2.5e-3-output_scaleing-1param-1e-4-(73-params)-allsmallinit",
+    "CP-qppo-ac-simple_reuploading-insider-input-rescale2-qlr0.5e-3-output_scaleing-1param-1e-4-allsmallinit-(73-params)",
+    "CP-qppo-ac-simple_reuploading-insider-input-rescale2-qlr2.5e-3-output_scaleing-1param-1e-4-allsmallinit-(73-params)",
+    "CP-qppo-ac-simple_reuploading-insider-input-rescale2-qlr10.e-3-output_scaleing-1param-1e-4-allsmallinit-(73-params)",
     "CP-random-baseline-(0-params)",
     "CP-ppo-ac-NN(6,6)-(lr=1.0e-3)-(86-params)",
 ]

@@ -57,8 +57,8 @@ def parse_args():
     parser.add_argument(
         "--input-scaleing-learning-rate",
         type=float,
-        default=1e-3,
-        help="input scaleing learning rate, currently not needed, since it is set to the current qlr (or the ouput scaleing lr, if shared (global) scaleing is used)",
+        default=1e-4,
+        help="input scaleing learning rate, currently onely needed for shared (global) input scaleing, since it is set to the current qlr else",
     )
     parser.add_argument(
         "--output-scaleing-start", type=float, default=1.0, help="output scaleing start value"

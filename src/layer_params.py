@@ -199,6 +199,9 @@ def make_actor_layer_params():
     elif args.quantum_actor and (args.circuit == "simple_reuploading_with_shared_input_scaleing"):
         layer_params = choose_init(args.n_qubits, args.n_var_layers, 3)
         input_scaleing_params = np.ones(args.n_qubits)
+        if args.gym_id == "CartPole-v0" or args.gym_id == "CartPole-v1":
+            input_scaleing_params[0] = 1 / 4.8
+            input_scaleing_params[2] = 1 / 0.418
 
     elif args.quantum_actor and (
         args.circuit == "simple_reuploading_with_input_scaleing"
@@ -207,6 +210,11 @@ def make_actor_layer_params():
         # choose parameter initialisation method
         layer_params = choose_init(args.n_qubits, args.n_var_layers, 3)
         input_scaleing_params = np.ones((args.n_qubits, args.n_var_layers))
+        if args.gym_id == "CartPole-v0" or args.gym_id == "CartPole-v1":
+            # input_scaleing_params = np.full((args.n_qubits, args.n_var_layers), 2)
+            for j in range(args.n_var_layers):
+                input_scaleing_params[0][j] = 1 / 4.8
+                input_scaleing_params[2][j] = 1 / 0.418
 
     elif args.quantum_actor and (
         args.circuit == "Jerbi-no-reuploading-no-input-scaleing"
@@ -220,6 +228,12 @@ def make_actor_layer_params():
         # choose parameter initialisation method
         layer_params = choose_init(args.n_qubits, args.n_var_layers, 2)
         input_scaleing_params = np.ones((args.n_qubits, args.n_var_layers - 1, 2))
+        if args.gym_id == "CartPole-v0" or args.gym_id == "CartPole-v1":
+            # input_scaleing_params = np.full((args.n_qubits, args.n_var_layers - 1, 2), 2)
+            for j in range(args.n_var_layers):
+                for i in range(2):
+                    input_scaleing_params[0][j][i] = 1 / 4.8
+                    input_scaleing_params[2][j][i] = 1 / 0.418
 
     else:
         layer_params = np.random.rand(0)
@@ -242,6 +256,11 @@ def make_critic_layer_params():
     elif args.quantum_actor and (args.circuit == "simple_reuploading_with_shared_input_scaleing"):
         layer_params = choose_init(args.n_qubits, args.n_var_layers, 3)
         input_scaleing_params = np.ones(args.n_qubits)
+        if args.gym_id == "CartPole-v0" or args.gym_id == "CartPole-v1":
+            input_scaleing_params[0] = 1 / 4.8
+            # input_scaleing_params[1]= 2
+            input_scaleing_params[2] = 1 / 0.418
+            # input_scaleing_params[3]= 2
 
     elif args.quantum_actor and (
         args.circuit == "simple_reuploading_with_input_scaleing"
@@ -250,6 +269,11 @@ def make_critic_layer_params():
         # choose parameter initialisation method
         layer_params = choose_init(args.n_qubits, args.n_var_layers, 3)
         input_scaleing_params = np.ones((args.n_qubits, args.n_var_layers))
+        if args.gym_id == "CartPole-v0" or args.gym_id == "CartPole-v1":
+            # input_scaleing_params = np.full((args.n_qubits, args.n_var_layers), 2)
+            for j in range(args.n_var_layers):
+                input_scaleing_params[0][j] = 1 / 4.8
+                input_scaleing_params[2][j] = 1 / 0.418
 
     elif args.quantum_critic and (
         args.circuit == "Jerbi-no-reuploading-no-input-scaleing"
@@ -263,6 +287,12 @@ def make_critic_layer_params():
         # choose parameter initialisation method
         layer_params = choose_init(args.n_qubits, args.n_var_layers, 2)
         input_scaleing_params = np.ones((args.n_qubits, args.n_var_layers - 1, 2))
+        if args.gym_id == "CartPole-v0" or args.gym_id == "CartPole-v1":
+            # input_scaleing_params = np.full((args.n_qubits, args.n_var_layers - 1, 2), 2)
+            for j in range(args.n_var_layers):
+                for i in range(2):
+                    input_scaleing_params[0][j][i] = 1 / 4.8
+                    input_scaleing_params[2][j][i] = 1 / 0.418
 
     else:
         layer_params = np.random.rand(0)

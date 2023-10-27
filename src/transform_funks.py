@@ -55,7 +55,7 @@ def normalize_obs(observation):
                     torch.clamp((norm_obs[2] / 0.279), -1.0, 1.0),
                     torch.tanh(beta * norm_obs[3]),
                 ]
-            )"""
+            )
             norm_obs = torch.Tensor(
                 [
                     torch.clamp((norm_obs[0] / 4.8), -1.0, 1.0),
@@ -68,11 +68,11 @@ def normalize_obs(observation):
             norm_obs = torch.Tensor(
                 [
                     torch.clamp((norm_obs[0] / 4.8), -1.0, 1.0),
-                    2 * torch.arctan(2 * norm_obs[1]) / np.pi,
+                    2 * torch.arctan(norm_obs[1]) / np.pi,
                     torch.clamp((norm_obs[2] / 0.418), -1.0, 1.0),
-                    2 * torch.arctan(2 * norm_obs[3]) / np.pi,
+                    2 * torch.arctan(norm_obs[3]) / np.pi,
                 ]
-            )"""
+            )
         else:
             norm_obs = torch.Tensor(
                 [

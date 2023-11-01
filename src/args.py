@@ -43,10 +43,22 @@ def parse_args():
     #    help="quantum optimizer learning at start of lin-scheduling",
     # )
     parser.add_argument(
-        "--learning-rate", type=float, default=2.5e-4, help="optimizer learning rate"
+        "--learning-rate",
+        type=float,
+        default=2.5e-4,
+        help="classic critic NN optimizer learning rate",
     )
     parser.add_argument(
-        "--qlearning-rate", type=float, default=1e-3, help="quantum optimizer learning rate"
+        "--classic-actor-learning-rate",
+        type=float,
+        default=2.5e-4,
+        help="classic actor NN optimizer learning rate",
+    )
+    parser.add_argument(
+        "--qlearning-rate",
+        type=float,
+        default=1e-3,
+        help="quantum circuit optimizer learning rate",
     )
     parser.add_argument(
         "--output-scaleing-learning-rate",
@@ -125,24 +137,8 @@ def parse_args():
         default=False,
         nargs="?",
         const=True,
-        help="exponential leaning rate scheduling for quantum circuits, overrides other scedulings",
+        help="exponential learning rate scheduling for quantum circuits, overrides other scedulings",
     )
-    # parser.add_argument(
-    #    "--sq-qlr-scheduling",
-    #    type=lambda x: bool(strtobool(x)),
-    #    default=False,
-    #    nargs="?",
-    #    const=True,
-    #    help="sqratic leaning rate scheduling for quantum circuits, executed before lin-qlr-scheduling if both are enabled",
-    # )
-    # parser.add_argument(
-    #    "--lin-qlr-scheduling",
-    #    type=lambda x: bool(strtobool(x)),
-    #    default=False,
-    #    nargs="?",
-    #    const=True,
-    #    help="linear leaning rate scheduling for quantum circuits, executed after exp-qlr-scheduling if both are enabled",
-    # )
 
     parser.add_argument(
         "--insider-input-rescale",
@@ -217,14 +213,28 @@ def parse_args():
         default=0.5,
         help="maximum norm for the global gradient clipping",
     )
-
+    """
     parser.add_argument(
         "--actor-hidden-layer-nodes",
         type=int,
         default=64,
-        help="number of nodes for all hidden layers of the actor",
+        help="number of nodes for the hidden layer if two-actor-hidden-layers==False",
+    )"""
+
+    parser.add_argument(
+        "--actor-hidden-layer1-nodes",
+        type=int,
+        default=64,
+        help="number of nodes for the first hidden layer of the actor",
     )
 
+    parser.add_argument(
+        "--actor-hidden-layer2-nodes",
+        type=int,
+        default=64,
+        help="number of nodes for all second hidden layer of the actor, if set to 0 onely one hidden layer will be used",
+    )
+    """
     parser.add_argument(
         "--two-actor-hidden-layers",
         type=lambda x: bool(strtobool(x)),
@@ -232,7 +242,7 @@ def parse_args():
         nargs="?",
         const=True,
         help="toggle the use of two hidden layers for the actor",
-    )
+    )"""
 
     parser.add_argument(
         "--critic-hidden-layer-nodes",
@@ -240,7 +250,7 @@ def parse_args():
         default=64,
         help="number of nodes for all hidden layers of the critic",
     )
-
+    """
     parser.add_argument(
         "--two-critic-hidden-layers",
         type=lambda x: bool(strtobool(x)),
@@ -248,7 +258,7 @@ def parse_args():
         nargs="?",
         const=True,
         help="toggle the use of two hidden layers for the critic",
-    )
+    )"""
 
     parser.add_argument(
         "--quantum-actor",

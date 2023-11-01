@@ -60,13 +60,22 @@ def calc_num_actor_params(envs):
     elif args.quantum_actor and args.circuit == "Jerbi-reuploading":
         actor_par_count = 2 * (2 * args.n_enc_layers + 1) * args.n_qubits
     elif not args.quantum_actor:
-        actor_par_count = (
-            num_obs * args.actor_hidden_layer_nodes
-            + args.actor_hidden_layer_nodes**2
-            + args.actor_hidden_layer_nodes * num_acts
-            + 2 * args.actor_hidden_layer_nodes
-            + num_acts
-        )
+        if args.actor_hidden_layer2_nodes != 0:  # 2 hidden layers
+            actor_par_count = (
+                num_obs * args.actor_hidden_layer1_nodes  # weights
+                + args.actor_hidden_layer1_nodes * args.actor_hidden_layer2_nodes  # weights
+                + args.actor_hidden_layer2_nodes * num_acts  # weights
+                + args.actor_hidden_layer1_nodes  # bias
+                + args.actor_hidden_layer2_nodes  # bias
+                + num_acts  # bias
+            )
+        else:  # 1 hidden layer
+            actor_par_count = (
+                num_obs * args.actor_hidden_layer1_nodes  # weights
+                + args.actor_hidden_layer1_nodes * num_acts  # weights
+                + args.actor_hidden_layer1_nodes  # bias
+                + num_acts  # bias
+            )
 
     if args.quantum_actor and args.hybrid:
         actor_par_count = actor_par_count + args.n_qubits * num_acts + num_acts
@@ -153,7 +162,8 @@ def manually_calc_num_params(
     actor=True,
     quantum=False,
     circuit="NN",
-    hidden_layer_nodes=4,
+    hidden_layer_nodes1=4,
+    hidden_layer_nodes2=4,
     n_var_layers=6,
     n_enc_layers=6,
     n_qubits=4,
@@ -206,13 +216,22 @@ def manually_calc_num_params(
     elif quantum and circuit == "Jerbi-reuploading":
         actor_par_count = 2 * (2 * n_enc_layers + 1) * n_qubits
     elif not quantum:
-        actor_par_count = (
-            num_obs * hidden_layer_nodes
-            + hidden_layer_nodes**2
-            + hidden_layer_nodes * num_acts
-            + 2 * hidden_layer_nodes
-            + num_acts
-        )
+        if hidden_layer_nodes2 != 0:  # 2 hidden layers
+            actor_par_count = (
+                num_obs * hidden_layer_nodes1  # weights
+                + hidden_layer_nodes1 * hidden_layer_nodes2  # weights
+                + hidden_layer_nodes2 * num_acts  # weights
+                + hidden_layer_nodes1  # bias
+                + hidden_layer_nodes2  # bias
+                + num_acts  # bias
+            )
+        else:  # 1 hidden layer
+            actor_par_count = (
+                num_obs * hidden_layer_nodes1  # weights
+                + hidden_layer_nodes1 * num_acts  # weights
+                + hidden_layer_nodes1  # bias
+                + num_acts  # bias
+            )
 
     if quantum and hybrid:
         actor_par_count = actor_par_count + n_qubits * num_acts + num_acts

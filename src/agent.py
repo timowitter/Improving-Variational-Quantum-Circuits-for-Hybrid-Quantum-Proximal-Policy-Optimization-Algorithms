@@ -24,7 +24,7 @@ def layer_init(layer, std=np.sqrt(2), bias_const=0.0):  # 2 Layer Initialisation
 class Agent(nn.Module):
     def __init__(self, envs):
         super(Agent, self).__init__()
-        if not args.quantum_critic and args.two_critic_hidden_layers:
+        if not args.quantum_critic:
             self.critic = nn.Sequential(
                 layer_init(
                     nn.Linear(
@@ -39,34 +39,23 @@ class Agent(nn.Module):
                 nn.Tanh(),
                 layer_init(nn.Linear(args.critic_hidden_layer_nodes, 1), std=1.0),
             )
-        elif not args.quantum_critic:
-            self.critic = nn.Sequential(
-                layer_init(
-                    nn.Linear(
-                        np.array(get_obs_dim(envs.single_observation_space)).prod(),
-                        args.critic_hidden_layer_nodes,
-                    )
-                ),
-                nn.Tanh(),
-                layer_init(nn.Linear(args.critic_hidden_layer_nodes, 1), std=1.0),
-            )
 
-        if not args.quantum_actor and args.two_actor_hidden_layers:
+        if not args.quantum_actor and args.actor_hidden_layer2_nodes != 0:
             self.actor = nn.Sequential(
                 layer_init(
                     nn.Linear(
                         np.array(get_obs_dim(envs.single_observation_space)).prod(),
-                        args.actor_hidden_layer_nodes,
+                        args.actor_hidden_layer1_nodes,
                     )
                 ),
                 nn.Tanh(),
                 layer_init(
-                    nn.Linear(args.actor_hidden_layer_nodes, args.actor_hidden_layer_nodes)
+                    nn.Linear(args.actor_hidden_layer1_nodes, args.actor_hidden_layer2_nodes)
                 ),
                 nn.Tanh(),
                 layer_init(
                     nn.Linear(
-                        args.actor_hidden_layer_nodes, get_act_dim(envs.single_action_space)
+                        args.actor_hidden_layer2_nodes, get_act_dim(envs.single_action_space)
                     ),
                     std=0.01,
                 ),
@@ -76,13 +65,13 @@ class Agent(nn.Module):
                 layer_init(
                     nn.Linear(
                         np.array(get_obs_dim(envs.single_observation_space)).prod(),
-                        args.actor_hidden_layer_nodes,
+                        args.actor_hidden_layer1_nodes,
                     )
                 ),
                 nn.Tanh(),
                 layer_init(
                     nn.Linear(
-                        args.actor_hidden_layer_nodes, get_act_dim(envs.single_action_space)
+                        args.actor_hidden_layer1_nodes, get_act_dim(envs.single_action_space)
                     ),
                     std=0.01,
                 ),
@@ -193,28 +182,8 @@ class Agent(nn.Module):
             action = probs.sample()
             action = action.view(1)
 
-        if (
-            args.quantum_actor
-            and not args.hybrid
-            and args.output_scaleing
-            # and args.scheduled_output_scaleing
-            and False
-        ):
-            # logprobs and entropy before output scaleing is used
-            logits_pre_outscale = torch.Tensor(acts_dim)
-            for i in range(acts_dim):
-                logits_pre_outscale[i] = logits_uncat[i]
-            probs_no_out_scale = Categorical(logits=logits_pre_outscale)
-            logprobs = probs_no_out_scale.log_prob(action)
-            entropy = probs_no_out_scale.entropy()
-
-            # print("probs.log_prob(action)", probs.log_prob(action))
-            # print("logprobs",logprobs)
-            # print("probs.entropy()", probs.entropy())
-            # print("entropy",entopy)
-        else:
-            logprobs = probs.log_prob(action)
-            entropy = probs.entropy()
+        logprobs = probs.log_prob(action)
+        entropy = probs.entropy()
 
         return (
             action,

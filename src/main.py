@@ -148,8 +148,24 @@ if __name__ == "__main__":
     actor_circuit = actor_circuit_selection()
     critic_circuit = critic_circuit_selection()
 
-    agent_optimizer = optim.Adam(agent.parameters(), lr=args.learning_rate, eps=1e-5)
-    # agent.actor.parameters(), agent.critic.parameters(), agent.hybrid.parameters()
+    # classic_agent_optimizers init
+    if not args.quantum_actor:
+        actor_optimizer = optim.Adam(
+            agent.actor.parameters(), lr=args.classic_actor_learning_rate, eps=1e-5
+        )
+    elif args.hybrid:
+        hybrid_actor_optimizer = optim.Adam(
+            agent.hybrid_actor.parameters(), lr=args.classic_actor_learning_rate, eps=1e-5
+        )
+
+    if not args.quantum_critic:
+        critic_optimizer = optim.Adam(agent.critic.parameters(), lr=args.learning_rate, eps=1e-5)
+    elif args.hybrid:
+        hybrid_critic_optimizer = optim.Adam(
+            agent.hybrid_critic.parameters(), lr=args.learning_rate, eps=1e-5
+        )
+
+    # circuit_optimizers init
     if args.quantum_actor:  # 3 Different Adams epsylon
         quantum_actor_optimizer = optim.Adam(
             [actor_layer_params], lr=args.qlearning_rate, eps=1e-5
@@ -574,7 +590,18 @@ if __name__ == "__main__":
                     # Overall loss
                     loss = pg_loss - args.ent_coef * entropy_loss + args.vf_coef * v_loss
 
-                    agent_optimizer.zero_grad()
+                    # classic_agent_optimizers.zero_grad()
+                    if not args.quantum_actor:
+                        actor_optimizer.zero_grad()
+                    elif args.hybrid:
+                        hybrid_actor_optimizer.zero_grad()
+
+                    if not args.quantum_critic:
+                        critic_optimizer.zero_grad()
+                    elif args.hybrid:
+                        hybrid_critic_optimizer.zero_grad()
+
+                    # circuit optimizers.zero_grad()
                     if args.quantum_actor:
                         quantum_actor_optimizer.zero_grad()
                         if (
@@ -631,12 +658,51 @@ if __name__ == "__main__":
                             args.seed,
                         )
 
-                    nn.utils.clip_grad_norm_(agent.parameters(), args.max_grad_norm)
+                    # nn.utils.clip_grad_norm_(agent.parameters(), args.max_grad_norm)
+                    if not args.quantum_actor:
+                        nn.utils.clip_grad_norm_(agent.actor.parameters(), args.max_grad_norm)
+                    elif args.hybrid:
+                        nn.utils.clip_grad_norm_(
+                            agent.hybrid_actor.parameters(), args.max_grad_norm
+                        )
+
+                    if not args.quantum_critic:
+                        nn.utils.clip_grad_norm_(agent.critic.parameters(), args.max_grad_norm)
+                    elif args.hybrid:
+                        nn.utils.clip_grad_norm_(
+                            agent.hybrid_critic.parameters(), args.max_grad_norm
+                        )
+
                     if args.quantum_actor and args.clip_circuit_grad_norm:
                         nn.utils.clip_grad_norm_([actor_layer_params], args.max_grad_norm)
                     if args.quantum_critic and args.clip_circuit_grad_norm:
                         nn.utils.clip_grad_norm_([critic_layer_params], args.max_grad_norm)
-                    agent_optimizer.step()
+                    if (
+                        args.circuit == "simple_reuploading_with_input_scaleing"
+                        or args.circuit == "Hgog_reuploading_with_input_scaleing"
+                        or args.circuit == "Jerbi-reuploading"
+                    ) and args.clip_circuit_grad_norm:
+                        if args.quantum_actor:
+                            nn.utils.clip_grad_norm_(
+                                [actor_input_scaleing_params], args.max_grad_norm
+                            )
+                        if args.quantum_critic:
+                            nn.utils.clip_grad_norm_(
+                                [critic_input_scaleing_params], args.max_grad_norm
+                            )
+
+                    # classic_agent_optimizers.step()
+                    if not args.quantum_actor:
+                        actor_optimizer.step()
+                    elif args.hybrid:
+                        hybrid_actor_optimizer.step()
+
+                    if not args.quantum_critic:
+                        critic_optimizer.step()
+                    elif args.hybrid:
+                        hybrid_critic_optimizer.step()
+
+                    # circuit_optimizers.step()
                     if args.quantum_actor:
                         quantum_actor_optimizer.step()
                         if (
@@ -667,7 +733,7 @@ if __name__ == "__main__":
 
             # record rewards for plotting purposes
             writer.add_scalar(
-                "charts/learning_rate", agent_optimizer.param_groups[0]["lr"], global_step
+                "charts/learning_rate", args.classic_actor_learning_rate, global_step
             )
             qlearning_rate = 0
             if args.quantum_actor:
@@ -709,7 +775,7 @@ if __name__ == "__main__":
 
             # store data of update
             save_results.append_update_results(
-                agent_optimizer.param_groups[0]["lr"],
+                args.classic_actor_learning_rate,
                 qlearning_rate,
                 v_loss.item(),
                 pg_loss.item(),

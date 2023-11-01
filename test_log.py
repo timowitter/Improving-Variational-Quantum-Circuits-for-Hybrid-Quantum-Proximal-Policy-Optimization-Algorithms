@@ -1435,7 +1435,7 @@ max_steps = 500000
 alpha = 0.05
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps)
-"""
+
 
 
 plot_dir = plots_dir + "/FL-actor-Hyperparameter-Test-0-NN(3)-lr"
@@ -1444,6 +1444,70 @@ exp_names = [
     "FL-ppo-ac-NN(3)-(actor-lr=1.0e-3)-(67-params)",
     "FL-ppo-ac-NN(3)-(actor-lr=1.0e-2)-(67-params)",
     "FL-ppo-ac-NN(3)-(actor-lr=5.0e-2)-(67-params)",
+    "random-baseline",
+]
+seeds = [10, 20, 30]
+batchsize = 4 * 128
+max_steps = 150000
+alpha = 0.05
+
+plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps)
+"""
+
+plot_dir = plots_dir + "/FL-actor-Hyperparameter-Test-0-NN(4)-lr"
+gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
+exp_names = [
+    "FL-ppo-ac-NN(4)-(actor-lr=1.0e-3)-(88-params)",
+    "FL-ppo-ac-NN(4)-(actor-lr=1.0e-2)-(88-params)",
+    "FL-ppo-ac-NN(4)-(actor-lr=5.0e-2)-(88-params)",
+    "random-baseline",
+]
+seeds = [10, 20, 30]
+batchsize = 4 * 128
+max_steps = 150000
+alpha = 0.05
+
+plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps)
+
+
+plot_dir = plots_dir + "/FL-actor-Hyperparameter-Test-0-NN(5)-lr"
+gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
+exp_names = [
+    "FL-ppo-ac-NN(5)-(actor-lr=1.0e-3)-(109-params)",
+    "FL-ppo-ac-NN(5)-(actor-lr=1.0e-2)-(109-params)",
+    "FL-ppo-ac-NN(5)-(actor-lr=5.0e-2)-(109-params)",
+    "random-baseline",
+]
+seeds = [10, 20, 30]
+batchsize = 4 * 128
+max_steps = 150000
+alpha = 0.05
+
+plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps)
+
+
+plot_dir = plots_dir + "/FL-actor-Hyperparameter-Test-0-NN(4,4)-lr"
+gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
+exp_names = [
+    "FL-ppo-ac-NN(4,4)-(actor-lr=1.0e-3)-(108-params)",
+    "FL-ppo-ac-NN(4,4)-(actor-lr=1.0e-2)-(108-params)",
+    "FL-ppo-ac-NN(4,4)-(actor-lr=5.0e-2)-(108-params)",
+    "random-baseline",
+]
+seeds = [10, 20, 30]
+batchsize = 4 * 128
+max_steps = 150000
+alpha = 0.05
+
+plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps)
+
+
+plot_dir = plots_dir + "/FL-actor-Hyperparameter-Test-0-NN(64,64)-lr"
+gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
+exp_names = [
+    "FL-ppo-ac-NN(64,64)-(actor-lr=5.0e-5)-(5508-params)",
+    "FL-ppo-ac-NN(64,64)-(actor-lr=2.5e-4)-(5508-params)",
+    "FL-ppo-ac-NN(64,64)-(actor-lr=1.0e-3)-(5508-params)",
     "random-baseline",
 ]
 seeds = [10, 20, 30]

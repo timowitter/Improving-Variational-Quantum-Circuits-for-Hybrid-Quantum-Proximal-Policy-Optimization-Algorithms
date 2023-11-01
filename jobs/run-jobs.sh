@@ -5,6 +5,26 @@
 #          "Hgog" / "Hgog_reuploading" / "Hgog_reuploading_with_input_scaleing" /
 #          "Jerbi-no-reuploading-no-input-scaleing" / "Jerbi-reuploading-no-input-scaleing" / "Jerbi-reuploading"
 
+name1a="CP-ppo-ac-NN(5,5)-(actor-lr=1.0e-4)-(67-params)"
+name1b="CP-ppo-ac-NN(5,5)-(actor-lr=1.0e-3)-(67-params)"
+name1c="CP-ppo-ac-NN(5,5)-(actor-lr=1.0e-2)-(67-params)"
+
+name2a="CP-ppo-ac-NN(6,5)-(actor-lr=1.0e-4)-(77-params)"
+name2b="CP-ppo-ac-NN(6,5)-(actor-lr=1.0e-3)-(77-params)"
+name2c="CP-ppo-ac-NN(6,5)-(actor-lr=1.0e-2)-(77-params)"
+
+name3a="CP-ppo-ac-NN(6,6)-(actor-lr=1.0e-4)-(86-params)"
+name3b="CP-ppo-ac-NN(6,6)-(actor-lr=1.0e-3)-(86-params)"
+name3c="CP-ppo-ac-NN(6,6)-(actor-lr=1.0e-2)-(86-params)"
+
+name4a="CP-ppo-ac-NN(7,7)-(actor-lr=1.0e-4)-(107-params)"
+name4b="CP-ppo-ac-NN(7,7)-(actor-lr=1.0e-3)-(107-params)"
+name4c="CP-ppo-ac-NN(7,7)-(actor-lr=1.0e-2)-(107-params)"
+
+name5b="CP-ppo-ac-NN(64,64)-(actor-lr=2.5e-4)-(4610-params)"
+name5c="CP-ppo-ac-NN(64,64)-(actor-lr=1.0e-3)-(4610-params)"
+name5a="CP-ppo-ac-NN(64,64)-(actor-lr=1.0e-2)-(4610-params)"
+
 start_seed=10
 seed_step=10
 end_seed=50

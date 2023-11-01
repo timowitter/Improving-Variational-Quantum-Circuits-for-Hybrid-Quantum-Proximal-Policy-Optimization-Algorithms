@@ -1447,7 +1447,7 @@ exp_names = [
     "FL-ppo-ac-NN(3)-(actor-lr=1.0e-1)-(67-params)",
     "random-baseline",
 ]
-seeds = [10, 20, 30]
+seeds = [10, 20, 30, 40, 50]
 batchsize = 4 * 128
 max_steps = 150000
 alpha = 0.05
@@ -1464,7 +1464,7 @@ exp_names = [
     "FL-ppo-ac-NN(4)-(actor-lr=1.0e-1)-(88-params)",
     "random-baseline",
 ]
-seeds = [10, 20, 30]
+seeds = [10, 20, 30, 40, 50]
 batchsize = 4 * 128
 max_steps = 150000
 alpha = 0.05
@@ -1481,7 +1481,7 @@ exp_names = [
     "FL-ppo-ac-NN(5)-(actor-lr=1.0e-1)-(109-params)",
     "random-baseline",
 ]
-seeds = [10, 20, 30]
+seeds = [10, 20, 30, 40, 50]
 batchsize = 4 * 128
 max_steps = 150000
 alpha = 0.05
@@ -1498,7 +1498,7 @@ exp_names = [
     "FL-ppo-ac-NN(4,4)-(actor-lr=5.0e-2)-(108-params)",
     "random-baseline",
 ]
-seeds = [10, 20, 30]
+seeds = [10, 20, 30, 40, 50]
 batchsize = 4 * 128
 max_steps = 150000
 alpha = 0.05
@@ -1515,7 +1515,7 @@ exp_names = [
     "FL-ppo-ac-NN(64,64)-(actor-lr=1.0e-2)-(5508-params)",
     "random-baseline",
 ]
-seeds = [10, 20, 30]
+seeds = [10, 20, 30, 40, 50]
 batchsize = 4 * 128
 max_steps = 150000
 alpha = 0.05
@@ -1529,12 +1529,12 @@ exp_names = [
     "FL-ppo-ac-NN(3)-(actor-lr=5.0e-2)-(67-params)",
     "FL-ppo-ac-NN(4)-(actor-lr=5.0e-2)-(88-params)",
     "FL-ppo-ac-NN(5)-(actor-lr=5.0e-2)-(109-params)",
-    "FL-ppo-ac-NN(4,4)-(actor-lr=1.0e-2)-(108-params)",
+    "FL-ppo-ac-NN(4,4)-(actor-lr=2.0e-2)-(108-params)",
     "FL-ppo-ac-NN(64,64)-(actor-lr=1.0e-3)-(5508-params)",
     "random-baseline",
     "ppo_default_lr100.0e-4",
 ]
-seeds = [10, 20, 30]
+seeds = [10, 20, 30, 40, 50]
 batchsize = 4 * 128
 max_steps = 150000
 alpha = 0.05

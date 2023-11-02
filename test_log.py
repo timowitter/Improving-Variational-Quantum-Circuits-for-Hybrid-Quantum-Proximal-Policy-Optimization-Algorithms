@@ -1437,7 +1437,7 @@ alpha = 0.05
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps)
 """
 
-
+"""
 plot_dir = plots_dir + "/FL-actor-Hyperparameter-Test-0-NN(3)-lr"
 gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
 exp_names = [
@@ -1522,7 +1522,7 @@ alpha = 0.05
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps)
 
-"""
+
 plot_dir = plots_dir + "/FL-actor-Hyperparameter-Test-0b-best-NN"
 gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
 exp_names = [
@@ -1541,3 +1541,23 @@ alpha = 0.05
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps)
 """
+
+plot_dir = plots_dir + "/FL-actor-Hyperparameter-Test-0b-best-NN"
+gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
+exp_names = [
+    "FL-qppo-ac-simple_reuploading-exp_sced-ht25000-10->0.1e-3-output_scaleing-1e-3-(73-params)-randominit",
+    "FL-qppo-ac-simple_reuploading-exp_sced-ht25000-10->0.1e-3-output_scaleing-1e-3-(73-params)-gaussinit",
+    "FL-qppo-ac-simple_reuploading-exp_sced-ht25000-10->0.1e-3-output_scaleing-1e-3-(73-params)-allsmallinit",
+    "FL-qppo-ac-simple_reuploading-exp_sced-ht25000-10->0.1e-3-output_scaleing-1e-3-(73-params)-allmidinit",
+    "FL-qppo-ac-simple_reuploading-exp_sced-ht25000-10->0.1e-3-output_scaleing-1e-3-(73-params)-allbiginit",
+    "random-baseline",
+    "FL-ppo-ac-NN(3)-(actor-lr=5.0e-2)-(67-params)",
+    "FL-ppo-ac-NN(4)-(actor-lr=5.0e-2)-(88-params)",
+]
+seeds = [10, 20, 30]
+batchsize = 4 * 128
+max_steps = 150000
+alpha = 0.05
+
+plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps)
+

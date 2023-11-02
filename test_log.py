@@ -1437,7 +1437,7 @@ alpha = 0.05
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps)
 """
 
-"""
+
 plot_dir = plots_dir + "/FL-actor-Hyperparameter-Test-0-NN(3)-lr"
 gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
 exp_names = [
@@ -1504,7 +1504,7 @@ max_steps = 150000
 alpha = 0.1
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps)
-
+"""
 
 plot_dir = plots_dir + "/FL-actor-Hyperparameter-Test-0-NN(64,64)-lr"
 gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
@@ -1610,7 +1610,7 @@ max_steps = 500000
 alpha = 0.1
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps)
-"""
+
 
 plot_dir = plots_dir + "/CP-actor-Hyperparameter-Test-0-NN(7,7)-lr"
 gym_id = "CartPole-v1"
@@ -1642,7 +1642,7 @@ max_steps = 500000
 alpha = 0.1
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps)
-
+"""
 
 
 

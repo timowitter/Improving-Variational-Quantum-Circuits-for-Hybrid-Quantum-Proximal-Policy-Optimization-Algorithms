@@ -1450,7 +1450,7 @@ exp_names = [
 seeds = [10, 20, 30, 40, 50]
 batchsize = 4 * 128
 max_steps = 150000
-alpha = 0.05
+alpha = 0.1
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps)
 
@@ -1467,7 +1467,7 @@ exp_names = [
 seeds = [10, 20, 30, 40, 50]
 batchsize = 4 * 128
 max_steps = 150000
-alpha = 0.05
+alpha = 0.1
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps)
 
@@ -1484,7 +1484,7 @@ exp_names = [
 seeds = [10, 20, 30, 40, 50]
 batchsize = 4 * 128
 max_steps = 150000
-alpha = 0.05
+alpha = 0.1
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps)
 
@@ -1501,7 +1501,7 @@ exp_names = [
 seeds = [10, 20, 30, 40, 50]
 batchsize = 4 * 128
 max_steps = 150000
-alpha = 0.05
+alpha = 0.1
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps)
 
@@ -1512,13 +1512,14 @@ exp_names = [
     # "FL-ppo-ac-NN(64,64)-(actor-lr=5.0e-5)-(5508-params)",
     "FL-ppo-ac-NN(64,64)-(actor-lr=2.5e-4)-(5508-params)",
     "FL-ppo-ac-NN(64,64)-(actor-lr=1.0e-3)-(5508-params)",
+    "FL-ppo-ac-NN(64,64)-(actor-lr=5.0e-3)-(5508-params)",
     "FL-ppo-ac-NN(64,64)-(actor-lr=1.0e-2)-(5508-params)",
     "random-baseline",
 ]
 seeds = [10, 20, 30, 40, 50]
 batchsize = 4 * 128
 max_steps = 150000
-alpha = 0.05
+alpha = 0.1
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps)
 
@@ -1537,10 +1538,10 @@ exp_names = [
 seeds = [10, 20, 30, 40, 50]
 batchsize = 4 * 128
 max_steps = 150000
-alpha = 0.05
+alpha = 0.1
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps)
-"""
+
 
 plot_dir = plots_dir + "/FL-actor-Hyperparameter-Test-3-init"
 gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
@@ -1560,4 +1561,95 @@ max_steps = 150000
 alpha = 0.05
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps)
+
+
+
+plot_dir = plots_dir + "/CP-actor-Hyperparameter-Test-0-NN(5,5)-lr"
+gym_id = "CartPole-v1"
+exp_names = [
+    "CP-ppo-ac-NN(5,5)-(actor-lr=1.0e-4)-(67-params)",
+    "CP-ppo-ac-NN(5,5)-(actor-lr=1.0e-3)-(67-params)",
+    "CP-ppo-ac-NN(5,5)-(actor-lr=1.0e-2)-(67-params)",
+    "CP-random-baseline-(0-params)",
+]
+seeds = [10, 20, 30, 40, 50]
+batchsize = 4 * 128
+max_steps = 500000
+alpha = 0.1
+
+plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps)
+
+
+plot_dir = plots_dir + "/CP-actor-Hyperparameter-Test-0-NN(6,5)-lr"
+gym_id = "CartPole-v1"
+exp_names = [
+    "CP-ppo-ac-NN(6,5)-(actor-lr=1.0e-4)-(77-params)",
+    "CP-ppo-ac-NN(6,5)-(actor-lr=1.0e-3)-(77-params)",
+    "CP-ppo-ac-NN(6,5)-(actor-lr=1.0e-2)-(77-params)",
+    "CP-random-baseline-(0-params)",
+]
+seeds = [10, 20, 30, 40, 50]
+batchsize = 4 * 128
+max_steps = 500000
+alpha = 0.1
+
+plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps)
+
+
+plot_dir = plots_dir + "/CP-actor-Hyperparameter-Test-0-NN(6,6)-lr"
+gym_id = "CartPole-v1"
+exp_names = [
+    "CP-ppo-ac-NN(6,6)-(actor-lr=1.0e-4)-(86-params)",
+    "CP-ppo-ac-NN(6,6)-(actor-lr=1.0e-3)-(86-params)",
+    "CP-ppo-ac-NN(6,6)-(actor-lr=1.0e-2)-(86-params)",
+    "CP-random-baseline-(0-params)",
+]
+seeds = [10, 20, 30, 40, 50]
+batchsize = 4 * 128
+max_steps = 500000
+alpha = 0.1
+
+plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps)
+"""
+
+plot_dir = plots_dir + "/CP-actor-Hyperparameter-Test-0-NN(7,7)-lr"
+gym_id = "CartPole-v1"
+exp_names = [
+    "CP-ppo-ac-NN(7,7)-(actor-lr=1.0e-4)-(107-params)",
+    "CP-ppo-ac-NN(7,7)-(actor-lr=1.0e-3)-(107-params)",
+    "CP-ppo-ac-NN(7,7)-(actor-lr=1.0e-2)-(107-params)",
+    "CP-random-baseline-(0-params)",
+]
+seeds = [10, 20, 30, 40, 50]
+batchsize = 4 * 128
+max_steps = 500000
+alpha = 0.1
+
+plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps)
+
+
+plot_dir = plots_dir + "/CP-actor-Hyperparameter-Test-0-NN(64,64)-lr"
+gym_id = "CartPole-v1"
+exp_names = [
+    "CP-ppo-ac-NN(64,64)-(actor-lr=2.5e-4)-(4610-params)",
+    "CP-ppo-ac-NN(64,64)-(actor-lr=1.0e-3)-(4610-params)",
+    "CP-ppo-ac-NN(64,64)-(actor-lr=5.0e-3)-(4610-params)",
+    "CP-random-baseline-(0-params)",
+]
+seeds = [10, 20, 30, 40, 50]
+batchsize = 4 * 128
+max_steps = 500000
+alpha = 0.1
+
+plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps)
+
+
+
+
+
+
+
+
+
+
 

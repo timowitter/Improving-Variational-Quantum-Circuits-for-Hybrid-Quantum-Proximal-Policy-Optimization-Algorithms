@@ -1542,7 +1542,7 @@ alpha = 0.05
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps)
 """
 
-plot_dir = plots_dir + "/FL-actor-Hyperparameter-Test-0b-best-NN"
+plot_dir = plots_dir + "/FL-actor-Hyperparameter-Test-3-init"
 gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
 exp_names = [
     "FL-qppo-ac-simple_reuploading-exp_sced-ht25000-10->0.1e-3-output_scaleing-1e-3-(73-params)-randominit",

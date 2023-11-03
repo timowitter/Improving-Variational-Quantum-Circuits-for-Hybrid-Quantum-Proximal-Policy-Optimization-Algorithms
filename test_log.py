@@ -1658,7 +1658,7 @@ plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_
 
 
 
-plot_dir = plots_dir + "/FL-actor-Hyperparameter-Test-3-init"
+plot_dir = plots_dir + "/Plotting-Test"
 gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
 exp_names = [
     "FL-qppo-ac-simple_reuploading-exp_sced-ht25000-10->0.1e-3-output_scaleing-5e-2-(73-params)",
@@ -1672,8 +1672,8 @@ batchsize = 4 * 128
 max_steps = 50000
 alpha = 0.05
 
-title="Optput Scaleing Lernrate in Frozen-Lake",
-loc='upper left',
+title='Output Scaleing Lernrate in Frozen-Lake'
+loc='upper left'
 namelabels=["QPPO-VQC(6,6)-(73-params)-outscale(5e-2)", "QPPO-VQC(6,6)-(73-params)-outscale(1e-2)", "random-baseline", "PPO-NN(3)-(67-params)", "PPO-NN(4)-(88-params)"]
 seedlabels=['10', '20', '30']
 

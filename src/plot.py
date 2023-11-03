@@ -24,7 +24,7 @@ sns.set_theme()
 
 
 def plot_test_avg_final(
-    results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, batchsize=512
+    results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, title, loc, namelabels, seedlabels, batchsize=512
 ):
     # get all result directories
     results_dirs = []
@@ -87,25 +87,25 @@ def plot_test_avg_final(
 
     # plotting
 
-    plot_avg_episode_reward_by_seed(ep_res_by_seed, plot_dir)
-    plot_avg_episode_reward_by_exp_name(ep_res_by_exp_name, plot_dir)
-    plot_avg_episode_length_by_seed(ep_res_by_seed, plot_dir)
-    plot_avg_episode_length_by_exp_name(ep_res_by_exp_name, plot_dir)
+    plot_avg_episode_reward_by_seed(ep_res_by_seed, plot_dir, title, loc, seedlabels)
+    plot_avg_episode_reward_by_exp_name(ep_res_by_exp_name, plot_dir, title, loc, namelabels)
+    plot_avg_episode_length_by_seed(ep_res_by_seed, plot_dir, title, loc, seedlabels)
+    plot_avg_episode_length_by_exp_name(ep_res_by_exp_name, plot_dir, title, loc, namelabels)
 
-    plot_learning_rate_by_exp_name(up_res_by_exp_name, plot_dir)
-    plot_qlearning_rate_by_exp_name(up_res_by_exp_name, plot_dir)
-    plot_value_loss_by_exp_name(up_res_by_exp_name, plot_dir)
-    plot_policy_loss_by_exp_name(up_res_by_exp_name, plot_dir)
-    plot_entropy_by_seed(up_res_by_seed, plot_dir)
-    plot_entropy_by_exp_name(up_res_by_exp_name, plot_dir)
-    plot_loss_by_exp_name(up_res_by_exp_name, plot_dir)
-    plot_old_approx_kl_by_seed(up_res_by_seed, plot_dir)
-    plot_approx_kl_by_seed(up_res_by_seed, plot_dir)
-    plot_clipfrac_by_seed(up_res_by_seed, plot_dir)
-    plot_explained_variance_by_seed(up_res_by_seed, plot_dir)
-    plot_SPS_by_seed(up_res_by_seed, plot_dir)
-    plot_output_scaleing_by_seed(up_res_by_seed, plot_dir)
-    plot_output_scaleing_by_exp_name(up_res_by_exp_name, plot_dir)
+    plot_learning_rate_by_exp_name(up_res_by_exp_name, plot_dir, title, loc, namelabels)
+    plot_qlearning_rate_by_exp_name(up_res_by_exp_name, plot_dir, title, loc, namelabels)
+    plot_value_loss_by_exp_name(up_res_by_exp_name, plot_dir, title, loc, namelabels)
+    plot_policy_loss_by_exp_name(up_res_by_exp_name, plot_dir, title, loc, namelabels)
+    plot_entropy_by_seed(up_res_by_seed, plot_dir, title, loc, seedlabels)
+    plot_entropy_by_exp_name(up_res_by_exp_name, plot_dir, title, loc, namelabels)
+    plot_loss_by_exp_name(up_res_by_exp_name, plot_dir, title, loc, namelabels)
+    plot_old_approx_kl_by_seed(up_res_by_seed, plot_dir, title, loc, seedlabels)
+    plot_approx_kl_by_seed(up_res_by_seed, plot_dir, title, loc, seedlabels)
+    plot_clipfrac_by_seed(up_res_by_seed, plot_dir, title, loc, seedlabels)
+    plot_explained_variance_by_seed(up_res_by_seed, plot_dir, title, loc, seedlabels)
+    plot_SPS_by_seed(up_res_by_seed, plot_dir, title, loc, seedlabels)
+    plot_output_scaleing_by_seed(up_res_by_seed, plot_dir, title, loc, seedlabels)
+    plot_output_scaleing_by_exp_name(up_res_by_exp_name, plot_dir, title, loc, namelabels)
 
 
 ##################################################################################
@@ -247,7 +247,7 @@ def avg_over_seeds_of_update_results(df, gym_id, exp_name, batchsize, max_steps,
     return avg_up_res_avg
 
 
-def plot_avg_episode_reward_by_seed(episode_results, plot_dir):
+def plot_avg_episode_reward_by_seed(episode_results, plot_dir, title, loc, labels):
     sns.relplot(
         data=episode_results,
         kind="line",
@@ -255,13 +255,15 @@ def plot_avg_episode_reward_by_seed(episode_results, plot_dir):
         y="reward",
         col="exp_name",
         hue="seed",
+        legend=False,
     )
+    plt.legend(title=title, loc=loc, labels=labels)
     plot_dir = os.path.join(plot_dir, "episode_reward_by_seed.png")
     plt.savefig(plot_dir)
     plt.close()
 
 
-def plot_avg_episode_reward_by_exp_name(episode_results, plot_dir):
+def plot_avg_episode_reward_by_exp_name(episode_results, plot_dir, title, loc, labels):
     sns.relplot(
         data=episode_results,
         kind="line",
@@ -269,13 +271,15 @@ def plot_avg_episode_reward_by_exp_name(episode_results, plot_dir):
         y="reward",
         col="gym_id",
         hue="exp_name",
+        legend=False,
     )
+    plt.legend(title=title, loc=loc, labels=labels)
     plot_dir = os.path.join(plot_dir, "episode_reward_by_exp_name.png")
     plt.savefig(plot_dir)
     plt.close()
 
 
-def plot_avg_episode_length_by_seed(episode_results, plot_dir):
+def plot_avg_episode_length_by_seed(episode_results, plot_dir, title, loc, labels):
     sns.relplot(
         data=episode_results,
         kind="line",
@@ -283,13 +287,15 @@ def plot_avg_episode_length_by_seed(episode_results, plot_dir):
         y="episode_length",
         col="exp_name",
         hue="seed",
+        legend=False,
     )
+    plt.legend(title=title, loc=loc, labels=labels)
     plot_dir = os.path.join(plot_dir, "episode_lenght_by_seed.png")
     plt.savefig(plot_dir)
     plt.close()
 
 
-def plot_avg_episode_length_by_exp_name(episode_results, plot_dir):
+def plot_avg_episode_length_by_exp_name(episode_results, plot_dir, title, loc, labels):
     sns.relplot(
         data=episode_results,
         kind="line",
@@ -297,13 +303,15 @@ def plot_avg_episode_length_by_exp_name(episode_results, plot_dir):
         y="episode_length",
         col="gym_id",
         hue="exp_name",
+        legend=False,
     )
+    plt.legend(title=title, loc=loc, labels=labels)
     plot_dir = os.path.join(plot_dir, "episode_lenght_by_exp_name.png")
     plt.savefig(plot_dir)
     plt.close()
 
 
-def plot_learning_rate_by_seed(update_results, plot_dir):
+def plot_learning_rate_by_seed(update_results, plot_dir, title, loc, labels):
     sns.relplot(
         data=update_results,
         kind="line",
@@ -311,13 +319,15 @@ def plot_learning_rate_by_seed(update_results, plot_dir):
         y="learning_rate",
         col="exp_name",
         hue="seed",
+        legend=False,
     )
+    plt.legend(title=title, loc=loc, labels=labels)
     plot_dir = os.path.join(plot_dir, "learning_rate_by_seed.png")
     plt.savefig(plot_dir)
     plt.close()
 
 
-def plot_learning_rate_by_exp_name(update_results, plot_dir):
+def plot_learning_rate_by_exp_name(update_results, plot_dir, title, loc, labels):
     sns.relplot(
         data=update_results,
         kind="line",
@@ -325,13 +335,15 @@ def plot_learning_rate_by_exp_name(update_results, plot_dir):
         y="avg_learning_rate",
         col="gym_id",
         hue="exp_name",
+        legend=False,
     )
+    plt.legend(title=title, loc=loc, labels=labels)
     plot_dir = os.path.join(plot_dir, "learning_rate_by_exp_name.png")
     plt.savefig(plot_dir)
     plt.close()
 
 
-def plot_qlearning_rate_by_seed(update_results, plot_dir):
+def plot_qlearning_rate_by_seed(update_results, plot_dir, title, loc, labels):
     sns.relplot(
         data=update_results,
         kind="line",
@@ -339,13 +351,15 @@ def plot_qlearning_rate_by_seed(update_results, plot_dir):
         y="qlearning_rate",
         col="exp_name",
         hue="seed",
+        legend=False,
     )
+    plt.legend(title=title, loc=loc, labels=labels)
     plot_dir = os.path.join(plot_dir, "qlearning_rate_by_seed.png")
     plt.savefig(plot_dir)
     plt.close()
 
 
-def plot_qlearning_rate_by_exp_name(update_results, plot_dir):
+def plot_qlearning_rate_by_exp_name(update_results, plot_dir, title, loc, labels):
     sns.relplot(
         data=update_results,
         kind="line",
@@ -353,13 +367,15 @@ def plot_qlearning_rate_by_exp_name(update_results, plot_dir):
         y="avg_qlearning_rate",
         col="gym_id",
         hue="exp_name",
+        legend=False,
     )
+    plt.legend(title=title, loc=loc, labels=labels)
     plot_dir = os.path.join(plot_dir, "qlearning_rate_by_exp_name.png")
     plt.savefig(plot_dir)
     plt.close()
 
 
-def plot_value_loss_by_seed(update_results, plot_dir):
+def plot_value_loss_by_seed(update_results, plot_dir, title, loc, labels):
     sns.relplot(
         data=update_results,
         kind="line",
@@ -367,13 +383,15 @@ def plot_value_loss_by_seed(update_results, plot_dir):
         y="value_loss_emw",
         col="exp_name",
         hue="seed",
+        legend=False,
     )
+    plt.legend(title=title, loc=loc, labels=labels)
     plot_dir = os.path.join(plot_dir, "value_loss_by_seed.png")
     plt.savefig(plot_dir)
     plt.close()
 
 
-def plot_value_loss_by_exp_name(update_results, plot_dir):
+def plot_value_loss_by_exp_name(update_results, plot_dir, title, loc, labels):
     sns.relplot(
         data=update_results,
         kind="line",
@@ -381,13 +399,15 @@ def plot_value_loss_by_exp_name(update_results, plot_dir):
         y="value_loss_emw",
         col="gym_id",
         hue="exp_name",
+        legend=False,
     )
+    plt.legend(title=title, loc=loc, labels=labels)
     plot_dir = os.path.join(plot_dir, "value_loss_by_exp_name.png")
     plt.savefig(plot_dir)
     plt.close()
 
 
-def plot_policy_loss_by_seed(update_results, plot_dir):
+def plot_policy_loss_by_seed(update_results, plot_dir, title, loc, labels):
     sns.relplot(
         data=update_results,
         kind="line",
@@ -395,13 +415,15 @@ def plot_policy_loss_by_seed(update_results, plot_dir):
         y="policy_loss_emw",
         col="exp_name",
         hue="seed",
+        legend=False,
     )
+    plt.legend(title=title, loc=loc, labels=labels)
     plot_dir = os.path.join(plot_dir, "policy_loss_by.png")
     plt.savefig(plot_dir)
     plt.close()
 
 
-def plot_policy_loss_by_exp_name(update_results, plot_dir):
+def plot_policy_loss_by_exp_name(update_results, plot_dir, title, loc, labels):
     sns.relplot(
         data=update_results,
         kind="line",
@@ -409,13 +431,15 @@ def plot_policy_loss_by_exp_name(update_results, plot_dir):
         y="policy_loss_emw",
         col="gym_id",
         hue="exp_name",
+        legend=False,
     )
+    plt.legend(title=title, loc=loc, labels=labels)
     plot_dir = os.path.join(plot_dir, "policy_loss_by_exp_name.png")
     plt.savefig(plot_dir)
     plt.close()
 
 
-def plot_entropy_by_seed(update_results, plot_dir):
+def plot_entropy_by_seed(update_results, plot_dir, title, loc, labels):
     sns.relplot(
         data=update_results,
         kind="line",
@@ -423,13 +447,15 @@ def plot_entropy_by_seed(update_results, plot_dir):
         y="entropy_emw",
         col="exp_name",
         hue="seed",
+        legend=False,
     )
+    plt.legend(title=title, loc=loc, labels=labels)
     plot_dir = os.path.join(plot_dir, "entropy_by_seed.png")
     plt.savefig(plot_dir)
     plt.close()
 
 
-def plot_entropy_by_exp_name(update_results, plot_dir):
+def plot_entropy_by_exp_name(update_results, plot_dir, title, loc, labels):
     sns.relplot(
         data=update_results,
         kind="line",
@@ -437,13 +463,15 @@ def plot_entropy_by_exp_name(update_results, plot_dir):
         y="entropy_emw",
         col="gym_id",
         hue="exp_name",
+        legend=False,
     )
+    plt.legend(title=title, loc=loc, labels=labels)
     plot_dir = os.path.join(plot_dir, "entropy_by_exp_name.png")
     plt.savefig(plot_dir)
     plt.close()
 
 
-def plot_loss_by_seed(update_results, plot_dir):
+def plot_loss_by_seed(update_results, plot_dir, title, loc, labels):
     sns.relplot(
         data=update_results,
         kind="line",
@@ -451,13 +479,15 @@ def plot_loss_by_seed(update_results, plot_dir):
         y="loss_emw",
         col="exp_name",
         hue="seed",
+        legend=False,
     )
+    plt.legend(title=title, loc=loc, labels=labels)
     plot_dir = os.path.join(plot_dir, "loss_by_seed.png")
     plt.savefig(plot_dir)
     plt.close()
 
 
-def plot_loss_by_exp_name(update_results, plot_dir):
+def plot_loss_by_exp_name(update_results, plot_dir, title, loc, labels):
     sns.relplot(
         data=update_results,
         kind="line",
@@ -465,13 +495,15 @@ def plot_loss_by_exp_name(update_results, plot_dir):
         y="loss_emw",
         col="gym_id",
         hue="exp_name",
+        legend=False,
     )
+    plt.legend(title=title, loc=loc, labels=labels)
     plot_dir = os.path.join(plot_dir, "loss_by_exp_name.png")
     plt.savefig(plot_dir)
     plt.close()
 
 
-def plot_old_approx_kl_by_seed(update_results, plot_dir):
+def plot_old_approx_kl_by_seed(update_results, plot_dir, title, loc, labels):
     sns.relplot(
         data=update_results,
         kind="line",
@@ -479,13 +511,15 @@ def plot_old_approx_kl_by_seed(update_results, plot_dir):
         y="old_approx_kl",
         col="exp_name",
         hue="seed",
+        legend=False,
     )
+    plt.legend(title=title, loc=loc, labels=labels)
     plot_dir = os.path.join(plot_dir, "old_approx_kl_by_seed.png")
     plt.savefig(plot_dir)
     plt.close()
 
 
-def plot_approx_kl_by_seed(update_results, plot_dir):
+def plot_approx_kl_by_seed(update_results, plot_dir, title, loc, labels):
     sns.relplot(
         data=update_results,
         kind="line",
@@ -493,13 +527,15 @@ def plot_approx_kl_by_seed(update_results, plot_dir):
         y="approx_kl",
         col="exp_name",
         hue="seed",
+        legend=False,
     )
+    plt.legend(title=title, loc=loc, labels=labels)
     plot_dir = os.path.join(plot_dir, "approx_kl_by_seed.png")
     plt.savefig(plot_dir)
     plt.close()
 
 
-def plot_clipfrac_by_seed(update_results, plot_dir):
+def plot_clipfrac_by_seed(update_results, plot_dir, title, loc, labels):
     sns.relplot(
         data=update_results,
         kind="line",
@@ -507,13 +543,15 @@ def plot_clipfrac_by_seed(update_results, plot_dir):
         y="clipfrac",
         col="exp_name",
         hue="seed",
+        legend=False,
     )
+    plt.legend(title=title, loc=loc, labels=labels)
     plot_dir = os.path.join(plot_dir, "clipfrac_by_seed.png")
     plt.savefig(plot_dir)
     plt.close()
 
 
-def plot_explained_variance_by_seed(update_results, plot_dir):
+def plot_explained_variance_by_seed(update_results, plot_dir, title, loc, labels):
     sns.relplot(
         data=update_results,
         kind="line",
@@ -521,13 +559,15 @@ def plot_explained_variance_by_seed(update_results, plot_dir):
         y="explained_variance",
         col="exp_name",
         hue="seed",
+        legend=False,
     )
+    plt.legend(title=title, loc=loc, labels=labels)
     plot_dir = os.path.join(plot_dir, "explained_variance_by_seed.png")
     plt.savefig(plot_dir)
     plt.close()
 
 
-def plot_SPS_by_seed(update_results, plot_dir):
+def plot_SPS_by_seed(update_results, plot_dir, title, loc, labels):
     sns.relplot(
         data=update_results,
         kind="line",
@@ -535,13 +575,15 @@ def plot_SPS_by_seed(update_results, plot_dir):
         y="SPS",
         col="exp_name",
         hue="seed",
+        legend=False,
     )
+    plt.legend(title=title, loc=loc, labels=labels)
     plot_dir = os.path.join(plot_dir, "SPS_by_seed.png")
     plt.savefig(plot_dir)
     plt.close()
 
 
-def plot_output_scaleing_by_seed(update_results, plot_dir):
+def plot_output_scaleing_by_seed(update_results, plot_dir, title, loc, labels):
     sns.relplot(
         data=update_results,
         kind="line",
@@ -549,13 +591,15 @@ def plot_output_scaleing_by_seed(update_results, plot_dir):
         y="output_scaleing",
         col="exp_name",
         hue="seed",
+        legend=False,
     )
+    plt.legend(title=title, loc=loc, labels=labels)
     plot_dir = os.path.join(plot_dir, "output_scaleing_by_seed.png")
     plt.savefig(plot_dir)
     plt.close()
 
 
-def plot_output_scaleing_by_exp_name(update_results, plot_dir):
+def plot_output_scaleing_by_exp_name(update_results, plot_dir, title, loc, labels):
     sns.relplot(
         data=update_results,
         kind="line",
@@ -563,7 +607,9 @@ def plot_output_scaleing_by_exp_name(update_results, plot_dir):
         y="avg_output_scaleing",
         col="gym_id",
         hue="exp_name",
+        legend=False,
     )
+    plt.legend(title=title, loc=loc, labels=labels)
     plot_dir = os.path.join(plot_dir, "output_scaleing_by_exp_name.png")
     plt.savefig(plot_dir)
     plt.close()

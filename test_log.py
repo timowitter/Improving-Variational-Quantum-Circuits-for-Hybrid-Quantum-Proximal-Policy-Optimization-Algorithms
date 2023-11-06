@@ -1146,6 +1146,7 @@ max_steps = 500000
 alpha = 0.05
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps)
+# for the tests before this one, circular entanglement was used for the last layer instead of onely entangeling the 1st and 3th Qubit plus the 2nd an 4th Qubit
 
 
 plot_dir = plots_dir + "/CP-actor-Hyperparameter-Test-3a-random-inits"
@@ -1570,7 +1571,7 @@ name2="FL-qppo-ac-simple-exp_sced-ht25000-10->0.1e-3-output_scaleing-5e-3-(73-pa
 name3="FL-qppo-ac-simple_reuploading-exp_sced-ht25000-10->0.1e-3-(73-params)"
 name4="FL-qppo-ac-simple_reuploading-qlr-2.5e-3-output_scaleing-5e-3-(73-params)"
 
-
+#############################################################
 
 plot_dir = plots_dir + "/CP-actor-Hyperparameter-Test-0-NN(5,5)-lr"
 gym_id = "CartPole-v1"
@@ -1662,28 +1663,3 @@ alpha = 0.1
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps)
 """
 
-
-
-
-plot_dir = plots_dir + "/Plotting-Test"
-gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
-exp_names = [
-    "FL-qppo-ac-simple_reuploading-exp_sced-ht25000-10->0.1e-3-output_scaleing-5e-2-(73-params)",
-    "FL-qppo-ac-simple_reuploading-exp_sced-ht25000-10->0.1e-3-output_scaleing-1e-2-(73-params)-randominit",
-    "random-baseline",
-    "FL-ppo-ac-NN(3)-(actor-lr=5.0e-2)-(67-params)",
-    "FL-ppo-ac-NN(4)-(actor-lr=5.0e-2)-(88-params)",
-]
-seeds = [10, 20, 30]
-batchsize = 4 * 128
-max_steps = 50000
-alpha = 0.3
-
-title='Output Scaleing Lernrate in Frozen-Lake'
-loc='upper left'
-labels=["QPPO-VQC(6,6)-(73-params)-outscale(5e-2)", "QPPO-VQC(6,6)-(73-params)-outscale(1e-2)", "random-baseline", "PPO-NN(3)-(67-params)", "PPO-NN(4)-(88-params)"]
-
-plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
-
-
-#plt.legend(title='Smoker', loc='upper left', labels=['Hell Yeh', 'Nah Bruh'])

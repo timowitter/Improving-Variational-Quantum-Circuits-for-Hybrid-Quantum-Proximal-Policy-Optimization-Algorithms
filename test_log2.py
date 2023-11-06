@@ -250,6 +250,7 @@ alpha = 0.3
 labels=["QPPO-Data-Reuploading-OutScale(5e-3)-(73-Param)", "QPPO-Data-Reuploading-OutScale(1e-3)-(73-Param)", "QPPO-ohne-Reuploading-OutScale(5e-3)-(73-Param)", "QPPO-ohne-Reuploading-OutScale(1e-3)-(73-Param)", "Zufällige Aktionsauswahl"]
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
+# two seeds fail for the higher OutScale lr without data rauploading
 
 """
 

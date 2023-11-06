@@ -28,7 +28,7 @@ def make_clipped_random_init(n_qubits, n_layers, n_dims):
                     layer_params[i, j, k] = np.clip(layer_params[i, j, k], 0 + a, 1 - a)
                 else:
                     layer_params[i, j, k] = np.clip(layer_params[i, j, k], -1 + a, 0 - a)
-                # interval [-0.99, -0.01] & [0.01, 0.99]
+                # interval [-0.99, -0.01] || [0.01, 0.99]
     layer_params = np.arctanh(layer_params)  # we use tanh weight remapping
     return layer_params
 
@@ -44,7 +44,7 @@ def make_all_toosmall_random_init(n_qubits, n_layers, n_dims):
                     layer_params[i, j, k] = layer_params[i, j, k] + 0.0001
                 else:
                     layer_params[i, j, k] = layer_params[i, j, k] - 0.0001
-                # interval [-0.0011, -0.0001[ & [0.0001, 0.0011[
+                # interval [-0.0011, -0.0001[ || [0.0001, 0.0011[
     layer_params = np.arctanh(layer_params)  # we use tanh weight remapping
     return layer_params
 
@@ -60,7 +60,7 @@ def make_all_verysmall_random_init(n_qubits, n_layers, n_dims):
                     layer_params[i, j, k] = layer_params[i, j, k] + 0.001
                 else:
                     layer_params[i, j, k] = layer_params[i, j, k] - 0.001
-                # interval [-0.011, -0.001[ & [0.001, 0.011[
+                # interval [-0.011, -0.001[ || [0.001, 0.011[
     layer_params = np.arctanh(layer_params)  # will later be inside a tanh function
     return layer_params
 
@@ -76,7 +76,7 @@ def make_all_small_random_init(n_qubits, n_layers, n_dims):
                     layer_params[i, j, k] = layer_params[i, j, k] + a
                 else:
                     layer_params[i, j, k] = layer_params[i, j, k] - a
-                # interval [-0.11, -0.01[ & [0.01, 0.11[
+                # interval [-0.11, -0.01[ || [0.01, 0.11[
     layer_params = np.arctanh(layer_params)  # will later be inside a tanh function
     return layer_params
 
@@ -92,7 +92,7 @@ def make_all_medium_random_init(n_qubits, n_layers, n_dims):
                     layer_params[i, j, k] = layer_params[i, j, k] + 0.25
                 else:
                     layer_params[i, j, k] = layer_params[i, j, k] - 0.25
-                # interval [-0.75, -0.25[ & [0.25, 0.75[
+                # interval [-0.75, -0.25[ || [0.25, 0.75[
     layer_params = np.arctanh(layer_params)  # will later be inside a tanh function
     return layer_params
 
@@ -108,7 +108,7 @@ def make_all_big_random_init(n_qubits, n_layers, n_dims):
                     layer_params[i, j, k] = layer_params[i, j, k] + 0.6 - a
                 else:
                     layer_params[i, j, k] = layer_params[i, j, k] - 0.6 + a
-                # interval [-0.99, -0.59[ & [0.59, 0.99[
+                # interval [-0.99, -0.59[ || [0.59, 0.99[
     layer_params = np.arctanh(layer_params)  # we use tanh weight remapping
     return layer_params
 

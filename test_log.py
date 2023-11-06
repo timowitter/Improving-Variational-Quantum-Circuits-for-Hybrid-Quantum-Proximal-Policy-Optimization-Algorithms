@@ -1565,11 +1565,17 @@ alpha = 0.05
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps)
 
+name1="FL-qppo-ac-simple_reuploading-exp_sced-ht25000-10->0.1e-3-output_scaleing-5e-3-(73-params)"
+name2="FL-qppo-ac-simple-exp_sced-ht25000-10->0.1e-3-output_scaleing-5e-3-(73-params)"
+name3="FL-qppo-ac-simple_reuploading-exp_sced-ht25000-10->0.1e-3-(73-params)"
+name4="FL-qppo-ac-simple_reuploading-qlr-2.5e-3-output_scaleing-5e-3-(73-params)"
+
 
 
 plot_dir = plots_dir + "/CP-actor-Hyperparameter-Test-0-NN(5,5)-lr"
 gym_id = "CartPole-v1"
 exp_names = [
+    "CP-ppo-ac-NN(5,5)-(actor-lr=5.0e-5)-(67-params)",
     "CP-ppo-ac-NN(5,5)-(actor-lr=1.0e-4)-(67-params)",
     "CP-ppo-ac-NN(5,5)-(actor-lr=2.5e-4)-(67-params)",
     "CP-ppo-ac-NN(5,5)-(actor-lr=1.0e-3)-(67-params)",
@@ -1587,6 +1593,7 @@ plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_
 plot_dir = plots_dir + "/CP-actor-Hyperparameter-Test-0-NN(6,5)-lr"
 gym_id = "CartPole-v1"
 exp_names = [
+    "CP-ppo-ac-NN(6,5)-(actor-lr=5.0e-5)-(77-params)",
     "CP-ppo-ac-NN(6,5)-(actor-lr=1.0e-4)-(77-params)",
     "CP-ppo-ac-NN(6,5)-(actor-lr=2.5e-4)-(77-params)",
     "CP-ppo-ac-NN(6,5)-(actor-lr=1.0e-3)-(77-params)",
@@ -1604,6 +1611,7 @@ plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_
 plot_dir = plots_dir + "/CP-actor-Hyperparameter-Test-0-NN(6,6)-lr"
 gym_id = "CartPole-v1"
 exp_names = [
+    "CP-ppo-ac-NN(6,6)-(actor-lr=5.0e-5)-(86-params)",
     "CP-ppo-ac-NN(6,6)-(actor-lr=1.0e-4)-(86-params)",
     "CP-ppo-ac-NN(6,6)-(actor-lr=2.5e-4)-(86-params)",
     "CP-ppo-ac-NN(6,6)-(actor-lr=1.0e-3)-(86-params)",
@@ -1621,6 +1629,7 @@ plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_
 plot_dir = plots_dir + "/CP-actor-Hyperparameter-Test-0-NN(7,7)-lr"
 gym_id = "CartPole-v1"
 exp_names = [
+    "CP-ppo-ac-NN(7,7)-(actor-lr=5.0e-5)-(107-params)",
     "CP-ppo-ac-NN(7,7)-(actor-lr=1.0e-4)-(107-params)",
     "CP-ppo-ac-NN(7,7)-(actor-lr=2.5e-4)-(107-params)",
     "CP-ppo-ac-NN(7,7)-(actor-lr=1.0e-3)-(107-params)",
@@ -1638,6 +1647,7 @@ plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_
 plot_dir = plots_dir + "/CP-actor-Hyperparameter-Test-0-NN(64,64)-lr"
 gym_id = "CartPole-v1"
 exp_names = [
+    "CP-ppo-ac-NN(64,64)-(actor-lr=5.0e-5)-(4610-params)",
     "CP-ppo-ac-NN(64,64)-(actor-lr=1.0e-4)-(4610-params)",
     "CP-ppo-ac-NN(64,64)-(actor-lr=2.5e-4)-(4610-params)",
     "CP-ppo-ac-NN(64,64)-(actor-lr=1.0e-3)-(4610-params)",
@@ -1655,9 +1665,6 @@ plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_
 
 
 
-
-
-
 plot_dir = plots_dir + "/Plotting-Test"
 gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
 exp_names = [
@@ -1670,14 +1677,13 @@ exp_names = [
 seeds = [10, 20, 30]
 batchsize = 4 * 128
 max_steps = 50000
-alpha = 0.05
+alpha = 0.3
 
 title='Output Scaleing Lernrate in Frozen-Lake'
 loc='upper left'
-namelabels=["QPPO-VQC(6,6)-(73-params)-outscale(5e-2)", "QPPO-VQC(6,6)-(73-params)-outscale(1e-2)", "random-baseline", "PPO-NN(3)-(67-params)", "PPO-NN(4)-(88-params)"]
-seedlabels=['10', '20', '30']
+labels=["QPPO-VQC(6,6)-(73-params)-outscale(5e-2)", "QPPO-VQC(6,6)-(73-params)-outscale(1e-2)", "random-baseline", "PPO-NN(3)-(67-params)", "PPO-NN(4)-(88-params)"]
 
-plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, title, loc, namelabels, seedlabels)
+plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
 
 
 #plt.legend(title='Smoker', loc='upper left', labels=['Hell Yeh', 'Nah Bruh'])

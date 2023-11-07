@@ -258,7 +258,7 @@ def plot_avg_episode_reward_by_seed(episode_results, plot_dir):
         x="global_step",
         y="reward",
         col="exp_name",
-
+        errorbar="sd",
         hue="seed",
     )
     g._legend.set_title("Seed")
@@ -277,7 +277,7 @@ def plot_avg_episode_reward_by_exp_name(episode_results, plot_dir):
         kind="line",
         x="global_step",
         y="reward",
-
+        errorbar="sd",
         hue="exp_name",
     )
     g._legend.set_title("Ansatz")
@@ -299,6 +299,7 @@ def plot_avg_episode_length_by_seed(episode_results, plot_dir):
         y="episode_length",
         col="exp_name",
         hue="seed",
+        errorbar="sd",
     )
     g._legend.set_title("Seed")
     g.set(xlabel ="Zeitschritt", ylabel = "Episodenlänge")
@@ -313,7 +314,7 @@ def plot_avg_episode_length_by_exp_name(episode_results, plot_dir):
         kind="line",
         x="global_step",
         y="episode_length",
-        
+        errorbar="sd",
         hue="exp_name",
     )
     g._legend.set_title("Ansatz")
@@ -333,6 +334,7 @@ def plot_learning_rate_by_seed(update_results, plot_dir):
         y="learning_rate",
         col="exp_name",
         hue="seed",
+        errorbar="sd",
     )
     g._legend.set_title("Seed")
     g.set(xlabel ="Zeitschritt", ylabel = "Actor NN Lernrate")
@@ -347,7 +349,7 @@ def plot_learning_rate_by_exp_name(update_results, plot_dir):
         kind="line",
         x="global_step",
         y="learning_rate",
-        
+        errorbar="sd",
         hue="exp_name",
     )
     g._legend.set_title("Ansatz")
@@ -367,6 +369,7 @@ def plot_qlearning_rate_by_seed(update_results, plot_dir):
         y="qlearning_rate",
         col="exp_name",
         hue="seed",
+        errorbar="sd",
     )
     g._legend.set_title("Seed")
     g.set(xlabel ="Zeitschritt", ylabel = "Actor VQC Lernrate")
@@ -381,7 +384,7 @@ def plot_qlearning_rate_by_exp_name(update_results, plot_dir):
         kind="line",
         x="global_step",
         y="qlearning_rate",
-        
+        errorbar="sd",
         hue="exp_name",
     )
     g._legend.set_title("Ansatz")
@@ -401,6 +404,7 @@ def plot_value_loss_by_seed(update_results, plot_dir):
         y="value_loss_ema",
         col="exp_name",
         hue="seed",
+        errorbar="sd",
     )
     g._legend.set_title("Seed")
     g.set(xlabel ="Zeitschritt", ylabel = "Value Loss")
@@ -415,7 +419,7 @@ def plot_value_loss_by_exp_name(update_results, plot_dir):
         kind="line",
         x="global_step",
         y="value_loss_ema",
-        
+        errorbar="sd",
         hue="exp_name",
     )
     g._legend.set_title("Ansatz")
@@ -435,6 +439,7 @@ def plot_policy_loss_by_seed(update_results, plot_dir):
         y="policy_loss_ema",
         col="exp_name",
         hue="seed",
+        errorbar="sd",
     )
     g._legend.set_title("Seed")
     g.set(xlabel ="Zeitschritt", ylabel = "Policy Loss")
@@ -449,7 +454,7 @@ def plot_policy_loss_by_exp_name(update_results, plot_dir):
         kind="line",
         x="global_step",
         y="policy_loss_ema",
-        
+        errorbar="sd",
         hue="exp_name",
     )
     g._legend.set_title("Ansatz")
@@ -469,6 +474,7 @@ def plot_entropy_by_seed(update_results, plot_dir):
         y="entropy_ema",
         col="exp_name",
         hue="seed",
+        errorbar="sd",
     )
     g._legend.set_title("Seed")
     g.set(xlabel ="Zeitschritt", ylabel = "Entropie")
@@ -483,7 +489,7 @@ def plot_entropy_by_exp_name(update_results, plot_dir):
         kind="line",
         x="global_step",
         y="entropy_ema",
-        
+        errorbar="sd",
         hue="exp_name",
     )
     g._legend.set_title("Ansatz")
@@ -503,6 +509,7 @@ def plot_loss_by_seed(update_results, plot_dir):
         y="loss_ema",
         col="exp_name",
         hue="seed",
+        errorbar="sd",
     )
     g._legend.set_title("Seed")
     g.set(xlabel ="Zeitschritt", ylabel = "Loss")
@@ -517,7 +524,7 @@ def plot_loss_by_exp_name(update_results, plot_dir):
         kind="line",
         x="global_step",
         y="loss_ema",
-        
+        errorbar="sd",
         hue="exp_name",
     )
     g._legend.set_title("Ansatz")
@@ -537,6 +544,7 @@ def plot_old_approx_kl_by_seed(update_results, plot_dir):
         y="old_approx_kl",
         col="exp_name",
         hue="seed",
+        errorbar="sd",
     )
 
     plot_dir = os.path.join(plot_dir, "old_approx_kl_by_seed.png")
@@ -552,6 +560,7 @@ def plot_approx_kl_by_seed(update_results, plot_dir):
         y="approx_kl",
         col="exp_name",
         hue="seed",
+        errorbar="sd",
     )
 
     plot_dir = os.path.join(plot_dir, "approx_kl_by_seed.png")
@@ -567,6 +576,7 @@ def plot_clipfrac_by_seed(update_results, plot_dir):
         y="clipfrac",
         col="exp_name",
         hue="seed",
+        errorbar="sd",
     )
 
     plot_dir = os.path.join(plot_dir, "clipfrac_by_seed.png")
@@ -582,6 +592,7 @@ def plot_explained_variance_by_seed(update_results, plot_dir):
         y="explained_variance",
         col="exp_name",
         hue="seed",
+        errorbar="sd",
     )
 
     plot_dir = os.path.join(plot_dir, "explained_variance_by_seed.png")
@@ -597,6 +608,7 @@ def plot_SPS_by_seed(update_results, plot_dir):
         y="SPS",
         col="exp_name",
         hue="seed",
+        errorbar="sd",
     )
     g._legend.set_title("Seed")
     g.set(xlabel ="Zeitschritt", ylabel = "Zeitschritte pro Sekunde")
@@ -613,6 +625,7 @@ def plot_output_scaleing_by_seed(update_results, plot_dir):
         y="output_scaleing",
         col="exp_name",
         hue="seed",
+        errorbar="sd",
     )
     g._legend.set_title("Seed")
     g.set(xlabel ="Zeitschritt", ylabel = "Output Scaleing")
@@ -627,7 +640,7 @@ def plot_output_scaleing_by_exp_name(update_results, plot_dir):
         kind="line",
         x="global_step",
         y="output_scaleing",
-        
+        errorbar="sd",
         hue="exp_name",
     )
     g._legend.set_title("Ansatz")

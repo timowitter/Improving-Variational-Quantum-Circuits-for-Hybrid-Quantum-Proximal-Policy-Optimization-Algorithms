@@ -1663,3 +1663,27 @@ alpha = 0.1
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps)
 """
 
+
+
+
+plot_dir = plots_dir + "/CP-actor-Test-2-Ansatz-Comparison"
+gym_id = "CartPole-v1"
+exp_names = [
+    "CP-qppo-ac-simple_reuploading-exp_sced-ht100000-start-qlr2.5e-3-end-qlr1e-4-output_scaleing-1param-1e-4-(73-params)-allsmallinit",
+    "CP-qppo-ac-simple_reuploading----------------exp_sced-ht_80000-qlr(25-1)e-4-OutScale(1e-3)-allsmallinit-(73-params)",
+    "CP-qppo-ac-simple_reuploading_sharedInpScale-exp_sced-ht_80000-qlr(25-1)e-4-OutScale(1e-3)-allsmallinit-(77-params)",
+    "CP-qppo-ac-simple_reuploading_Input_Scaleing-exp_sced-ht_80000-qlr(25-1)e-4-OutScale(1e-3)-allsmallinit-(65-params)-4-layers",
+    "CP-qppo-ac-simple_reuploading_Input_Scaleing-exp_sced-ht_80000-qlr(25-1)e-4-OutScale(1e-3)-allsmallinit-(81-params)-5-layers",
+    "CP-qppo-ac-simple_reuploading_Input_Scaleing-exp_sced-ht_80000-qlr(10-0.5)e-4-OutScale(1e-3)-allsmallinit-(97-params)",
+    "CP-random-baseline-(0-params)",
+    "CP-ppo-ac-NN(5,5)-(actor-lr=1.0e-4)-(67-params)",
+    "CP-ppo-ac-NN(6,5)-(actor-lr=1.0e-4)-(77-params)",
+    "CP-ppo-ac-NN(6,6)-(actor-lr=1.0e-4)-(86-params)",
+]
+seeds = [10, 20, 30]
+batchsize = 4 * 128
+max_steps = 150000
+alpha = 0.05
+labels=["QPPO(6-Layer)-KeinInpScale-Out(1e-4)-(73-Param)", "QPPO(6-Layer)-KeinInpScale-(73-Param)", "QPPO(6-Layer)-GeteiltesInpScale-(77-Param)", "QPPO(4-Layer)-InpScale-(65-Param)", "QPPO(5-Layer)-InpScale-(81-Param)", "QPPO(6-Layer)-InpScale-(96-Param)", "Zufällige Aktionsauswahl", "PPO(5,5)-(67-Param)", "PPO(6,5)-(77-Param)", "PPO(6,6)-(86-Param)"]
+
+plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)

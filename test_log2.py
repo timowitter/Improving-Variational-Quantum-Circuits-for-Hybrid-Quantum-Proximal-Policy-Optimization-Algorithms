@@ -98,7 +98,7 @@ labels=["PPO(64,64)-Lr(2.5e-4)-(5508-Param)", "PPO(64,64)-Lr(1.0e-3)-(5508-Param
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
 
-"""
+
 plot_dir = plots_dir + "/FL-actor-Hyperparameter-Test-0b-best-NN"
 gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
 exp_names = [
@@ -116,7 +116,7 @@ alpha = 0.3
 labels=["PPO(3)-Lr(1.0e-2)-(67-Param)", "PPO(4)-Lr(1.0e-2)-(88-Param)", "PPO(5)-Lr(1.0e-2)-(109-Param)", "PPO(4,4)-Lr(1.0e-2)-(108-Param)", "PPO(64,64)-Lr(2.5e-3)-(5508-Param)", "Zufällige Aktionsauswahl"]
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
-"""
+""""""
 
 
 
@@ -245,7 +245,7 @@ plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_
 #
 
 
-"""
+
 plot_dir = plots_dir + "/FL-actor-Test-1-output-scaleing"
 gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
 exp_names = [
@@ -295,7 +295,7 @@ plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_
 # We compare it to an VQC without output scaleing and 2 PPOs with a NN with one hidden Layer with 3 (67 parameters) or 
 # 4 (88 parameters) Nodes (and a lr of 5e-2) for the actor respectively.
 # All Algorithms used a NN with two hidden layers and 64 Nodes (5313 parameters) and a lernrate of 2.5e-4 for the critic. 
-"""
+""""""
 
 
 plot_dir = plots_dir + "/FL-actor-Test-1a-output-scaleing-1-param"
@@ -555,6 +555,25 @@ labels=["PPO(5,5)-Lr(1.0e-4)-(67-Param)", "PPO(6,5)-Lr(1.0e-4)-(77-Param)", "PPO
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
 
+
+
+plot_dir = plots_dir + "/CP-actor-Hyperparameter-Test-0c-Lr-Scheduling"
+gym_id = "CartPole-v1"
+exp_names = [
+    "CP-ppo-ac-NN(5,5)-actorlr((100-1)e-5,ht=80000)-(67-params)",
+    "CP-ppo-ac-NN(6,5)-actorlr((100-1)e-5,ht=80000)-(77-params)",
+    "CP-ppo-ac-NN(6,6)-actorlr((100-1)e-5,ht=80000)-(86-params)",
+    "CP-ppo-ac-NN(7,7)-actorlr((100-1)e-5,ht=80000)-(107-params)",
+    "CP-ppo-ac-NN(64,64)-actorlr((25-1)e-5,ht=100000)-(4610-params)",
+    "CP-random-baseline-(0-params)",
+]
+seeds = [10, 20, 30, 40, 50]
+batchsize = 4 * 128
+max_steps = 500000
+alpha = 0.05
+labels=["PPO(5,5)-Lr((100->1)e-5, HWT=80000)-(67-Param)", "PPO(6,5)-Lr((100->1)e-5, HWT=80000)-(77-Param)", "PPO(6,6)-Lr((100->1)e-5, HWT=80000)-(86-Param)", "PPO(7,7)-LLr((100->1)e-5, HWT=80000)-(107-Param)", "PPO(64,64)-Lr((25->1)e-5, HWT=100000)-(4610-Param)", "Zufällige Aktionsauswahl"]
+
+plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
 """
 
 
@@ -567,8 +586,7 @@ plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_
 
 
 
-
-
+"""
 plot_dir = plots_dir + "/CP-actor-Hyperparameter-Test-1a-qlr-no_output_scale"
 gym_id = "CartPole-v1"
 exp_names = [
@@ -646,11 +664,11 @@ seeds = [10, 20, 30]
 batchsize = 4 * 128
 max_steps = 500000
 alpha = 0.05
-labels=["QPPO-Lr(2.5e-3)-OutScale(1e-4)-Zirkuläre-Letzte-Verschränkung-(73-Param)", "QPPO-Lr(2.5e-3)-OutScale(1e-3)-Zirkuläre-Letzte-Verschränkung-(73-Param)", "QPPO-Lr(5.0e-3)-OutScale(1e-3)-Zirkuläre-Letzte-Verschränkung-(73-Param)", "QPPO-Lr(2.5e-3)-OutScale(1e-4)-(73-Param)", "QPPO-Lr(2.5e-3)-OutScale(1e-3)-(73-Param)", "QPPO-Lr(5.0e-3)-OutScale(1e-3)-(73-Param)", "Zufällige Aktionsauswahl"]
+labels=["QPPO-Lr(2.5e-3)-OutScale(1e-4)-Zirkuläre-LV", "QPPO-Lr(2.5e-3)-OutScale(1e-3)-Zirkuläre-LV", "QPPO-Lr(5.0e-3)-OutScale(1e-3)-Zirkuläre-LV", "QPPO-Lr(2.5e-3)-OutScale(1e-4)", "QPPO-Lr(2.5e-3)-OutScale(1e-3)", "QPPO-Lr(5.0e-3)-OutScale(1e-3)", "Zufällige Aktionsauswahl"]
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
 # for the tests before this one, circular entanglement was used for the last layer instead of onely entangeling the 1st and 3th Qubit plus the 2nd an 4th Qubit
-
+""""""
 
 
 plot_dir = plots_dir + "/CP-actor-Hyperparameter-Test-3a-random-inits"
@@ -789,5 +807,29 @@ batchsize = 4 * 128
 max_steps = 500000
 alpha = 0.05
 labels=["QPPO(6-Layer)-KeinInpScale-(73-Param)", "QPPO(6-Layer)-GeteiltesInpScale-(77-Param)", "QPPO(5-Layer)-InpScale-(81-Param)", "Zufällige Aktionsauswahl", "PPO(5,5)-(67-Param)", "PPO(6,5)-(77-Param)", "PPO(6,6)-(86-Param)"]
+
+plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
+"""
+
+
+plot_dir = plots_dir + "/CP-actor-Test-2-Ansatz-Comparison"
+gym_id = "CartPole-v1"
+exp_names = [
+    "CP-qppo-ac-simple_reuploading-exp_sced-ht100000-start-qlr2.5e-3-end-qlr1e-4-output_scaleing-1param-1e-4-(73-params)-allsmallinit",
+    "CP-qppo-ac-simple_reuploading----------------exp_sced-ht_80000-qlr(25-1)e-4-OutScale(5e-4)-allsmallinit-(73-params)",
+    "CP-qppo-ac-simple_reuploading_sharedInpScale-exp_sced-ht_80000-qlr(25-1)e-4-OutScale(5e-4)-allsmallinit-(77-params)",
+    "CP-qppo-ac-simple_reuploading_Input_Scaleing-exp_sced-ht_80000-qlr(25-1)e-4-OutScale(5e-4)-allsmallinit-(65-params)-4-layers",
+    "CP-qppo-ac-simple_reuploading_Input_Scaleing-exp_sced-ht_80000-qlr(25-1)e-4-OutScale(5e-4)-allsmallinit-(81-params)-5-layers",
+    "CP-qppo-ac-simple_reuploading_Input_Scaleing-exp_sced-ht_80000-qlr(10-0.5)e-4-OutScale(5e-4)-allsmallinit-(97-params)",
+    "CP-random-baseline-(0-params)",
+    "CP-ppo-ac-NN(5,5)-(actor-lr=1.0e-4)-(67-params)",
+    "CP-ppo-ac-NN(6,5)-(actor-lr=1.0e-4)-(77-params)",
+    "CP-ppo-ac-NN(6,6)-(actor-lr=1.0e-4)-(86-params)",
+]
+seeds = [10, 20, 30]
+batchsize = 4 * 128
+max_steps = 150000
+alpha = 0.05
+labels=["QPPO(6-Layer)-KeinInpScale-Out(1e-4)-(73-Param)", "QPPO(6-Layer)-KeinInpScale-(73-Param)", "QPPO(6-Layer)-GeteiltesInpScale-(77-Param)", "QPPO(4-Layer)-InpScale-(65-Param)", "QPPO(5-Layer)-InpScale-(81-Param)", "QPPO(6-Layer)-InpScale-(96-Param)", "Zufällige Aktionsauswahl", "PPO(5,5)-(67-Param)", "PPO(6,5)-(77-Param)", "PPO(6,6)-(86-Param)"]
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)

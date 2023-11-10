@@ -664,6 +664,7 @@ if __name__ == "__main__":
                 "charts/learning_rate", args.classic_actor_learning_rate, global_step
             )
             qlearning_rate = 0
+            learning_rate = 0
             if args.quantum_actor:
                 writer.add_scalar(
                     "charts/qlearning_rate",
@@ -671,13 +672,16 @@ if __name__ == "__main__":
                     global_step,
                 )
                 qlearning_rate = quantum_actor_optimizer.param_groups[0]["lr"]
-            elif args.quantum_critic:
-                writer.add_scalar(
-                    "charts/qlearning_rate",
-                    quantum_critic_optimizer.param_groups[0]["lr"],
-                    global_step,
-                )
-                qlearning_rate = quantum_critic_optimizer.param_groups[0]["lr"]
+            else:
+                learning_rate = actor_optimizer.param_groups[0]["lr"]
+                if args.quantum_critic:
+                    writer.add_scalar(
+                        "charts/qlearning_rate",
+                        quantum_critic_optimizer.param_groups[0]["lr"],
+                        global_step,
+                    )
+                    qlearning_rate = quantum_critic_optimizer.param_groups[0]["lr"]
+
             writer.add_scalar("losses/value_loss", v_loss.item(), global_step)
             writer.add_scalar("losses/policy_loss", pg_loss.item(), global_step)
             writer.add_scalar("losses/entropy", entropy_loss.item(), global_step)
@@ -703,7 +707,7 @@ if __name__ == "__main__":
 
             # store data of update
             save_results.append_update_results(
-                args.classic_actor_learning_rate,
+                learning_rate,
                 qlearning_rate,
                 v_loss.item(),
                 pg_loss.item(),

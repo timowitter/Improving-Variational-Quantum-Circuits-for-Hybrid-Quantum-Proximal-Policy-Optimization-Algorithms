@@ -2362,11 +2362,11 @@ done
 
 # todo 500000-Steps, 5Seeds:
 
-name1="CP-qppo-ac-simple_reuploading----------------exp_sced-ht_80000-qlr(25->1)e-4-OutScale(1e-3)-allsmallinit-(73-params)",
-name2="CP-qppo-ac-simple_reuploading_sharedInpScale-exp_sced-ht_80000-qlr(25->1)e-4-OutScale(1e-3)-allsmallinit-(77-params)",
-name3="CP-qppo-ac-simple_reuploading_Input_Scaleing-exp_sced-ht_80000-qlr(25->1)e-4-OutScale(1e-3)-allsmallinit-(65-params)-4-layers",
-name4="CP-qppo-ac-simple_reuploading_Input_Scaleing-exp_sced-ht_80000-qlr(25->1)e-4-OutScale(1e-3)-allsmallinit-(81-params)-5-layers",
-name5="CP-qppo-ac-simple_reuploading_Input_Scaleing-exp_sced-ht_80000-qlr(10->0.5)e-4-OutScale(1e-3)-allsmallinit-(97-params)",
+name1="CP-qppo-ac-simple_reuploading----------------exp_sced-ht_80000-qlr(25-1)e-4-OutScale(1e-3)-allsmallinit-(73-params)"
+name2="CP-qppo-ac-simple_reuploading_sharedInpScale-exp_sced-ht_80000-qlr(25-1)e-4-OutScale(1e-3)-allsmallinit-(77-params)"
+name3="CP-qppo-ac-simple_reuploading_Input_Scaleing-exp_sced-ht_80000-qlr(25-1)e-4-OutScale(1e-3)-allsmallinit-(65-params)-4-layers"
+name4="CP-qppo-ac-simple_reuploading_Input_Scaleing-exp_sced-ht_80000-qlr(25-1)e-4-OutScale(1e-3)-allsmallinit-(81-params)-5-layers"
+name5="CP-qppo-ac-simple_reuploading_Input_Scaleing-exp_sced-ht_80000-qlr(10-0.5)e-4-OutScale(1e-3)-allsmallinit-(97-params)"
 
 start_seed=10
 seed_step=10
@@ -2502,6 +2502,38 @@ for env in ${envs[@]}; do
             sbatch --job-name="run-$env-$name4f-$seed" jobs/job.sh  --exp-name $name4f  --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4  --classic-actor-learning-rate 1.0e-5 --qlearning-rate 0 --n-qubits 0 --n-var-layers 0 --n-enc-layers 0 --actor-hidden-layer1-nodes 7 --actor-hidden-layer2-nodes 7 --critic-hidden-layer-nodes 64 --quantum-actor False --load-chkpt False --exp-qlr-scheduling True --exp-scheduling-halftime 80000 --exp-scheduling-qlearning-rate 1.0e-3
 
             sbatch --job-name="run-$env-$name5f-$seed" jobs/job.sh  --exp-name $name5f  --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4  --classic-actor-learning-rate 1.0e-5 --qlearning-rate 0 --n-qubits 0 --n-var-layers 0 --n-enc-layers 0 --actor-hidden-layer1-nodes 64 --actor-hidden-layer2-nodes 64 --critic-hidden-layer-nodes 64 --quantum-actor False --load-chkpt False --exp-qlr-scheduling True --exp-scheduling-halftime 100000 --exp-scheduling-qlearning-rate 2.5e-4
+        done
+    done
+done
+
+
+name1f="CP-ppo-ac-NN(5,5)-actorlr((50-1)e-5,ht=75000)-(67-params)"
+name2f="CP-ppo-ac-NN(6,5)-actorlr((50-1)e-5,ht=75000)-(77-params)"
+name3f="CP-ppo-ac-NN(6,6)-actorlr((50-1)e-5,ht=75000)-(86-params)"
+name4f="CP-ppo-ac-NN(7,7)-actorlr((50-1)e-5,ht=75000)-(107-params)"
+name5f="CP-ppo-ac-NN(64,64)-actorlr((25-0.5)e-5,ht=75000)-(4610-params)"
+
+
+start_seed=10
+seed_step=10
+end_seed=50
+envs=("CartPole-v1") 
+timesteps=500000
+
+circuits=("classic_NN")
+
+for env in ${envs[@]}; do
+    for circuit in ${circuits[@]}; do
+        for seed in $(seq $start_seed $seed_step $end_seed); do
+            sbatch --job-name="run-$env-$name1f-$seed" jobs/job.sh  --exp-name $name1f  --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4  --classic-actor-learning-rate 1.0e-5 --qlearning-rate 0 --n-qubits 0 --n-var-layers 0 --n-enc-layers 0 --actor-hidden-layer1-nodes 5 --actor-hidden-layer2-nodes 5 --critic-hidden-layer-nodes 64 --quantum-actor False --load-chkpt False --exp-qlr-scheduling True --exp-scheduling-halftime 75000 --exp-scheduling-qlearning-rate 5.0e-4
+
+            sbatch --job-name="run-$env-$name2f-$seed" jobs/job.sh  --exp-name $name2f  --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4  --classic-actor-learning-rate 1.0e-5 --qlearning-rate 0 --n-qubits 0 --n-var-layers 0 --n-enc-layers 0 --actor-hidden-layer1-nodes 6 --actor-hidden-layer2-nodes 5 --critic-hidden-layer-nodes 64 --quantum-actor False --load-chkpt False --exp-qlr-scheduling True --exp-scheduling-halftime 75000 --exp-scheduling-qlearning-rate 5.0e-4
+
+            sbatch --job-name="run-$env-$name3f-$seed" jobs/job.sh  --exp-name $name3f  --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4  --classic-actor-learning-rate 1.0e-5 --qlearning-rate 0 --n-qubits 0 --n-var-layers 0 --n-enc-layers 0 --actor-hidden-layer1-nodes 6 --actor-hidden-layer2-nodes 6 --critic-hidden-layer-nodes 64 --quantum-actor False --load-chkpt False --exp-qlr-scheduling True --exp-scheduling-halftime 75000 --exp-scheduling-qlearning-rate 5.0e-4
+
+            sbatch --job-name="run-$env-$name4f-$seed" jobs/job.sh  --exp-name $name4f  --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4  --classic-actor-learning-rate 1.0e-5 --qlearning-rate 0 --n-qubits 0 --n-var-layers 0 --n-enc-layers 0 --actor-hidden-layer1-nodes 7 --actor-hidden-layer2-nodes 7 --critic-hidden-layer-nodes 64 --quantum-actor False --load-chkpt False --exp-qlr-scheduling True --exp-scheduling-halftime 75000 --exp-scheduling-qlearning-rate 5.0e-4
+
+            sbatch --job-name="run-$env-$name5f-$seed" jobs/job.sh  --exp-name $name5f  --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4  --classic-actor-learning-rate 0.5e-5 --qlearning-rate 0 --n-qubits 0 --n-var-layers 0 --n-enc-layers 0 --actor-hidden-layer1-nodes 64 --actor-hidden-layer2-nodes 64 --critic-hidden-layer-nodes 64 --quantum-actor False --load-chkpt False --exp-qlr-scheduling True --exp-scheduling-halftime 75000 --exp-scheduling-qlearning-rate 2.5e-4
         done
     done
 done

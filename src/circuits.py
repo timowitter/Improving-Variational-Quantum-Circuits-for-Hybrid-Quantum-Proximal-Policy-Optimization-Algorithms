@@ -34,16 +34,16 @@ def simple_layer(layer_params, layer_nr):
         qml.RY(layer_params[i, layer_nr, 1], wires=i)
         qml.RZ(layer_params[i, layer_nr, 2], wires=i)
 
-    if (
-        (layer_nr == args.n_var_layers - 1)
-        and (args.gym_id == "CartPole-v0" or args.gym_id == "CartPole-v1")
-        and args.n_qubits == 4
-    ):
-        qml.CNOT(wires=[0, 2])
-        qml.CNOT(wires=[1, 3])
-    else:
-        for i in range(args.n_qubits - 1):
-            qml.CNOT(wires=[i, i + 1])
+    #if (
+    #    (layer_nr == args.n_var_layers - 1)
+    #    and (args.gym_id == "CartPole-v0" or args.gym_id == "CartPole-v1")
+    #    and args.n_qubits == 4
+    #):
+    #    qml.CNOT(wires=[0, 2])
+    #    qml.CNOT(wires=[1, 3])
+    #else:
+    for i in range(args.n_qubits - 1):
+        qml.CNOT(wires=[i, i + 1])
 
 
 # Variational Quantum Policy Circuit (Actor)

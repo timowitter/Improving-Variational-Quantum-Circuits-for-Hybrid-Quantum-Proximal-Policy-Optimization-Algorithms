@@ -254,107 +254,35 @@ if __name__ == "__main__":
         # Annealing the Quantum Leaning Rate if activated
         if args.exp_qlr_scheduling:
             frac_exp = 2.0 ** ((-update + 1.0) / exp_scheduling_updates)
-            lrnow_circuit = (
-                frac_exp * (args.exp_scheduling_qlearning_rate - args.qlearning_rate)
-                + args.qlearning_rate
-            )
-
-        # linear and sq scheduling did not produce relevant results
-        """
-        elif args.sq_qlr_scheduling and args.lin_qlr_scheduling:
-            if update <= sq_scheduling_updates:
-                # phase 1 sq_scheduling: exponential annealing
-                frac_sq = (
-                    sq_scheduling_updates - update + 1.0
-                ) ** 2 / sq_scheduling_updates**2  # 1 at start, exponentially decreasing over time -> greedyness will decrease over time
-
-                # prevent hyperparameter mixup
-                if args.lin_scheduling_qlearning_rate >= args.qlearning_rate:
-                    lrnow_circuit = (
-                        frac_sq
-                        * (
-                            args.sq_scheduling_qlearning_rate
-                            - args.lin_scheduling_qlearning_rate
-                        )
-                        + args.lin_scheduling_qlearning_rate
-                    )
-                else:
-                    lrnow_circuit = (
-                        frac_sq * (args.sq_scheduling_qlearning_rate - args.qlearning_rate)
-                        + args.qlearning_rate
-                    )
-
-            elif update <= lin_scheduling_updates:
-                # phase 2 main learning: linear annealing
-                frac_lin = 1.0 - (update - sq_scheduling_updates - 1.0) / (
-                    lin_scheduling_updates - sq_scheduling_updates
-                )  # 1 at start, linearly decreasing over time -> lr will decrease over time
-                if args.lin_scheduling_qlearning_rate >= args.qlearning_rate:
-                    lrnow_circuit = (
-                        frac_lin * (args.lin_scheduling_qlearning_rate - args.qlearning_rate)
-                        + args.qlearning_rate
-                    )
-                else:
-                    lrnow_circuit = (
-                        frac_lin * (args.qlearning_rate - args.lin_scheduling_qlearning_rate)
-                        + args.lin_scheduling_qlearning_rate
-                    )
-            else:
-                # phase 3 lin_scheduling: constant small lr
-                lrnow_circuit = args.lin_scheduling_qlearning_rate
-
-        elif args.sq_qlr_scheduling:
-            if update <= sq_scheduling_updates:
-                # phase 1 sq_scheduling: exponential annealing
-                frac_sq = (
-                    sq_scheduling_updates - update + 1.0
-                ) ** 2 / sq_scheduling_updates**2  # 1 at start, exponentially decreasing over time -> greedyness will decrease over time
-
-                lrnow_circuit = (
-                    frac_sq * (args.sq_scheduling_qlearning_rate - args.qlearning_rate)
+            if args.quantum_actor:
+                qlrnow_circuit = (
+                    frac_exp * (args.exp_scheduling_qlearning_rate - args.qlearning_rate)
                     + args.qlearning_rate
                 )
             else:
-                # phase 3 lin_scheduling: constant small lr
-                lrnow_circuit = args.qlearning_rate
+                lrnow_circuit = (
+                    frac_exp * (args.exp_scheduling_qlearning_rate - args.classic_actor_learning_rate)
+                    + args.classic_actor_learning_rate
+                )
 
-        elif args.lin_qlr_scheduling:
-            if update <= lin_scheduling_updates:
-                # phase 2 main learning: linear annealing
-                frac_lin = 1.0 - (update - 1.0) / (
-                    lin_scheduling_updates
-                )  # 1 at start, linearly decreasing over time -> lr will decrease over time
 
-                if args.lin_scheduling_qlearning_rate >= args.qlearning_rate:
-                    lrnow_circuit = (
-                        frac_lin * (args.lin_scheduling_qlearning_rate - args.qlearning_rate)
-                        + args.qlearning_rate
-                    )
-                else:
-                    lrnow_circuit = (
-                        frac_lin * (args.qlearning_rate - args.lin_scheduling_qlearning_rate)
-                        + args.lin_scheduling_qlearning_rate
-                    )
-            else:
-                # phase 2 lin_scheduling: constant small lr
-                lrnow_circuit = args.qlearning_rate
-                # lrnow_circuit = args.lin_scheduling_qlearning_rate
-        """
-        if args.exp_qlr_scheduling:  # or args.sq_qlr_scheduling or args.lin_qlr_scheduling
+        if args.exp_qlr_scheduling:
             if args.quantum_actor:
-                quantum_actor_optimizer.param_groups[0]["lr"] = lrnow_circuit
-            if args.quantum_critic:
-                quantum_critic_optimizer.param_groups[0]["lr"] = lrnow_circuit
+                quantum_actor_optimizer.param_groups[0]["lr"] = qlrnow_circuit
+            else: 
+                actor_optimizer.param_groups[0]["lr"] = lrnow_circuit
+            #if args.quantum_critic:
+            #    quantum_critic_optimizer.param_groups[0]["lr"] = qlrnow_circuit
             if (
                 args.circuit == "simple_reuploading_with_input_scaleing"
                 or args.circuit == "Hgog_reuploading_with_input_scaleing"
                 or args.circuit == "Jerbi-reuploading"
             ):
                 if args.quantum_actor:
-                    actor_input_scaleing_optimizer.param_groups[0]["lr"] = lrnow_circuit
+                    actor_input_scaleing_optimizer.param_groups[0]["lr"] = qlrnow_circuit
 
-                if args.quantum_critic:
-                    critic_input_scaleing_optimizer.param_groups[0]["lr"] = lrnow_circuit
+                #if args.quantum_critic:
+                #    critic_input_scaleing_optimizer.param_groups[0]["lr"] = qlrnow_circuit
 
         # if args.output_scaleing and args.scheduled_output_scaleing:
         #    sced_out_scale_bonus = ((global_step) / 100000) * args.sced_out_scale_fac

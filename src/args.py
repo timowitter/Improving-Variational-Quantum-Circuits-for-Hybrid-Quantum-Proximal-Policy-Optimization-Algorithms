@@ -28,7 +28,7 @@ def parse_args():
         "--exp-scheduling-qlearning-rate",
         type=float,
         default=10e-3,
-        help="quantum optimizer learning rate at start of exp-scheduling, will exponentially decline to the normal q-lr depending on the exp-scheduling-halftime ",
+        help="learning rate at start of exp-scheduling, will exponentially decline to the normal q-lr depending on the exp-scheduling-halftime",
     )
     # parser.add_argument(
     #    "--sq-scheduling-qlearning-rate",

@@ -12,7 +12,7 @@ name4f="CP-ppo-ac-NN(7,7)-actorlr((100-1)e-5,ht=80000)-(107-params)"
 name5f="CP-ppo-ac-NN(64,64)-actorlr((25-1)e-5,ht=100000)-(4610-params)"
 
 
-start_seed=10
+start_seed=50
 seed_step=10
 end_seed=50
 envs=("CartPole-v1") 
@@ -23,7 +23,7 @@ circuits=("classic_NN")
 for env in ${envs[@]}; do
     for circuit in ${circuits[@]}; do
         for seed in $(seq $start_seed $seed_step $end_seed); do
-            sbatch --job-name="run-$env-$name1f-$seed" jobs/job.sh  --exp-name $name1f  --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4  --classic-actor-learning-rate 1.0e-5 --qlearning-rate 0 --n-qubits 0 --n-var-layers 0 --n-enc-layers 0 --actor-hidden-layer1-nodes 5 --actor-hidden-layer2-nodes 5 --critic-hidden-layer-nodes 64 --quantum-actor False --load-chkpt False --exp-qlr-scheduling True --exp-scheduling-halftime 80000 --exp-scheduling-qlearning-rate 1.0e-3
+            #sbatch --job-name="run-$env-$name1f-$seed" jobs/job.sh  --exp-name $name1f  --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4  --classic-actor-learning-rate 1.0e-5 --qlearning-rate 0 --n-qubits 0 --n-var-layers 0 --n-enc-layers 0 --actor-hidden-layer1-nodes 5 --actor-hidden-layer2-nodes 5 --critic-hidden-layer-nodes 64 --quantum-actor False --load-chkpt False --exp-qlr-scheduling True --exp-scheduling-halftime 80000 --exp-scheduling-qlearning-rate 1.0e-3
 
             sbatch --job-name="run-$env-$name2f-$seed" jobs/job.sh  --exp-name $name2f  --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4  --classic-actor-learning-rate 1.0e-5 --qlearning-rate 0 --n-qubits 0 --n-var-layers 0 --n-enc-layers 0 --actor-hidden-layer1-nodes 6 --actor-hidden-layer2-nodes 5 --critic-hidden-layer-nodes 64 --quantum-actor False --load-chkpt False --exp-qlr-scheduling True --exp-scheduling-halftime 80000 --exp-scheduling-qlearning-rate 1.0e-3
 

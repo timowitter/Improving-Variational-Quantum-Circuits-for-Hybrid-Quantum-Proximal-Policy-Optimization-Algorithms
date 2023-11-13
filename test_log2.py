@@ -561,15 +561,15 @@ labels=["PPO(5,5)-Lr(1.0e-4)-(67-Param)", "PPO(6,5)-Lr(1.0e-4)-(77-Param)", "PPO
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
 
 
-
+"""
 plot_dir = plots_dir + "/CP-actor-Hyperparameter-Test-0c-Lr-Scheduling"
 gym_id = "CartPole-v1"
 exp_names = [
-    "CP-ppo-ac-NN(5,5)-actorlr((50-1)e-5,ht=75000)-(67-params)",
-    "CP-ppo-ac-NN(6,5)-actorlr((50-1)e-5,ht=75000)-(77-params)",
-    "CP-ppo-ac-NN(6,6)-actorlr((50-1)e-5,ht=75000)-(86-params)",
-    "CP-ppo-ac-NN(7,7)-actorlr((50-1)e-5,ht=75000)-(107-params)",
-    "CP-ppo-ac-NN(64,64)-actorlr((25-0.5)e-5,ht=75000)-(4610-params)",
+    "CP-ppo-ac-NN(5,5)-actorlr((25-5)e-5,ht=100000)-(67-params)",
+    "CP-ppo-ac-NN(6,5)-actorlr((25-5)e-5,ht=100000)-(77-params)",
+    "CP-ppo-ac-NN(6,6)-actorlr((25-5)e-5,ht=100000)-(86-params)",
+    "CP-ppo-ac-NN(7,7)-actorlr((25-5)e-5,ht=100000)-(107-params)",
+    "CP-ppo-ac-NN(64,64)-actorlr((10-2)e-5,ht=100000)-(4610-params)",
     "CP-random-baseline-(0-params)",
 ]
 seeds = [10, 20, 30, 40, 50]
@@ -579,7 +579,7 @@ alpha = 0.05
 labels=["PPO(5,5)-Lr((50->1)e-5, HWZ=75000)-(67-Param)", "PPO(6,5)-Lr((50->1)e-5, HWZ=75000)-(77-Param)", "PPO(6,6)-Lr((50->1)e-5, HWZ=75000)-(86-Param)", "PPO(7,7)-Lr((50->1)e-5, HWZ=75000)-(107-Param)", "PPO(64,64)-Lr((25->0.5)e-5, HWZ=75000)-(4610-Param)", "Zufällige Aktionsauswahl"]
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
-"""
+
 
 
 

@@ -262,7 +262,7 @@ def plot_avg_episode_reward_by_seed(episode_results, plot_dir):
         hue="seed",
     )
     g._legend.set_title("Seed")
-    g.set(xlabel ="Zeitschritt", ylabel = "Reward")
+    g.set(xlabel ="Zeitschritt", ylabel = "Ergebnis")
     #g.set(xlabel ="Globaler Schritt", ylabel = "Reward", title ='some title')
     #sns.move_legend(g, "upper left", bbox_to_anchor=(1, 1))
     #sns.move_legend(g, "upper left")
@@ -281,7 +281,7 @@ def plot_avg_episode_reward_by_exp_name(episode_results, plot_dir):
         hue="exp_name",
     )
     g._legend.set_title("Ansatz")
-    g.set(xlabel ="Zeitschritt", ylabel = "Reward")
+    g.set(xlabel ="Zeitschritt", ylabel = "Ergebnis")
     #for t, l in zip(g._legend.texts, labels):
         #t.set_text(l)
     #sns.move_legend(g, "upper left", bbox_to_anchor=(1, 1))

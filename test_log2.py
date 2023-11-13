@@ -450,12 +450,13 @@ exp_names = [
     "CP-ppo-ac-NN(5,5)-(actor-lr=1.0e-3)-(67-params)",
     #"CP-ppo-ac-NN(5,5)-(actor-lr=1.0e-2)-(67-params)",
     "CP-random-baseline-(0-params)",
+    "CP-ppo-ac-NN(5,5)-actorlr((50-1)e-5,ht=75000)-(67-params)",
 ]
 seeds = [10, 20, 30, 40, 50]
 batchsize = 4 * 128
 max_steps = 500000
 alpha = 0.05
-labels=["PPO(5,5)-Lr(5.0e-5)-(67-Param)", "PPO(5,5)-Lr(1.0e-4)-(67-Param)", "PPO(5,5)-Lr(2.5e-4)-(67-Param)", "PPO(5,5)-Lr(1.0e-3)-(67-Param)", "Zufällige Aktionsauswahl"]
+labels=["PPO(5,5)-Lr(5.0e-5)-(67-Param)", "PPO(5,5)-Lr(1.0e-4)-(67-Param)", "PPO(5,5)-Lr(2.5e-4)-(67-Param)", "PPO(5,5)-Lr(1.0e-3)-(67-Param)", "Zufällige Aktionsauswahl", "PPO(5,5)-Lr((50->1)e-5, HWZ=75000)-(67-Param)"]
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
 
@@ -469,12 +470,13 @@ exp_names = [
     "CP-ppo-ac-NN(6,5)-(actor-lr=1.0e-3)-(77-params)",
     #"CP-ppo-ac-NN(6,5)-(actor-lr=1.0e-2)-(77-params)",
     "CP-random-baseline-(0-params)",
+    "CP-ppo-ac-NN(6,5)-actorlr((50-1)e-5,ht=75000)-(77-params)",
 ]
 seeds = [10, 20, 30, 40, 50]
 batchsize = 4 * 128
 max_steps = 500000
 alpha = 0.05
-labels=["PPO(6,5)-Lr(5.0e-5)-(77-Param)", "PPO(6,5)-Lr(1.0e-4)-(77-Param)", "PPO(6,5)-Lr(2.5e-4)-(77-Param)", "PPO(6,5)-Lr(1.0e-3)-(77-Param)", "Zufällige Aktionsauswahl"]
+labels=["PPO(6,5)-Lr(5.0e-5)-(77-Param)", "PPO(6,5)-Lr(1.0e-4)-(77-Param)", "PPO(6,5)-Lr(2.5e-4)-(77-Param)", "PPO(6,5)-Lr(1.0e-3)-(77-Param)", "Zufällige Aktionsauswahl", "PPO(6,5)-Lr((50->1)e-5, HWZ=75000)-(77-Param)"]
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
 
@@ -488,12 +490,13 @@ exp_names = [
     "CP-ppo-ac-NN(6,6)-(actor-lr=1.0e-3)-(86-params)",
     #"CP-ppo-ac-NN(6,6)-(actor-lr=1.0e-2)-(86-params)",
     "CP-random-baseline-(0-params)",
+    "CP-ppo-ac-NN(6,6)-actorlr((50-1)e-5,ht=75000)-(86-params)",
 ]
 seeds = [10, 20, 30, 40, 50]
 batchsize = 4 * 128
 max_steps = 500000
 alpha = 0.05
-labels=["PPO(6,6)-Lr(5.0e-5)-(86-Param)", "PPO(6,6)-Lr(1.0e-4)-(86-Param)", "PPO(6,6)-Lr(2.5e-4)-(86-Param)", "PPO(6,6)-Lr(1.0e-3)-(86-Param)", "Zufällige Aktionsauswahl"]
+labels=["PPO(6,6)-Lr(5.0e-5)-(86-Param)", "PPO(6,6)-Lr(1.0e-4)-(86-Param)", "PPO(6,6)-Lr(2.5e-4)-(86-Param)", "PPO(6,6)-Lr(1.0e-3)-(86-Param)", "Zufällige Aktionsauswahl", "PPO(6,6)-Lr((50->1)e-5, HWZ=75000)-(86-Param)"]
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
 
@@ -507,12 +510,13 @@ exp_names = [
     "CP-ppo-ac-NN(7,7)-(actor-lr=1.0e-3)-(107-params)",
     #"CP-ppo-ac-NN(7,7)-(actor-lr=1.0e-2)-(107-params)",
     "CP-random-baseline-(0-params)",
+    "CP-ppo-ac-NN(7,7)-actorlr((50-1)e-5,ht=75000)-(107-params)",
 ]
 seeds = [10, 20, 30, 40, 50]
 batchsize = 4 * 128
 max_steps = 500000
 alpha = 0.05
-labels=["PPO(7,7)-Lr(5.0e-5)-(107-Param)", "PPO(7,7)-Lr(1.0e-4)-(107-Param)", "PPO(7,7)-Lr(2.5e-4)-(107-Param)", "PPO(7,7)-Lr(1.0e-3)-(107-Param)", "Zufällige Aktionsauswahl"]
+labels=["PPO(7,7)-Lr(5.0e-5)-(107-Param)", "PPO(7,7)-Lr(1.0e-4)-(107-Param)", "PPO(7,7)-Lr(2.5e-4)-(107-Param)", "PPO(7,7)-Lr(1.0e-3)-(107-Param)", "Zufällige Aktionsauswahl", "PPO(7,7)-Lr((50->1)e-5, HWZ=75000)-(107-Param)"]
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
 
@@ -526,12 +530,13 @@ exp_names = [
     "CP-ppo-ac-NN(64,64)-(actor-lr=1.0e-3)-(4610-params)",
     #"CP-ppo-ac-NN(64,64)-(actor-lr=5.0e-3)-(4610-params)",
     "CP-random-baseline-(0-params)",
+    "CP-ppo-ac-NN(64,64)-actorlr((25-0.5)e-5,ht=75000)-(4610-params)",
 ]
 seeds = [10, 20, 30, 40, 50]
 batchsize = 4 * 128
 max_steps = 500000
 alpha = 0.05
-labels=["PPO(64,64)-Lr(5.0e-5)-(4610-Param)", "PPO(64,64)-Lr(1.0e-4)-(4610-Param)", "PPO(64,64)-Lr(2.5e-4)-(4610-Param)", "PPO(64,64)-Lr(1.0e-3)-(4610-Param)", "Zufällige Aktionsauswahl"]
+labels=["PPO(64,64)-Lr(5.0e-5)-(4610-Param)", "PPO(64,64)-Lr(1.0e-4)-(4610-Param)", "PPO(64,64)-Lr(2.5e-4)-(4610-Param)", "PPO(64,64)-Lr(1.0e-3)-(4610-Param)", "Zufällige Aktionsauswahl", "PPO(64,64)-Lr((25->0.5)e-5, HWZ=75000)-(4610-Param)"]
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
 
@@ -560,18 +565,18 @@ plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_
 plot_dir = plots_dir + "/CP-actor-Hyperparameter-Test-0c-Lr-Scheduling"
 gym_id = "CartPole-v1"
 exp_names = [
-    "CP-ppo-ac-NN(5,5)-actorlr((100-1)e-5,ht=80000)-(67-params)",
-    "CP-ppo-ac-NN(6,5)-actorlr((100-1)e-5,ht=80000)-(77-params)",
-    "CP-ppo-ac-NN(6,6)-actorlr((100-1)e-5,ht=80000)-(86-params)",
-    "CP-ppo-ac-NN(7,7)-actorlr((100-1)e-5,ht=80000)-(107-params)",
-    "CP-ppo-ac-NN(64,64)-actorlr((25-1)e-5,ht=100000)-(4610-params)",
+    "CP-ppo-ac-NN(5,5)-actorlr((50-1)e-5,ht=75000)-(67-params)",
+    "CP-ppo-ac-NN(6,5)-actorlr((50-1)e-5,ht=75000)-(77-params)",
+    "CP-ppo-ac-NN(6,6)-actorlr((50-1)e-5,ht=75000)-(86-params)",
+    "CP-ppo-ac-NN(7,7)-actorlr((50-1)e-5,ht=75000)-(107-params)",
+    "CP-ppo-ac-NN(64,64)-actorlr((25-0.5)e-5,ht=75000)-(4610-params)",
     "CP-random-baseline-(0-params)",
 ]
 seeds = [10, 20, 30, 40, 50]
 batchsize = 4 * 128
 max_steps = 500000
 alpha = 0.05
-labels=["PPO(5,5)-Lr((100->1)e-5, HWT=80000)-(67-Param)", "PPO(6,5)-Lr((100->1)e-5, HWT=80000)-(77-Param)", "PPO(6,6)-Lr((100->1)e-5, HWT=80000)-(86-Param)", "PPO(7,7)-LLr((100->1)e-5, HWT=80000)-(107-Param)", "PPO(64,64)-Lr((25->1)e-5, HWT=100000)-(4610-Param)", "Zufällige Aktionsauswahl"]
+labels=["PPO(5,5)-Lr((50->1)e-5, HWZ=75000)-(67-Param)", "PPO(6,5)-Lr((50->1)e-5, HWZ=75000)-(77-Param)", "PPO(6,6)-Lr((50->1)e-5, HWZ=75000)-(86-Param)", "PPO(7,7)-Lr((50->1)e-5, HWZ=75000)-(107-Param)", "PPO(64,64)-Lr((25->0.5)e-5, HWZ=75000)-(4610-Param)", "Zufällige Aktionsauswahl"]
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
 """
@@ -786,7 +791,7 @@ seeds = [10, 20, 30]
 batchsize = 4 * 128
 max_steps = 150000
 alpha = 0.05
-labels=["QPPO(4-Layer)-InpScale-Lr((2.5->0.1)e-3, HWZ=100000)-(65-Param)", "QPPO(5-Layer)-InpScale-Lr((2.5->0.1)e-3, HWZ=100000)-(81-Param)", "QPPO(5-Layer)-InpScale-Lr((2.5->0.1)e-3, HWZ=_80000)-(81-Param)", "QPPO(6-Layer)-InpScale-Lr((2.5->0.1)e-3, HWZ=100000)-(97-Param)", "QPPO(6-Layer)-InpScale-Lr((1.5->0.1)e-3, HWZ=100000)-(97-Param)", "Zufällige Aktionsauswahl", "QPPO(6-Layer)-KeinInpScale-Lr((2.5->0.1)e-3, HWZ=100000)-(73-Param)", "QPPO(6-Layer)-GeteiltesInpScale-Lr((2.5->0.1)e-3, HWZ=100000)-(77-Param)"]
+labels=["QPPO(4-Layer)-InpScale-Lr((2.5->0.1)e-3, HWZ=100000)-(65-Param)", "QPPO(5-Layer)-InpScale-Lr((2.5->0.1)e-3, HWZ=100000)-(81-Param)", "QPPO(5-Layer)-InpScale-Lr((2.5->0.1)e-3, HWZ=_80000)-(81-Param)", "QPPO(6-Layer)-InpScale-Lr((2.5->0.1)e-3, HWZ=100000)-(97-Param)", "QPPO(6-Layer)-InpScale-Lr((1.5->0.1)e-3, HWZ=100000)-(97-Param)", "Zufällige Aktionsauswahl", "QPPO(6-Layer)-ManuellesIRS-Lr((2.5->0.1)e-3, HWZ=100000)-(73-Param)", "QPPO(6-Layer)-GeteiltesInpScale-Lr((2.5->0.1)e-3, HWZ=100000)-(77-Param)"]
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
 
@@ -806,12 +811,12 @@ seeds = [10, 20, 30]
 batchsize = 4 * 128
 max_steps = 500000
 alpha = 0.05
-labels=["QPPO(6-Layer)-KeinInpScale-(73-Param)", "QPPO(6-Layer)-GeteiltesInpScale-(77-Param)", "QPPO(5-Layer)-InpScale-(81-Param)", "Zufällige Aktionsauswahl", "PPO(5,5)-(67-Param)", "PPO(6,5)-(77-Param)", "PPO(6,6)-(86-Param)"]
+labels=["QPPO(6-Layer)-ManuellesIRS-(73-Param)", "QPPO(6-Layer)-GeteiltesInpScale-(77-Param)", "QPPO(5-Layer)-InpScale-(81-Param)", "Zufällige Aktionsauswahl", "PPO(5,5)-(67-Param)", "PPO(6,5)-(77-Param)", "PPO(6,6)-(86-Param)"]
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
 """
 
-
+"""
 plot_dir = plots_dir + "/CP-actor-Test-2-Ansatz-Comparison"
 gym_id = "CartPole-v1"
 exp_names = [
@@ -830,6 +835,7 @@ seeds = [10, 20, 30]
 batchsize = 4 * 128
 max_steps = 150000
 alpha = 0.05
-labels=["QPPO(6-Layer)-KeinInpScale-Out(1e-4)-(73-Param)", "QPPO(6-Layer)-KeinInpScale-(73-Param)", "QPPO(6-Layer)-GeteiltesInpScale-(77-Param)", "QPPO(4-Layer)-InpScale-(65-Param)", "QPPO(5-Layer)-InpScale-(81-Param)", "QPPO(6-Layer)-InpScale-(96-Param)", "Zufällige Aktionsauswahl", "PPO(5,5)-(67-Param)", "PPO(6,5)-(77-Param)", "PPO(6,6)-(86-Param)"]
+labels=["QPPO(6-Layer)-ManuellesIRS-Alt-(73-P)", "QPPO(6-Layer)-ManuellesIRS-(73-P)", "QPPO(6-Layer)-GeteiltesInpScale-(77-P)", "QPPO(4-Layer)-InpScale-(65-Param)", "QPPO(5-Layer)-InpScale-(81-Param)", "QPPO(6-Layer)-InpScale-(96-Param)", "Zufällige Aktionsauswahl", "PPO(5,5)-(67-Param)", "PPO(6,5)-(77-Param)", "PPO(6,6)-(86-Param)"]
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
+"""

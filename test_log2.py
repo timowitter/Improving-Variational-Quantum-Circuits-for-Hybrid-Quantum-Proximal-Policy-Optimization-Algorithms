@@ -6,7 +6,7 @@ results_dir = "qppo-slurm/results"
 plots_dir = "final-plots"
 test_plots_dir = "test-plots"
 
-"""
+
 plot_dir = plots_dir + "/FL-actor-Hyperparameter-Test-0-NN(3)-lr"
 gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
 exp_names = [
@@ -20,10 +20,10 @@ seeds = [10, 20, 30, 40, 50]
 batchsize = 4 * 128
 max_steps = 150000
 alpha = 0.3
-labels=["PPO(3)-Lr(1.0e-3)-(67-Param)", "PPO(3)-Lr(1.0e-2)-(67-Param)", "PPO(3)-Lr(5.0e-2)-(67-Param)", "PPO(3)-Lr(1.0e-1)-(67-Param)", "Zufällige Aktionsauswahl"]
+labels=["Lr=1.0e-3", "Lr=1.0e-2", "Lr=5.0e-2", "Lr=1.0e-1", "Zufällige Aktion"]
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
-
+"""
 
 plot_dir = plots_dir + "/FL-actor-Hyperparameter-Test-0-NN(4)-lr"
 gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
@@ -38,7 +38,7 @@ seeds = [10, 20, 30, 40, 50]
 batchsize = 4 * 128
 max_steps = 150000
 alpha = 0.3
-labels=["PPO(4)-Lr(1.0e-3)-(88-Param)", "PPO(4)-Lr(1.0e-2)-(88-Param)", "PPO(4)-Lr(5.0e-2)-(88-Param)", "PPO(4)-Lr(1.0e-1)-(88-Param)", "Zufällige Aktionsauswahl"]
+labels=["Lr=1.0e-3", "Lr=1.0e-2", "Lr=5.0e-2)", "Lr=1.0e-1", "Zufällige Aktion"]
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
 
@@ -56,7 +56,7 @@ seeds = [10, 20, 30, 40, 50]
 batchsize = 4 * 128
 max_steps = 150000
 alpha = 0.3
-labels=["PPO(5)-Lr(1.0e-3)-(109-Param)", "PPO(5)-Lr(1.0e-2)-(109-Param)", "PPO(5)-Lr(5.0e-2)-(109-Param)", "PPO(5)-Lr(1.0e-1)-(109-Param)", "Zufällige Aktionsauswahl"]
+labels=["Lr=1.0e-3", "Lr=1.0e-2", "Lr=5.0e-2)", "Lr=1.0e-1", "Zufällige Aktion"]
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
 
@@ -74,7 +74,7 @@ seeds = [10, 20, 30, 40, 50]
 batchsize = 4 * 128
 max_steps = 150000
 alpha = 0.3
-labels=["PPO(4,4)-Lr(1.0e-3)-(108-Param)", "PPO(4,4)-Lr(1.0e-2)-(108-Param)", "PPO(4,4)-Lr(2.0e-2)-(108-Param)", "PPO(4,4)-Lr(5.0e-2)-(108-Param)", "Zufällige Aktionsauswahl"]
+labels=["Lr=1.0e-3", "Lr=1.0e-2", "Lr=2.0e-2", "Lr=5.0e-2", "Zufällige Aktion"]
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
 
@@ -87,14 +87,14 @@ exp_names = [
     "FL-ppo-ac-NN(64,64)-(actor-lr=1.0e-3)-(5508-params)",
     "FL-ppo-ac-NN(64,64)-(actor-lr=2.5e-3)-(5508-params)",
     "FL-ppo-ac-NN(64,64)-(actor-lr=5.0e-3)-(5508-params)",
-    "FL-ppo-ac-NN(64,64)-(actor-lr=1.0e-2)-(5508-params)",
+    #"FL-ppo-ac-NN(64,64)-(actor-lr=1.0e-2)-(5508-params)",
     "random-baseline",
 ]
 seeds = [10, 20, 30, 40, 50]
 batchsize = 4 * 128
 max_steps = 150000
 alpha = 0.3
-labels=["PPO(64,64)-Lr(2.5e-4)-(5508-Param)", "PPO(64,64)-Lr(1.0e-3)-(5508-Param)", "PPO(64,64)-Lr(2.5e-3)-(5508-Param)", "PPO(64,64)-Lr(5.0e-3)-(5508-Param)", "PPO(64,64)-Lr(1.0e-2)-(5508-Param)", "Zufällige Aktionsauswahl"]
+labels=["Lr=2.5e-4", "Lr=1.0e-3", "Lr=2.5e-3", "Lr=5.0e-3", "Zufällige Aktion"]
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
 
@@ -111,19 +111,19 @@ exp_names = [
 ]
 seeds = [10, 20, 30, 40, 50]
 batchsize = 4 * 128
-max_steps = 50000
+max_steps = 25000
 alpha = 0.3
-labels=["PPO(3)-Lr(1.0e-2)-(67-Param)", "PPO(4)-Lr(1.0e-2)-(88-Param)", "PPO(5)-Lr(1.0e-2)-(109-Param)", "PPO(4,4)-Lr(1.0e-2)-(108-Param)", "PPO(64,64)-Lr(2.5e-3)-(5508-Param)", "Zufällige Aktionsauswahl"]
+labels=["NN(3)-(Lr=1.0e-2)-(67-Param)", "NN(4)-(Lr=1.0e-2)-(88-Param)", "NN(5)-(Lr=1.0e-2)-(109-Param)", "NN(4,4)-(Lr=1.0e-2)-(108-Param)", "NN(64,64)-(Lr=2.5e-3)-(5508-Param)", "Zufällige Aktionsauswahl"]
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
-""""""
+
+"""
 
 
 
 
 
-
-
+"""
 plot_dir = plots_dir + "/FL-actor-Hyperparameter-Test-1a-qlr"
 gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
 exp_names = [
@@ -439,7 +439,7 @@ plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_
 
 
 # Cartpole hyperparam tests
-
+"""
 
 plot_dir = plots_dir + "/CP-actor-Hyperparameter-Test-0-NN(5,5)-lr"
 gym_id = "CartPole-v1"
@@ -556,7 +556,7 @@ seeds = [10, 20, 30, 40, 50]
 batchsize = 4 * 128
 max_steps = 500000
 alpha = 0.05
-labels=["PPO(5,5)-Lr(1.0e-4)-(67-Param)", "PPO(6,5)-Lr(1.0e-4)-(77-Param)", "PPO(6,6)-Lr(1.0e-4)-(86-Param)", "PPO(7,7)-Lr(1.0e-4)-(107-Param)", "PPO(64,64)-Lr(5.0e-5)-(4610-Param)", "Zufällige Aktionsauswahl"]
+labels=["NN(5,5)-(Lr=1.0e-4)-(67-Param)", "NN(6,5)-(Lr=1.0e-4)-(77-Param)", "NN(6,6)-(Lr=1.0e-4)-(86-Param)", "NN(7,7)-(Lr=1.0e-4)-(107-Param)", "NN(64,64)-(Lr=5.0e-5)-(4610-Param)", "Zufällige Aktionsauswahl"]
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
 
@@ -576,11 +576,11 @@ seeds = [10, 20, 30, 40, 50]
 batchsize = 4 * 128
 max_steps = 500000
 alpha = 0.05
-labels=["PPO(5,5)-Lr((25->5)e-5, HWZ=150000)-(67-Param)", "PPO(6,5)-Lr((25->5)e-5, HWZ=150000)-(77-Param)", "PPO(6,6)-Lr((25->5)e-5, HWZ=150000)-(86-Param)", "PPO(7,7)-Lr((25->5)e-5, HWZ=150000)-(107-Param)", "PPO(64,64)-Lr((10->2.0)e-5, HWZ=150000)-(4610-Param)", "Zufällige Aktionsauswahl"]
+labels=["NN(5,5)-(Lr=(25->5)e-5,HWZ=150000)-(67-Param)", "NN(6,5)-(Lr=(25->5)e-5,HWZ=150000)-(77-Param)", "NN(6,6)-(Lr=(25->5)e-5,HWZ=150000)-(86-Param)", "NN(7,7)-(Lr=(25->5)e-5,HWZ=150000)-(107-Param)", "NN(64,64)-(Lr=(10->2.0)e-5,HWZ=150000)-(4610-Param)", "Zufällige Aktionsauswahl"]
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
 
-
+"""
 
 
 

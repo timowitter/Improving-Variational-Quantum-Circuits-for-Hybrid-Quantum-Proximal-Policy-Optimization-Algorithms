@@ -6,7 +6,7 @@ results_dir = "qppo-slurm/results"
 plots_dir = "final-plots"
 test_plots_dir = "test-plots"
 
-
+"""
 plot_dir = plots_dir + "/FL-actor-Hyperparameter-Test-0-NN(3)-lr"
 gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
 exp_names = [
@@ -23,7 +23,7 @@ alpha = 0.3
 labels=["Lr=1.0e-3", "Lr=1.0e-2", "Lr=5.0e-2", "Lr=1.0e-1", "Zufällige Aktion"]
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
-"""
+
 
 plot_dir = plots_dir + "/FL-actor-Hyperparameter-Test-0-NN(4)-lr"
 gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
@@ -580,13 +580,43 @@ labels=["NN(5,5)-(Lr=(25->5)e-5,HWZ=150000)-(67-Param)", "NN(6,5)-(Lr=(25->5)e-5
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
 
+
+
+plot_dir = plots_dir + "/CP-actor-Hyperparameter-Test-0d-Sigmoid-Lr-Scheduling"
+gym_id = "CartPole-v1"
+exp_names = [
+    "CP-ppo-ac-NN(5,5)-sigmoid-actorlr((25-5)e-5)-(67-params)",
+    "CP-ppo-ac-NN(6,5)-sigmoid-actorlr((25-5)e-5)-(77-params)",
+    "CP-ppo-ac-NN(6,6)-sigmoid-actorlr((25-5)e-5)-(86-params)",
+    "CP-ppo-ac-NN(7,7)-sigmoid-actorlr((25-5)e-5)-(107-params)",
+    "CP-ppo-ac-NN(64,64)-sigmoid-actorlr((10-2)e-5)-(4610-params)",
+    "CP-random-baseline-(0-params)",
+]
+seeds = [10, 20, 30, 40, 50]
+batchsize = 4 * 128
+max_steps = 500000
+alpha = 0.05
+labels=["NN(5,5)-Sigmoid-Lr-(67-Param)", "NN(6,5)-Sigmoid-Lr-(77-Param)", "NN(6,6)-Sigmoid-Lr-(86-Param)", "NN(7,7)-Sigmoid-Lr-(107-Param)", "NN(64,64)-Sigmoid-Lr-(4610-Param)", "Zufällige Aktionsauswahl"]
+
+plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
+
+
+plot_dir = plots_dir + "/CP-actor-Hyperparameter-Test-0e-Scheduling-comp"
+gym_id = "CartPole-v1"
+exp_names = [
+    "CP-ppo-ac-NN(6,6)-(actor-lr=1.0e-4)-(86-params)",
+    "CP-ppo-ac-NN(6,6)-actorlr((25-5)e-5,ht=150000)-(86-params)",
+    "CP-ppo-ac-NN(6,6)-sigmoid-actorlr((25-5)e-5)-(86-params)",
+    "CP-random-baseline-(0-params)",
+]
+seeds = [10, 20, 30, 40, 50]
+batchsize = 4 * 128
+max_steps = 500000
+alpha = 0.05
+labels=["NN(6,6) Fixe-Lr", "NN(6,6) Exp-Lr", "NN(6,6) Sigmoid-Lr", "Zufällige Aktionsauswahl"]
+
+plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
 """
-
-
-
-
-
-
 
 
 

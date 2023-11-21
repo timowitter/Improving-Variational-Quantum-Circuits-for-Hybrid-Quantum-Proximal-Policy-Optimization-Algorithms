@@ -267,7 +267,7 @@ if __name__ == "__main__":
                     frac_exp * (args.exp_scheduling_qlearning_rate - args.classic_actor_learning_rate)
                     + args.classic_actor_learning_rate
                 )
-        elif sigmoid_lr_scheduling:
+        elif sigmoid_lr_scheduling:     #sigmoid lr anneahling after Nakamura et al.
             t=10*((update-1.0)/exp_scheduling_updates)
             frac_sigmoid = 1/(1+np.exp(0.5*(2*t-10)))
             if args.quantum_actor:

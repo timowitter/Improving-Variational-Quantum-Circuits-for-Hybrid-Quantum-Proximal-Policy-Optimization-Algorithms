@@ -409,17 +409,17 @@ def parse_args():
     ):  # load args exept total_timesteps and continue learning if new total_timesteps > global_timesteps
         args_chkpt_file = os.path.join(args.chkpt_dir, "commandline_args.txt")
         t = args.total_timesteps
-        n = args.exp_name
-        n2 = args.chkpt_dir
-        n3 = args.results_dir
-        n4 = args.plot_dir
+        #n = args.exp_name
+        #n2 = args.chkpt_dir
+        #n3 = args.results_dir
+        #n4 = args.plot_dir
         with open(args_chkpt_file, "r") as f:
             args.__dict__ = json.load(f)
         args.load_chkpt = True
         args.total_timesteps = t
-        args.exp_name = n
-        args.chkpt_dir = n2 
-        args.results_dir = n3
-        args.plot_dir = n4
+        #args.exp_name = n
+        #args.chkpt_dir = n2 
+        #args.results_dir = n3
+        #args.plot_dir = n4
 
     return args

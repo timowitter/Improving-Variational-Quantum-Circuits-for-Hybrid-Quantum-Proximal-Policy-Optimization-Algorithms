@@ -252,6 +252,9 @@ if __name__ == "__main__":
     # Training loop
     for update in range(done_updates + 1, num_updates + 1):
         # Annealing the Quantum Leaning Rate if activated
+
+        sigmoid_lr_scheduling = True #todo make Hyperparam
+
         if args.exp_qlr_scheduling:
             frac_exp = 2.0 ** ((-update + 1.0) / exp_scheduling_updates)
             if args.quantum_actor:
@@ -264,9 +267,22 @@ if __name__ == "__main__":
                     frac_exp * (args.exp_scheduling_qlearning_rate - args.classic_actor_learning_rate)
                     + args.classic_actor_learning_rate
                 )
+        elif sigmoid_lr_scheduling:
+            t=10*((update-1.0)/exp_scheduling_updates)
+            frac_sigmoid = 1/(1+np.exp(0.5*(2*t-10)))
+            if args.quantum_actor:
+                qlrnow_circuit = (
+                    frac_sigmoid * (args.exp_scheduling_qlearning_rate - args.qlearning_rate)
+                    + args.qlearning_rate
+                )
+            else:
+                lrnow_circuit = (
+                    frac_sigmoid * (args.exp_scheduling_qlearning_rate - args.classic_actor_learning_rate)
+                    + args.classic_actor_learning_rate
+                )
 
 
-        if args.exp_qlr_scheduling:
+        if args.exp_qlr_scheduling or sigmoid_lr_scheduling:
             if args.quantum_actor:
                 quantum_actor_optimizer.param_groups[0]["lr"] = qlrnow_circuit
             else: 

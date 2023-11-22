@@ -253,7 +253,7 @@ if __name__ == "__main__":
     for update in range(done_updates + 1, num_updates + 1):
         # Annealing the Quantum Leaning Rate if activated
 
-        sigmoid_lr_scheduling = True #todo make Hyperparam
+        sigmoid_lr_scheduling = False #todo make Hyperparam
 
         if args.exp_qlr_scheduling:
             frac_exp = 2.0 ** ((-update + 1.0) / exp_scheduling_updates)

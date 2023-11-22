@@ -1754,7 +1754,7 @@ exp_names = [
     "CP-ppo-ac-NN(6,5)-(actor-lr=1.0e-4)-(77-params)",
     "CP-ppo-ac-NN(6,6)-(actor-lr=1.0e-4)-(86-params)",
 ]
-seeds = [10, 20]
+seeds = [10, 20, 30]
 batchsize = 4 * 128
 max_steps = 500000
 alpha = 0.05

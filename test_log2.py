@@ -191,14 +191,14 @@ exp_names = [
     "FL-qppo-simple_reuploading-exp_sced_fixed-ht35000-start-qlr10.e-3-end-qlr1.0e-3-lr2.5e-4-6varlayers-(72-params)",
     "random-baseline",
     "FL-qppo-simple_reuploading-qlr2.5e-3-lr2.5e-4-clipcoef0.20-6varlayers-(72-params)",
-    "FL-ppo-ac-NN(3)-(actor-lr=1.0e-2)-(67-params)",
-    "FL-ppo-ac-NN(4)-(actor-lr=1.0e-2)-(88-params)",
+    #"FL-ppo-ac-NN(3)-(actor-lr=1.0e-2)-(67-params)",
+    #"FL-ppo-ac-NN(4)-(actor-lr=1.0e-2)-(88-params)",
 ]
 seeds = [10, 20, 30, 40, 50]
 batchsize = 4 * 128
 max_steps = 150000
 alpha = 0.3
-labels=["QPPO-Lr((10->0.1)e-3, HWZ=15000)-(72-Param)", "QPPO-Lr((10->0.1)e-3, HWZ=25000)-(72-Param)", "QPPO-Lr((10->0.1)e-3, HWZ=40000)-(72-Param)", "QPPO-Lr((10->1.0)e-3, HWZ=10000)-(72-Param)", "QPPO-Lr((10->1.0)e-3, HWZ=20000)-(72-Param)", "QPPO-Lr((10->1.0)e-3, HWZ=35000)-(72-Param)", "Zufällige Aktionsauswahl", "QPPO-Lr(2.5e-3)-(72-Param)", "PPO(3)-Lr(1.0e-2)-(67-Param)", "PPO(4)-Lr(1.0e-2)-(88-Param)"]
+labels=["QPPO-Lr((10->0.1)e-3, HWZ=15000)", "QPPO-Lr((10->0.1)e-3, HWZ=25000)", "QPPO-Lr((10->0.1)e-3, HWZ=40000)", "QPPO-Lr((10->1.0)e-3, HWZ=10000)", "QPPO-Lr((10->1.0)e-3, HWZ=20000)", "QPPO-Lr((10->1.0)e-3, HWZ=35000)", "Zufällige Aktionsauswahl", "QPPO-KonstLr=2.5e-3"]
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
 
@@ -251,7 +251,7 @@ gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
 exp_names = [
     "FL-qppo-ac-simple_reuploading-exp_sced-output_scaleing-1param-1e-3-(73-params)",
     "FL-qppo-ac-simple_reuploading-exp_sced-output_scaleing-1param-1e-2-(73-params)",
-    "FL-qppo-ac-simple_reuploading-exp_sced-output_scaleing-1param-5e-2-(73-params)",
+    #"FL-qppo-ac-simple_reuploading-exp_sced-output_scaleing-1param-5e-2-(73-params)", #"QPPO-GlobalOutScale(5e-2)-(73-Param)"
     "FL-qppo-ac-simple_reuploading-exp_sced-output_scaleing-4params-1e-3-(76-params)",
     "FL-qppo-ac-simple_reuploading-exp_sced-output_scaleing-4params-1e-2-(76-params)",
     "FL-qppo-ac-simple_reuploading-exp_sced-output_scaleing-4params-5e-2-(76-params)",
@@ -263,7 +263,7 @@ seeds = [10, 20, 30]
 batchsize = 4 * 128
 max_steps = 100000
 alpha = 0.3
-labels=["QPPO-GlobalOutScale(1e-3)-(73-Param)", "QPPO-GlobalOutScale(1e-2)-(73-Param)", "QPPO-GlobalOutScale(5e-2)-(73-Param)", "QPPO-LocalOutScale(1e-3)-(76-Param)", "QPPO-LocalOutScale(1e-2)-(76-Param)", "QPPO-LocalOutScale(5e-2)-(76-Param)", "Zufällige Aktionsauswahl", "QPPO-keinOutScale-(72-Param)"]
+labels=["QPPO-GlobalOutScale(1e-3)-(73-Param)", "QPPO-GlobalOutScale(1e-2)-(73-Param)", "QPPO-LocalOutScale(1e-3)-(76-Param)", "QPPO-LocalOutScale(1e-2)-(76-Param)", "QPPO-LocalOutScale(5e-2)-(76-Param)", "Zufällige Aktionsauswahl", "QPPO-keinOutScale-(72-Param)"]
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
 
@@ -272,7 +272,7 @@ plot_dir = plots_dir + "/FL-actor-Test-1-output-scaleing-2"
 gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
 exp_names = [
     "FL-qppo-ac-simple_reuploading-exp_sced-output_scaleing-1param-1e-2-(73-params)",
-    "FL-qppo-ac-simple_reuploading-exp_sced-output_scaleing-1param-5e-2-(73-params)",
+    #"FL-qppo-ac-simple_reuploading-exp_sced-output_scaleing-1param-5e-2-(73-params)", #"QPPO-GlobalOutScale(5e-2)-(73-Param)"
     "FL-qppo-ac-simple_reuploading-exp_sced-output_scaleing-4params-1e-2-(76-params)",
     "FL-qppo-ac-simple_reuploading-exp_sced-output_scaleing-4params-5e-2-(76-params)",
     "random-baseline",
@@ -283,7 +283,7 @@ seeds = [10, 20, 30]
 batchsize = 4 * 128
 max_steps = 50000
 alpha = 0.3
-labels=["QPPO-GlobalOutScale(1e-2)-(73-Param)", "QPPO-GlobalOutScale(5e-2)-(73-Param)", "QPPO-LocalOutScale(1e-2)-(76-Param)", "QPPO-LocalOutScale(5e-2)-(76-Param)", "Zufällige Aktionsauswahl", "PPO(3)-(67-Param)", "PPO(4)-(88-Param)"]
+labels=["QPPO-GlobalOutScale(1e-2)-(73-Param)", "QPPO-LocalOutScale(1e-2)-(76-Param)", "QPPO-LocalOutScale(5e-2)-(76-Param)", "Zufällige Aktionsauswahl", "PPO(3)-(67-Param)", "PPO(4)-(88-Param)"]
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
 
@@ -384,7 +384,7 @@ seeds = [10, 20, 30]
 batchsize = 4 * 128
 max_steps = 150000
 alpha = 0.3
-labels=["QPPO-Data-Reuploading-OutScale(5e-3)-(73-Param)", "QPPO-Data-Reuploading-OutScale(1e-3)-(73-Param)", "QPPO-ohne-Reuploading-OutScale(5e-3)-(73-Param)", "QPPO-ohne-Reuploading-OutScale(1e-3)-(73-Param)", "Zufällige Aktionsauswahl"]
+labels=["QPPO-Data-Reuploading-(5e-3)", "QPPO-Data-Reuploading-(1e-3)", "QPPO-ohne-Reuploading-(5e-3)", "QPPO-ohne-Reuploading-(1e-3)", "Zufällige Aktionsauswahl"]
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
 # two seeds fail for the higher OutScale lr without data rauploading
@@ -410,7 +410,7 @@ labels=["QPPO-(73-Param)", "QPPO-Hgog-(73-Param)", "QPPO-Jerbi-(73-Param)", "Zuf
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
 
 
-"""
+
 plot_dir = plots_dir + "/FL-actor-Test-3-Ansatz-comparison"
 gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
 exp_names = [
@@ -438,22 +438,22 @@ plot_dir = plots_dir + "/FL-actor-Test-3b-Ansatz-comparison-global-outscale"
 gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
 exp_names = [
     #"FL-qppo-ac-simple_reuploading-exp_sced-ht25000-10->0.1e-3-output_scaleing-5e-3-(73-params)",
-    "FL-qppo-ac-simple_reuploading-exp_sced-ht25000-10->0.1e-3-output_scaleing-4params-5e-2-(76-params)",
-    "FL-qppo-ac-simple_reuploading-qlr-2.5e-3------------------output_scaleing-4params-5e-2-(76-params)",
-    "FL-qppo-ac-simple_reuploading-exp_sced-ht25000-10->0.1e-3-(73-params)",
+    "FL-qppo-ac-simple_reuploading-exp_sced-ht25000-10->0.1e-3-output_scaleing-4params-2.5e-2-(76-params)",
+    "FL-qppo-ac-simple_reuploading-qlr-2.5e-3------------------output_scaleing-4params-2.5e-2-(76-params)",
+    #"FL-qppo-ac-simple_reuploading-exp_sced-ht25000-10->0.1e-3-(73-params)",
     "random-baseline",
     "FL-ppo-ac-NN(3)-(actor-lr=1.0e-2)-(67-params)",
     "FL-ppo-ac-NN(4)-(actor-lr=1.0e-2)-(88-params)",
 ]
-seeds = [10, 20, 30]
+seeds = [10, 20, 30, 40, 50]
 batchsize = 4 * 128
-max_steps = 150000
+max_steps = 50000
 alpha = 0.3
-labels=["QPPO-Alles-(76-Param)", "QPPO-ohne-ExpLr-(76-Param)", "QPPO-ohne-OutScale-(72-Param)", "Zufällige Aktionsauswahl", "PPO(3)-(67-Param)", "PPO(4)-(88-Param)"]
+labels=["QPPO-Alles-(76-Param)", "QPPO-ohne-ExpLr-(76-Param)", "Zufällige Aktionsauswahl", "PPO(3)-(67-Param)", "PPO(4)-(88-Param)"]
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
-"""
-#"QPPO-Reuploading+OutScale+Scheduling-(73-Param)", 
+
+
 
 
 
@@ -657,7 +657,7 @@ seeds = [10, 20, 30]
 batchsize = 4 * 128
 max_steps = 500000
 alpha = 0.05
-labels=["QPPO-Lr(2.5e-3)-(72-Param)", "QPPO-Lr(1.0e-2)-(72-Param)", "QPPO-Lr((10->0.1)e-3, HWZ=15000)-(72-Param)", "QPPO-Lr((10->0.1)e-3, HWZ=25000)-(72-Param)", "QPPO-Lr((10->0.1)e-3, HWZ=35000)-(72-Param)",  "Zufällige Aktionsauswahl", "PPO(5,5)-Lr(1.0e-4)-(67-Param)"]
+labels=["QPPO Lr=2.5e-3", "QPPO Lr=1.0e-2", "QPPO Lr=(10->0.1)e-3,HWZ=15000", "QPPO Lr=(10->0.1)e-3,HWZ=25000", "QPPO Lr=(10->0.1)e-3,HWZ=35000",  "Zufällige Aktionsauswahl", "PPO(5,5) Lr=1.0e-4"]
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
 
@@ -866,7 +866,7 @@ labels=["QPPO(6-Layer)-ManuellesIRS-(73-Param)", "QPPO(6-Layer)-GeteiltesInpScal
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
 """
 
-""""""
+"""
 plot_dir = plots_dir + "/CP-actor-Test-2-Ansatz-Comparison"
 gym_id = "CartPole-v1"
 exp_names = [
@@ -889,3 +889,4 @@ labels=["QPPO-Kein-InpScale-(73-Param)", "QPPO-Globales-InpScale-(77-Param)", "Q
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
 
 #"QPPO(6-Layer)-KeinInpScale-Out(1e-4)-(73-Param)",  , "PPO(6,6)-(86-Param)"
+"""

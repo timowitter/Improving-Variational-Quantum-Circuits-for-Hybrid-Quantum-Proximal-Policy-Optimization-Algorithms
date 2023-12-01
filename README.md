@@ -76,11 +76,11 @@
 **Plots**
 >Um die Testergebnisse zu Plotten wird `src.plot.plot_test_avg_final("qppo-slurm/results", "plots", gym_id, exp_names, seeds, alpha, max_steps, labels)` ausgeführt, wobei gilt:
 
-- f `gym_id` ist die id der Gym Umgebung des Tests.
+- `gym_id` ist die id der Gym Umgebung des Tests.
     
-- f `exp_name` ist eine Liste mit den Namen der Experimente, die geplotted werden sollen.
+- `exp_name` ist eine Liste mit den Namen der Experimente, die geplotted werden sollen.
     
-- f `seeds` ist eine Liste mit den Seeds die eingesetzt wurden.
+- `seeds` ist eine Liste mit den Seeds die eingesetzt wurden.
     
 - `alpha` ist der alpha wert für das ewm (exponentially weighted moveing average).
     

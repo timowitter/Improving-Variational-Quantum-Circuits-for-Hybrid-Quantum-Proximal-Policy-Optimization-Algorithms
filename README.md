@@ -76,17 +76,17 @@
 **Plots**
 >Um die Testergebnisse zu Plotten wird `src.plot.plot_test_avg_final("qppo-slurm/results", "plots", gym_id, exp_names, seeds, alpha, max_steps, labels)` ausgeführt, wobei gilt:
 
-- `gym_id` ist die id der Gym Umgebung des Tests.
+    - `gym_id` ist die id der Gym Umgebung des Tests.
     
-- `exp_name` ist eine Liste mit den Namen der Experimente, die geplotted werden sollen.
+    - `exp_name` ist eine Liste mit den Namen der Experimente, die geplotted werden sollen.
     
-- `seeds` ist eine Liste mit den Seeds die eingesetzt wurden.
+    - `seeds` ist eine Liste mit den Seeds die eingesetzt wurden.
     
-- `alpha` ist der alpha wert für das ewm (exponentially weighted moveing average).
+    - `alpha` ist der alpha wert für das ewm (exponentially weighted moveing average).
     
-- `max_steps` ist die Azahl der Zeitschritte über die geplotted werden soll
+    - `max_steps` ist die Azahl der Zeitschritte über die geplotted werden soll
     
-- `labels` ist eine Liste mit Namenskürzeln, die für die Legende verwendet werden sollen (in der selben Reihenfolge wie `exp_name`).
+    - `labels` ist eine Liste mit Namenskürzeln, die für die Legende verwendet werden sollen (in der selben Reihenfolge wie `exp_name`).
 
 >In "plot_log.py" haben wir alle von uns verwendeten aufrufe der Funktion aufgelistet.
 

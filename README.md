@@ -1,4 +1,4 @@
-#Dies ist das Git-repository zur Bachelorarbeit "Parameter Reduktion durch Quantenschaltkreise – Aktuelle Methoden am Beispiel von Quantum Proximal Policy Optimization" von Timo Witter. 
+<b>Dies ist das Git-repository zur Bachelorarbeit "Parameter Reduktion durch Quantenschaltkreise – Aktuelle Methoden am Beispiel von Quantum Proximal Policy Optimization" von Timo Witter.</b> 
 Es unfasst die folgenden Dateien und Verzeichnisse:
 
 - jobs:

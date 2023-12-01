@@ -4,7 +4,6 @@ from src.plot_old import plot_training_results
 
 results_dir = "qppo-slurm/results"
 plots_dir = "plots"
-test_plots_dir = "test-plots"
 
 
 plot_dir = plots_dir + "/FL-actor-Hyperparameter-Test-0-NN(3)-lr"

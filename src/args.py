@@ -30,18 +30,6 @@ def parse_args():
         default=10e-3,
         help="learning rate at start of exp-scheduling, will exponentially decline to the normal q-lr depending on the exp-scheduling-halftime",
     )
-    # parser.add_argument(
-    #    "--sq-scheduling-qlearning-rate",
-    #    type=float,
-    #    default=2.5e-4,
-    #    help="quantum optimizer learning at start of sq-scheduling",
-    # )
-    # parser.add_argument(
-    #    "--lin-scheduling-qlearning-rate",
-    #    type=float,
-    #    default=2.5e-4,
-    #    help="quantum optimizer learning at start of lin-scheduling",
-    # )
     parser.add_argument(
         "--learning-rate",
         type=float,
@@ -88,18 +76,7 @@ def parse_args():
         default=150000,
         help="length (number of timesteps) of the exp-scheduling half time in which the exp-scheduling-qlearning-rate halves",
     )
-    # parser.add_argument(
-    #    "--sq-scheduling-timesteps",
-    #    type=int,
-    #    default=150000,
-    #    help="length of the sq-scheduling Phase",
-    # )
-    # parser.add_argument(
-    #    "--lin-scheduling-timesteps",
-    #    type=int,
-    #    default=500000,
-    #    help="length of the lin-scheduling Phase (not executed during sq-scheduling timesteps if both are enabled)",
-    # )
+
     parser.add_argument(
         "--torch-deterministic",
         type=lambda x: bool(strtobool(x)),
@@ -108,15 +85,6 @@ def parse_args():
         const=True,
         help="set cdnn.deterministic /default:True",
     )
-    # parser.add_argument('--cuda', type=lambda x:bool(strtobool(x)), default=False, nargs='?', const=True, help='determines if gpu shall be used /default:False')
-    # parser.add_argument(
-    #    "--capture-video",
-    #    type=lambda x: bool(strtobool(x)),
-    #    default=False,
-    #    nargs="?",
-    #    const=True,
-    #    help="wether to record videos to `videos` folder",
-    # )  # not working
 
     # Algorith specific
     parser.add_argument(
@@ -141,13 +109,24 @@ def parse_args():
     )
 
     parser.add_argument(
-        "--insider-input-rescale",
+        "--sigmoid-qlr-scheduling",
         type=lambda x: bool(strtobool(x)),
         default=False,
         nargs="?",
         const=True,
-        help="uses insider input rescaleing for cartpole environment if no trainable input rescaleing is used",
+        help="sigmoid learning rate scheduling for quantum circuits, overrides other scedulings",
     )
+
+    
+    parser.add_argument(
+        "--arctan-input-rescale",
+        type=lambda x: bool(strtobool(x)),
+        default=False,
+        nargs="?",
+        const=True,
+        help="uses manual 2*arctan(x) input rescaleing for cartpole environment (if no trainable input rescaleing is activated)",
+    )
+    
 
     parser.add_argument(
         "--gae",
@@ -213,13 +192,6 @@ def parse_args():
         default=0.5,
         help="maximum norm for the global gradient clipping",
     )
-    """
-    parser.add_argument(
-        "--actor-hidden-layer-nodes",
-        type=int,
-        default=64,
-        help="number of nodes for the hidden layer if two-actor-hidden-layers==False",
-    )"""
 
     parser.add_argument(
         "--actor-hidden-layer1-nodes",
@@ -227,39 +199,18 @@ def parse_args():
         default=64,
         help="number of nodes for the first hidden layer of the actor",
     )
-
     parser.add_argument(
         "--actor-hidden-layer2-nodes",
         type=int,
         default=64,
         help="number of nodes for all second hidden layer of the actor, if set to 0 onely one hidden layer will be used",
     )
-    """
-    parser.add_argument(
-        "--two-actor-hidden-layers",
-        type=lambda x: bool(strtobool(x)),
-        default=True,
-        nargs="?",
-        const=True,
-        help="toggle the use of two hidden layers for the actor",
-    )"""
-
     parser.add_argument(
         "--critic-hidden-layer-nodes",
         type=int,
         default=64,
         help="number of nodes for all hidden layers of the critic",
     )
-    """
-    parser.add_argument(
-        "--two-critic-hidden-layers",
-        type=lambda x: bool(strtobool(x)),
-        default=True,
-        nargs="?",
-        const=True,
-        help="toggle the use of two hidden layers for the critic",
-    )"""
-
     parser.add_argument(
         "--quantum-actor",
         type=lambda x: bool(strtobool(x)),
@@ -303,7 +254,6 @@ def parse_args():
         const=True,
         help="toggle output scaleing",
     )
-
     parser.add_argument(
         "--shared-output-scaleing-param",
         type=lambda x: bool(strtobool(x)),
@@ -340,20 +290,6 @@ def parse_args():
         default=20,
         help="gives the the checkpoint save-intervall in number of updates (batchsize = num_steps * num_envs)",
     )
-    # parser.add_argument(
-    #    "--scheduled-output-scaleing",
-    #    type=lambda x: bool(strtobool(x)),
-    #    default=False,
-    #    nargs="?",
-    #    const=True,
-    #    help="toggle scheduled output scaleing or trainable output scaleing",
-    # )
-    # parser.add_argument(
-    #    "--sced-out-scale-fac",
-    #    type=float,
-    #    default=2.0,
-    #    help="value output scaleing is increased with every/over 100000 steps",
-    # )
     parser.add_argument(
         "--random-baseline",
         type=lambda x: bool(strtobool(x)),
@@ -382,15 +318,6 @@ def parse_args():
     )
 
     parser.add_argument(
-        "--record-insider-info",
-        type=lambda x: bool(strtobool(x)),
-        default=False,
-        nargs="?",
-        const=True,
-        help="toggle recording of insider Information for insider rescaleing",
-    )
-
-    parser.add_argument(
         "--param-init",
         type=str,
         default="random",
@@ -409,17 +336,9 @@ def parse_args():
     ):  # load args exept total_timesteps and continue learning if new total_timesteps > global_timesteps
         args_chkpt_file = os.path.join(args.chkpt_dir, "commandline_args.txt")
         t = args.total_timesteps
-        #n = args.exp_name
-        #n2 = args.chkpt_dir
-        #n3 = args.results_dir
-        #n4 = args.plot_dir
         with open(args_chkpt_file, "r") as f:
             args.__dict__ = json.load(f)
         args.load_chkpt = True
         args.total_timesteps = t
-        #args.exp_name = n
-        #args.chkpt_dir = n2 
-        #args.results_dir = n3
-        #args.plot_dir = n4
 
     return args

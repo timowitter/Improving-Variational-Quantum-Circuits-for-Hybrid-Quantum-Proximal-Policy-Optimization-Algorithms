@@ -73,7 +73,7 @@ if __name__ == "__main__":
         envs.single_action_space, gym.spaces.Discrete
     ), "onely discrete action spaces supported"
     save_results = Save_results(
-        args.results_dir, args.load_chkpt, args.record_grads, args.record_insider_info
+        args.results_dir, args.load_chkpt, args.record_grads
     )
 
     actor_par_count = calc_num_actor_params(envs)
@@ -253,8 +253,6 @@ if __name__ == "__main__":
     for update in range(done_updates + 1, num_updates + 1):
         # Annealing the Quantum Leaning Rate if activated
 
-        sigmoid_lr_scheduling = False #todo make Hyperparam
-
         if args.exp_qlr_scheduling:
             frac_exp = 2.0 ** ((-update + 1.0) / exp_scheduling_updates)
             if args.quantum_actor:
@@ -267,7 +265,7 @@ if __name__ == "__main__":
                     frac_exp * (args.exp_scheduling_qlearning_rate - args.classic_actor_learning_rate)
                     + args.classic_actor_learning_rate
                 )
-        elif sigmoid_lr_scheduling:     #sigmoid lr anneahling after Nakamura et al.
+        elif args.sigmoid_lr_scheduling:     #sigmoid lr anneahling after Nakamura et al.
             t=10*((update-1.0)/exp_scheduling_updates)
             frac_sigmoid = 1/(1+np.exp(0.5*(2*t-10)))
             if args.quantum_actor:
@@ -282,7 +280,7 @@ if __name__ == "__main__":
                 )
 
 
-        if args.exp_qlr_scheduling or sigmoid_lr_scheduling:
+        if args.exp_qlr_scheduling or args.sigmoid_lr_scheduling:
             if args.quantum_actor:
                 quantum_actor_optimizer.param_groups[0]["lr"] = qlrnow_circuit
             else: 
@@ -299,12 +297,6 @@ if __name__ == "__main__":
 
                 #if args.quantum_critic:
                 #    critic_input_scaleing_optimizer.param_groups[0]["lr"] = qlrnow_circuit
-
-        # if args.output_scaleing and args.scheduled_output_scaleing:
-        #    sced_out_scale_bonus = ((global_step) / 100000) * args.sced_out_scale_fac
-        #    # for i in range(get_act_dim(envs.single_action_space)):
-        #    output_scaleing_params[0] = 1 + sced_out_scale_bonus
-        #    # np.sqrt()  # sqrt is NOT needed since it will NOT be multiplyed with its mean in this version of the code
 
         # Environment interaction
         for step in range(0, args.num_steps):
@@ -340,43 +332,6 @@ if __name__ == "__main__":
             next_ob, reward, terminated, truncated, info = envs.step(
                 actions[step].cpu().numpy()
             )  # np.asarray(x, dtype = 'int')   #
-
-            # record insider information for insider rescaleing
-            if args.record_insider_info:
-                if args.gym_id == "CartPole-v0" or args.gym_id == "CartPole-v1":
-                    abs_cart_velocity = np.abs(next_ob[1])
-                    abs_pole_velocity = np.abs(next_ob[3])
-
-                    """
-                    print(
-                        "abs_cart_velocity",
-                        abs_cart_velocity,
-                        "abs_pole_velocity",
-                        abs_pole_velocity,
-                        "global_step",
-                        global_step,
-                        "args.gym_id",
-                        args.gym_id,
-                        "args.exp_name",
-                        args.exp_name,
-                        "args.circuit",
-                        args.circuit,
-                        "args.seed",
-                        args.seed,
-                    )"""
-
-                    for i in range(args.num_envs):
-                        save_results.append_insider_info(
-                            abs_cart_velocity[i],
-                            abs_pole_velocity[i],
-                            global_step,
-                            args.gym_id,
-                            args.exp_name,
-                            args.circuit,
-                            args.seed,
-                        )
-                else:
-                    raise NotImplementedError()
 
             rewards[step] = torch.tensor(reward).view(-1)
             done = torch.logical_or(torch.Tensor(terminated), torch.Tensor(truncated))

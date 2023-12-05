@@ -74,15 +74,12 @@ if __name__ == "__main__":
     ), "onely discrete action spaces supported"
     deterministic_tests_for_plotting = args.deterministic_tests_for_plotting and not args.random_baseline
     if deterministic_tests_for_plotting:
-        det_env = make_env(
-                args.gym_id,
-                args.seed + args.num_envs,
-                args.num_envs,
-                args.num_envs,
-                args.chkpt_dir,
-                False,
-                store_envs,
-            )
+        # initiate single env for testing the Deterministic Version of the stochastic policy
+        det_env = gym.make(args.gym_id)
+        det_env.action_space.seed(args.seed + args.num_envs)
+        det_env.observation_space.seed(args.seed + args.num_envs)
+        if args.gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0" or args.gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0-alt" or args.gym_id == "FrozenLake-v0" or args.gym_id == "FrozenLake-v1":
+            det_env = gym.wrappers.TimeLimit(det_env, max_episode_steps=100)
     save_results = Save_results(
         args.results_dir, args.load_chkpt, args.record_grads, deterministic_tests_for_plotting
     )

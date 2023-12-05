@@ -636,7 +636,8 @@ if __name__ == "__main__":
                 det_done = False
                 det_score = 0
                 det_length = 0
-                det_obs=torch.Tensor(det_env.reset())
+                det_obs_tmp, _ = det_env.reset()
+                det_obs=torch.Tensor(det_obs_tmp)
                 while det_done == False:
                     det_length += 1
 
@@ -651,9 +652,10 @@ if __name__ == "__main__":
                                 )
 
                     # Env step
-                    det_obs, det_reward, terminated, truncated, info = det_env.step(
+                    det_ob, det_reward, terminated, truncated, info = det_env.step(
                         det_action.item()
                     ) 
+                    det_obs=torch.Tensor(det_ob)
                     det_score += det_reward
                     if (terminated or truncated):   #episode ended
                         det_done = True

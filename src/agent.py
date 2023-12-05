@@ -228,7 +228,7 @@ class Agent(nn.Module):
 
         argmax_action = torch.argmax(logits)
 
-        return argmax_action.item()
+        return argmax_action
 
     def get_random_action_and_value(self, acts_dim, action=None):
         logits = torch.ones(acts_dim)

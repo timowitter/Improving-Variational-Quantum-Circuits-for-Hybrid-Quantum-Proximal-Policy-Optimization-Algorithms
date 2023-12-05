@@ -34,12 +34,12 @@ def make_env(gym_id, seed, env_num, num_envs, chkpt_dir, load_chkpt, store_envs)
             env = gym.make("Deterministic-ShortestPath-4x4-FrozenLake-v0-alt")
             print("ShortestPathFrozenLake-alt-version")
             env = gym.wrappers.TimeLimit(env, max_episode_steps=100)
-        elif gym_id == "FrozenLake-v0" or gym_id == "FrozenLake-v1":
-            env = gym.make(
-                gym_id, desc=["SFFF", "FFFH", "FHFH", "HFFG"], map_name="4x4", is_slippery=False
-            )
-            print("is_slippery=False")
-            env = gym.wrappers.TimeLimit(env, max_episode_steps=100)
+        #elif gym_id == "FrozenLake-v0" or gym_id == "FrozenLake-v1":
+        #    env = gym.make(
+        #        gym_id, desc=["SFFF", "FFFH", "FHFH", "HFFG"], map_name="4x4", is_slippery=False
+        #    )
+        #    print("is_slippery=False")
+        #    env = gym.wrappers.TimeLimit(env, max_episode_steps=100)
         else:
             env = gym.make(gym_id)
         env = gym.wrappers.RecordEpisodeStatistics(env)  # VectorListInfo

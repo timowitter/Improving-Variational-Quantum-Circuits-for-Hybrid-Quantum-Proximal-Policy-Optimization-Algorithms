@@ -637,7 +637,11 @@ if __name__ == "__main__":
                 det_score = 0
                 det_length = 0
                 det_obs_tmp, _ = det_env.reset()
+                print("det_ob_temp", det_obs_tmp)
+                if (args.gym_id == "FrozenLake-v0" or args.gym_id == "FrozenLake-v1" or args.gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0" or args.gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0-alt") and (type(det_obs_tmp) is tuple):
+                    det_obs_tmp = det_obs_tmp[0]
                 det_obs=torch.Tensor(det_obs_tmp)
+                print("det_obs[]", det_obs)
                 while det_done == False:
                     det_length += 1
 
@@ -655,7 +659,11 @@ if __name__ == "__main__":
                     det_ob, det_reward, terminated, truncated, info = det_env.step(
                         det_action.item()
                     ) 
+                    print("det_ob", det_ob)
+                    if (args.gym_id == "FrozenLake-v0" or args.gym_id == "FrozenLake-v1" or args.gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0" or args.gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0-alt") and (type(det_obs_tmp) is tuple):
+                        det_ob = det_ob[0]
                     det_obs=torch.Tensor(det_ob)
+                    print("det_obs", det_obs)
                     det_score += det_reward
                     if (terminated or truncated):   #episode ended
                         det_done = True

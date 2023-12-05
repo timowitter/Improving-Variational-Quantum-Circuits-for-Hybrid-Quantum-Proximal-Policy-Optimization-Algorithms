@@ -14,7 +14,8 @@ start_seed=10
 seed_step=10
 end_seed=10
 envs=("Deterministic-ShortestPath-4x4-FrozenLake-v0") 
-timesteps=150000
+timesteps=10000
+#timesteps=150000
 
 circuits=("classic_NN")
 
@@ -34,7 +35,7 @@ start_seed=10
 seed_step=10
 end_seed=10
 envs=("CartPole-v1") 
-timesteps=500000
+#timesteps=500000
 
 circuits=("classic_NN")
 

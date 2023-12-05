@@ -265,7 +265,7 @@ if __name__ == "__main__":
                     frac_exp * (args.exp_scheduling_qlearning_rate - args.classic_actor_learning_rate)
                     + args.classic_actor_learning_rate
                 )
-        elif args.sigmoid_lr_scheduling:     #sigmoid lr anneahling after Nakamura et al.
+        elif args.sigmoid_qlr_scheduling:     #sigmoid lr anneahling after Nakamura et al.
             t=10*((update-1.0)/exp_scheduling_updates)
             frac_sigmoid = 1/(1+np.exp(0.5*(2*t-10)))
             if args.quantum_actor:
@@ -280,7 +280,7 @@ if __name__ == "__main__":
                 )
 
 
-        if args.exp_qlr_scheduling or args.sigmoid_lr_scheduling:
+        if args.exp_qlr_scheduling or args.sigmoid_qlr_scheduling:
             if args.quantum_actor:
                 quantum_actor_optimizer.param_groups[0]["lr"] = qlrnow_circuit
             else: 

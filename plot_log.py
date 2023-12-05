@@ -804,7 +804,7 @@ plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_
 
 
 """"""
-plot_dir = plots_dir + "/CP-actor-Test-2-Ansatz-Comparison"
+plot_dir = plots_dir + "/CP-actor-Test-2b-Ansatz-Comparison"
 gym_id = "CartPole-v1"
 exp_names = [
     "CP-qppo-ac-simple_reuploading----------------exp_sced-ht100000-qlr(25-1)e-4-OutScale(1e-3)-allsmallinit-(73-params)",

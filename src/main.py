@@ -72,8 +72,19 @@ if __name__ == "__main__":
     assert isinstance(
         envs.single_action_space, gym.spaces.Discrete
     ), "onely discrete action spaces supported"
+    deterministic_tests_for_plotting = args.deterministic_tests_for_plotting and not args.random_baseline
+    if deterministic_tests_for_plotting:
+        det_env = make_env(
+                args.gym_id,
+                args.seed + args.num_envs,
+                args.num_envs,
+                args.num_envs,
+                args.chkpt_dir,
+                False,
+                store_envs,
+            )
     save_results = Save_results(
-        args.results_dir, args.load_chkpt, args.record_grads
+        args.results_dir, args.load_chkpt, args.record_grads, deterministic_tests_for_plotting
     )
 
     actor_par_count = calc_num_actor_params(envs)
@@ -622,6 +633,50 @@ if __name__ == "__main__":
                             actor_input_scaleing_optimizer.step()
                         if args.quantum_critic:
                             critic_input_scaleing_optimizer.step()
+
+
+            ##########################################
+            # use deterministic (argmax) version of the policy for the evaluation of the learning succsess
+            # per default set as false since it uses a lot of additional resources and our stochastic policy should learn to resemble
+            # a (almost) deterministic policy at the end of the learning process anyway
+            if(deterministic_tests_for_plotting):
+                det_done = False
+                det_score = 0
+                det_length = 0
+                det_obs=det_env.reset()
+                while det_done == False:
+                    det_length += 1
+
+                    # Get action
+                    det_action = agent.get_argmax_action(
+                                    det_obs,
+                                    actor_circuit,
+                                    actor_layer_params,
+                                    actor_input_scaleing_params,
+                                    get_obs_dim(envs.single_observation_space),
+                                    get_act_dim(envs.single_action_space),
+                                )
+
+                    # Env step
+                    det_obs, det_reward, terminated, truncated, info = det_env.step(
+                        det_action.cpu().numpy()
+                    ) 
+                    det_score += det_reward
+                    if (terminated or truncated):   #episode ended
+                        det_done = True
+
+                save_results.append_det_results(
+                                det_score,
+                                det_length,
+                                global_step,
+                                args.gym_id,
+                                args.exp_name,
+                                args.circuit,
+                                args.seed,
+                            )       
+            ##########################################
+
+
 
             # debug variables (info)
             y_pred, y_true = b_values.cpu().numpy(), b_returns.cpu().numpy()

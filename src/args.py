@@ -300,6 +300,15 @@ def parse_args():
     )
 
     parser.add_argument(
+        "--deterministic-tests-for-plotting",
+        type=lambda x: bool(strtobool(x)),
+        default=False,
+        nargs="?",
+        const=True,
+        help="if this is activated after each update a deterministic (argmax) version of the policy will complete one environment interaction and log its reward for plotting and succsess evaluation",
+    )
+
+    parser.add_argument(
         "--clip-circuit-grad-norm",
         type=lambda x: bool(strtobool(x)),
         default=True,

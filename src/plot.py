@@ -24,7 +24,7 @@ sns.color_palette("colorblind")
 
 
 def plot_test_avg_final(
-    results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, namelabels, batchsize=512, settitle=False, title="none"
+    results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, namelabels, batchsize=512, settitle=False, title="none", plot_deterministic_tests=False
 ):
     # get all result directories
     results_dirs = []
@@ -96,6 +96,8 @@ def plot_test_avg_final(
     plot_avg_episode_length_by_seed(ep_res_by_seed, plot_dir)
     plot_avg_episode_length_by_exp_name(ep_res_by_seed, plot_dir, settitle, title)
 
+
+
     plot_learning_rate_by_exp_name(up_res_by_seed, plot_dir, settitle, title)
     plot_qlearning_rate_by_exp_name(up_res_by_seed, plot_dir, settitle, title)
     #plot_value_loss_by_exp_name(up_res_by_seed, plot_dir)
@@ -110,6 +112,28 @@ def plot_test_avg_final(
     plot_SPS_by_seed(up_res_by_seed, plot_dir)
     plot_output_scaleing_by_seed(up_res_by_seed, plot_dir)
     plot_output_scaleing_by_exp_name(up_res_by_seed, plot_dir, settitle, title)
+
+
+    if(plot_deterministic_tests):
+        det_res_df_list = [
+            pd.read_csv(os.path.join(loc, "det_results.csv")) for loc in results_dirs
+        ]
+        for df in det_res_df_list:
+            df.drop(df[df["global_step"] > max_steps].index, inplace=True)
+
+        for df in det_res_df_list:
+            for i in range(np.size(exp_names)):
+                df.loc[df['exp_name'] == exp_names[i], 'exp_name'] = namelabels[i]
+        
+        det_res_ema_list = [
+            ema_for_plotting_det_results(df, alpha) for df in det_res_df_list
+        ]
+        ep_res_ema = pd.concat(det_res_ema_list, ignore_index=True)
+
+        plot_det_reward_by_seed(ep_res_ema, plot_dir)
+        plot_det_reward_by_exp_name(ep_res_ema, plot_dir, settitle, title)
+        plot_det_length_by_seed(ep_res_ema, plot_dir)
+        plot_det_length_by_exp_name(ep_res_ema, plot_dir, settitle, title)
 
 ##################################################################################
 ##################################################################################
@@ -157,6 +181,11 @@ def avg_over_update_of_episodic_results(
 def ema_for_plotting_by_seed_of_episodic_results(df, alpha):
     df["reward"] = df["avg_reward_per_update"].ewm(alpha=alpha).mean()
     df["episode_length"] = df["avg_episode_length_per_update"].ewm(alpha=alpha).mean()
+    return df
+
+def ema_for_plotting_det_results(df, alpha):
+    df["reward"] = df["det_score"].ewm(alpha=alpha).mean()
+    df["episode_length"] = df["det_episode_length"].ewm(alpha=alpha).mean()
     return df
 
 
@@ -660,5 +689,91 @@ def plot_output_scaleing_by_exp_name(update_results, plot_dir, settitle, title):
     #for t, l in zip(g._legend.texts, labels):
         #t.set_text(l)
     plot_dir = os.path.join(plot_dir, "output_scaleing_by_exp_name.png")
+    plt.savefig(plot_dir)
+    plt.close()
+
+
+
+
+
+
+
+
+
+def plot_det_reward_by_seed(episode_results, plot_dir):
+    g = sns.relplot(
+        data=episode_results,
+        kind="line",
+        x="global_step",
+        y="reward",
+        col="exp_name",
+        errorbar="sd",
+        hue="seed",
+    )
+    g._legend.set_title("Seed")
+    g.set(xlabel ="Zeitschritt", ylabel = "Ergebnis mit Deterministischer Evaluation")
+    #g.set(xlabel ="Globaler Schritt", ylabel = "Reward", title ='some title')
+    #sns.move_legend(g, "upper left", bbox_to_anchor=(1, 1))
+    #sns.move_legend(g, "upper left")
+    plot_dir = os.path.join(plot_dir, "det_reward_by_seed.png")
+    plt.savefig(plot_dir)
+    plt.close()
+
+
+def plot_det_reward_by_exp_name(episode_results, plot_dir, settitle, title):
+    g=sns.relplot(
+        data=episode_results,
+        kind="line",
+        x="global_step",
+        y="reward",
+        errorbar="sd",
+        hue="exp_name",
+    )
+    g._legend.set_title("Ansatz")
+    g.set(xlabel ="Zeitschritt", ylabel = "Ergebnis mit Deterministischer Evaluation")
+    if(settitle):
+        g.set(title=title)
+    #for t, l in zip(g._legend.texts, labels):
+        #t.set_text(l)
+    #sns.move_legend(g, "upper left", bbox_to_anchor=(1, 1))
+    #sns.move_legend(g, "upper left")
+    plot_dir = os.path.join(plot_dir, "det_reward_by_exp_name.png")
+    plt.savefig(plot_dir)
+    plt.close()
+
+
+def plot_det_length_by_seed(episode_results, plot_dir):
+    g = sns.relplot(
+        data=episode_results,
+        kind="line",
+        x="global_step",
+        y="episode_length",
+        col="exp_name",
+        hue="seed",
+        errorbar="sd",
+    )
+    g._legend.set_title("Seed")
+    g.set(xlabel ="Zeitschritt", ylabel = "Episodenlänge mit Deterministischer Evaluation")
+    plot_dir = os.path.join(plot_dir, "det_lenght_by_seed.png")
+    plt.savefig(plot_dir)
+    plt.close()
+
+
+def plot_det_length_by_exp_name(episode_results, plot_dir, settitle, title):
+    g=sns.relplot(
+        data=episode_results,
+        kind="line",
+        x="global_step",
+        y="episode_length",
+        errorbar="sd",
+        hue="exp_name",
+    )
+    g._legend.set_title("Ansatz")
+    g.set(xlabel ="Zeitschritt", ylabel = "Episodenlänge mit Deterministischer Evaluation")
+    if(settitle):
+        g.set(title=title)
+    #for t, l in zip(g._legend.texts, labels):
+        #t.set_text(l)
+    plot_dir = os.path.join(plot_dir, "det_lenght_by_exp_name.png")
     plt.savefig(plot_dir)
     plt.close()

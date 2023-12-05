@@ -197,6 +197,38 @@ class Agent(nn.Module):
                 critic_input_scaleing_params,
             ),
         )
+    
+    def get_argmax_action(
+        self,
+        observation,
+        actor_circuit,
+        actor_layer_params,
+        actor_input_scaleing_params,
+        obs_dim,
+        acts_dim,
+    ):
+        if args.quantum_actor:
+            logits_uncat = actor_circuit(
+                actor_layer_params, actor_input_scaleing_params, observation, acts_dim
+            )  # logits_uncat is a list, logits needs to be a tensor
+
+            if args.hybrid:  # hybrid output postprocessing
+                logits_cat = torch.Tensor(acts_dim)
+                for i in range(acts_dim):
+                    logits_cat[i] = logits_uncat[i]
+                logits = self.hybrid_actor(logits_cat.float())
+
+            else:
+                # merge list of tensors to tensor
+                logits = torch.Tensor(acts_dim)
+                for i in range(acts_dim):
+                    logits[i] = logits_uncat[i]
+        else:
+            logits = self.actor(trans_obs(observation, obs_dim))
+
+        argmax_action = torch.argmax(logits)
+
+        return argmax_action
 
     def get_random_action_and_value(self, acts_dim, action=None):
         logits = torch.ones(acts_dim)

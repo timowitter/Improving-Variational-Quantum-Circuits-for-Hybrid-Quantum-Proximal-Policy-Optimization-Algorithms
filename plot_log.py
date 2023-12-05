@@ -5,7 +5,7 @@ from src.plot_old import plot_training_results
 results_dir = "qppo-slurm/results"
 plots_dir = "plots"
 
-
+"""
 plot_dir = plots_dir + "/FL-actor-Hyperparameter-Test-0-NN(3)-lr"
 gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
 exp_names = [
@@ -289,7 +289,7 @@ labels=["LocalOutScale(1e-4)", "LocalOutScale(1e-3)", "LocalOutScale(1e-2)", "Lo
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
 
 
-"""
+""""""
 plot_dir = plots_dir + "/FL-actor-Test-1c-output-scaleing-in-alternate-Frozen-Lake-Environment"
 gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0-alt"
 exp_names = [
@@ -306,7 +306,7 @@ labels=["QPPO-GlobalOutScale(1e-2)-(73-Param)", "QPPO-LocalOutScale(1e-2)-(76-Pa
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
 # Tests in alternate-Frozen-Lake-Environment discontinued
-"""
+""""""
 
 plot_dir = plots_dir + "/FL-actor-Test-2-reuploading"
 gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
@@ -761,7 +761,7 @@ labels=["pi*tanh(x)-Reskalierung", "pi*tanh(2x)-Reskalierung", "2pi*arctan(x)-Re
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
 
 
-"""
+""""""
 plot_dir = plots_dir + "/CP-actor-Test-1b-input-scaleing"
 gym_id = "CartPole-v1"
 exp_names = [
@@ -781,7 +781,7 @@ alpha = 0.05
 labels=["QPPO(4-Layer)-InpScale-Lr=(2.5->0.1)e-3,HWZ=100000-(65-Param)", "QPPO(5-Layer)-InpScale-Lr=(2.5->0.1)e-3,HWZ=100000-(81-Param)", "QPPO(5-Layer)-InpScale-Lr=(2.5->0.1)e-3,HWZ=_80000-(81-Param)", "QPPO(6-Layer)-InpScale-Lr=(2.5->0.1)e-3,HWZ=100000-(97-Param)", "QPPO(6-Layer)-InpScale-Lr=(1.5->0.1)e-3,HWZ=100000-(97-Param)", "Zufällige Aktionsauswahl", "QPPO-manuelles-Rescale-Lr=(2.5->0.1)e-3,HWZ=100000-(73-Param)", "QPPO-globales-InpScale-Lr=(2.5->0.1)e-3,HWZ=100000-(77-Param)"]
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
-"""
+""""""
 
 plot_dir = plots_dir + "/CP-actor-Test-1c-input-scaleing-500000-Steps"
 gym_id = "CartPole-v1"
@@ -803,7 +803,7 @@ labels=["QPPO-manuelles-Rescale-(73-Param)", "QPPO-globales-InpScale-(77-Param)"
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
 
 
-"""
+""""""
 plot_dir = plots_dir + "/CP-actor-Test-2-Ansatz-Comparison"
 gym_id = "CartPole-v1"
 exp_names = [
@@ -834,7 +834,7 @@ labels=["QPPO-manuelles-Rescale-(73-Param)", "QPPO-globales-InpScale-(77-Param)"
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
 
 #"PPO(6,6)-(86-Param)"
-"""
+""""""
 
 plot_dir = plots_dir + "/CP-actor-Test-2-Ansatz-Comparison"
 gym_id = "CartPole-v1"
@@ -857,3 +857,28 @@ labels=["QPPO-manuelles-Rescale-(73-Param)", "QPPO-globales-InpScale-(77-Param)"
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
 
+"""
+
+
+
+
+
+
+
+
+
+
+plot_dir = plots_dir + "/FL-actor-Hyperparameter-Test-0z-Deterministic-argmax-evaluation"
+gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
+exp_names = [
+    "FL-ppo-ac-NN(3)-(actor-lr=1.0e-2)-(67-params)-Det-Tests",
+    "FL-ppo-ac-NN(4)-(actor-lr=1.0e-2)-(88-params)-Det-Tests",
+    "random-baseline",
+]
+seeds = [10, 20, 30, 40, 50]
+batchsize = 4 * 128
+max_steps = 25000
+alpha = 0.3
+labels=["NN(3)-(67-Param)", "NN(4)-(88-Param)"]
+
+plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels, plot_deterministic_tests=True)

@@ -5,12 +5,13 @@ import torch.nn as nn
 
 
 class Save_results(nn.Module):
-    def __init__(self, results_dir, load_chkpt, record_grads):
+    def __init__(self, results_dir, load_chkpt, record_grads, deterministic_tests_for_plotting):
         super(Save_results, self).__init__()
         self.results_dir = results_dir
         self.df_episode_exists = False
         self.df_update_exists = False
         self.df_gradient_exists = False
+        self.df_det_exists = False
         file_pathExists = os.path.exists(self.results_dir)
         if not file_pathExists:
             os.makedirs(self.results_dir)
@@ -32,6 +33,14 @@ class Save_results(nn.Module):
                         print("ERROR gradient_results.csv can not be found")
                     self.df_gradient = pd.read_csv(self.results_dir + "/gradient_results.csv")
                     self.df_gradient_exists = True
+                if deterministic_tests_for_plotting:
+                    df_pathExists4 = os.path.exists(self.results_dir + "/det_results.csv")
+                    if not df_pathExists4:
+                        print("ERROR det_results.csv can not be found")
+                    self.df_det = pd.read_csv(self.results_dir + "/det_results.csv")
+                    self.df_det_exists = True
+
+                
 
     def append_episode_results(
         self, episode_reward, episode_length, global_step, gym_id, exp_name, circuit, seed
@@ -53,6 +62,30 @@ class Save_results(nn.Module):
             self.df_episode_exists = True
         else:
             self.df_episode = pd.concat([self.df_episode, df], ignore_index=True)
+
+
+
+    def append_det_results(
+        self, det_score, det_episode_length, global_step, gym_id, exp_name, circuit, seed
+    ):
+        episode_results = {
+            "det_score": det_score,
+            "det_episode_length": det_episode_length,
+            "global_step": global_step,
+            "gym_id": gym_id,
+            "exp_name": exp_name,
+            "circuit": circuit,
+            "seed": seed,
+        }
+
+        df = pd.DataFrame(data=episode_results, index=[0])
+
+        if not self.df_det_exists:
+            self.df_det = df
+            self.df_det_exists = True
+        else:
+            self.df_det = pd.concat([self.df_episode, df], ignore_index=True)
+
 
     def append_update_results(
         self,
@@ -148,4 +181,8 @@ class Save_results(nn.Module):
         if self.df_gradient_exists:
             self.df_gradient.to_csv(
                 self.results_dir + "/gradient_results.csv", sep=",", encoding="utf-8", index=False
+            )
+        if self.df_det_exists:
+            self.df_det.to_csv(
+                self.results_dir + "/det_results.csv", sep=",", encoding="utf-8", index=False
             )

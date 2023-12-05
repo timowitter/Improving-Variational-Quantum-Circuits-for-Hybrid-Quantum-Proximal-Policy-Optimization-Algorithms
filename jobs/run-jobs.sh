@@ -11,9 +11,9 @@
 name1b="FL-ppo-ac-NN(3)-(actor-lr=1.0e-2)-(67-params)-Det-Tests"
 name2b="FL-ppo-ac-NN(4)-(actor-lr=1.0e-2)-(88-params)-Det-Tests"
 
-start_seed=10
+start_seed=20
 seed_step=10
-end_seed=10
+end_seed=50
 envs=("Deterministic-ShortestPath-4x4-FrozenLake-v0") 
 timesteps=150000
 

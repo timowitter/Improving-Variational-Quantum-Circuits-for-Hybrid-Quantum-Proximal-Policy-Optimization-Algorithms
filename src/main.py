@@ -652,7 +652,7 @@ if __name__ == "__main__":
 
                     # Env step
                     det_obs, det_reward, terminated, truncated, info = det_env.step(
-                        det_action.cpu().numpy()
+                        det_action.item()
                     ) 
                     det_score += det_reward
                     if (terminated or truncated):   #episode ended

@@ -7,43 +7,26 @@
 
 
 
-name1b="FL-ppo-ac-NN(3)-(actor-lr=1.0e-2)-(67-params)-Det-Tests"
-name2b="FL-ppo-ac-NN(4)-(actor-lr=1.0e-2)-(88-params)-Det-Tests"
+name1="FL-qppo-ac-simple_reuploading-exp_sced-ht25000-10->0.1e-3-output_scaleing-5e-3-(73-params)-Det-Tests"
+name2="FL-qppo-ac-simple-exp_sced-output_scaleing-1param-1e-3-(73-params)-Det-Tests"
+name3="FL-qppo-ac-simple_reuploading-exp_sced-ht25000-10->0.1e-3-(73-params)-Det-Tests"
+name4="FL-qppo-ac-simple_reuploading-qlr-2.5e-3-output_scaleing-5e-3-(73-params)-Det-Tests"
+name5="FL-qppo-ac-simple_reuploading-exp_sced-ht25000-10->0.1e-3-output_scaleing-4params-2.5e-2-(76-params)-Det-Tests"
 
 start_seed=10
 seed_step=10
-end_seed=50
+end_seed=30
 envs=("Deterministic-ShortestPath-4x4-FrozenLake-v0") 
-timesteps=150000
+timesteps=100000
 
-circuits=("classic_NN")
-
-for env in ${envs[@]}; do
-    for circuit in ${circuits[@]}; do
-        for seed in $(seq $start_seed $seed_step $end_seed); do
-            sbatch --job-name="run-$env-$name1b-$seed" jobs/job.sh  --exp-name $name1b  --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4  --classic-actor-learning-rate 1.0e-2 --qlearning-rate 0 --n-qubits 0 --n-var-layers 0 --n-enc-layers 0 --actor-hidden-layer1-nodes 3 --actor-hidden-layer2-nodes 0 --critic-hidden-layer-nodes 64 --quantum-actor False --load-chkpt False --deterministic-tests-for-plotting True
-            sbatch --job-name="run-$env-$name2b-$seed" jobs/job.sh  --exp-name $name2b  --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4  --classic-actor-learning-rate 1.0e-2 --qlearning-rate 0 --n-qubits 0 --n-var-layers 0 --n-enc-layers 0 --actor-hidden-layer1-nodes 4 --actor-hidden-layer2-nodes 0 --critic-hidden-layer-nodes 64 --quantum-actor False --load-chkpt False --deterministic-tests-for-plotting True
-        done
-    done
-done
-
-
-name1a="CP-ppo-ac-NN(5,5)-(actor-lr=1.0e-4)-(67-params)-Det-Tests"
-name2a="CP-ppo-ac-NN(6,5)-(actor-lr=1.0e-4)-(77-params)-Det-Tests"
-
-start_seed=10
-seed_step=10
-end_seed=50
-envs=("CartPole-v1") 
-timesteps=500000
-
-circuits=("classic_NN")
+circuits=("simple_reuploading")
 
 for env in ${envs[@]}; do
     for circuit in ${circuits[@]}; do
         for seed in $(seq $start_seed $seed_step $end_seed); do
-            sbatch --job-name="run-$env-$name1a-$seed" jobs/job.sh  --exp-name $name1a  --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4  --classic-actor-learning-rate 1.0e-4 --qlearning-rate 0 --n-qubits 0 --n-var-layers 0 --n-enc-layers 0 --actor-hidden-layer1-nodes 5 --actor-hidden-layer2-nodes 5 --critic-hidden-layer-nodes 64 --quantum-actor False --load-chkpt False --deterministic-tests-for-plotting True
-            sbatch --job-name="run-$env-$name2a-$seed" jobs/job.sh  --exp-name $name2a  --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4  --classic-actor-learning-rate 1.0e-4 --qlearning-rate 0 --n-qubits 0 --n-var-layers 0 --n-enc-layers 0 --actor-hidden-layer1-nodes 6 --actor-hidden-layer2-nodes 5 --critic-hidden-layer-nodes 64 --quantum-actor False --load-chkpt False --deterministic-tests-for-plotting True
+            sbatch --job-name="run-$env-$name1-$seed" jobs/job.sh  --exp-name $name1  --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 0.1e-3 --n-qubits 4 --n-var-layers 6 --n-enc-layers 6 --load-chkpt False --exp-qlr-scheduling True --exp-scheduling-halftime 25000 --exp-scheduling-qlearning-rate 10e-3 --output-scaleing True --output-scaleing-learning-rate 5e-3 --shared-output-scaleing-param True --deterministic-tests-for-plotting True
+            sbatch --job-name="run-$env-$name3-$seed" jobs/job.sh  --exp-name $name3  --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 0.1e-3 --n-qubits 4 --n-var-layers 6 --n-enc-layers 6 --load-chkpt False --exp-qlr-scheduling True --exp-scheduling-halftime 25000 --exp-scheduling-qlearning-rate 10e-3 --output-scaleing False --deterministic-tests-for-plotting True
+            sbatch --job-name="run-$env-$name4-$seed" jobs/job.sh  --exp-name $name4  --circuit $circuit --seed $seed --gym-id $env --total-timesteps $timesteps --learning-rate 2.5e-4 --qlearning-rate 2.5e-3 --n-qubits 4 --n-var-layers 6 --n-enc-layers 6 --load-chkpt False --exp-qlr-scheduling False --output-scaleing True --output-scaleing-learning-rate 5e-3 --shared-output-scaleing-param True --deterministic-tests-for-plotting True
         done
     done
 done

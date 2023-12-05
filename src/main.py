@@ -307,7 +307,6 @@ if __name__ == "__main__":
             global_step += 1 * args.num_envs
             obs[step] = next_obs
             dones[step] = next_done
-            print("next_obs[i]", next_obs[1])
 
             # Get action
             for i in range(args.num_envs):
@@ -638,7 +637,6 @@ if __name__ == "__main__":
                 det_score = 0
                 det_length = 0
                 det_obs=det_env.reset()
-                print("det_obs", det_obs)
                 while det_done == False:
                     det_length += 1
 

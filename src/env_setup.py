@@ -78,3 +78,13 @@ def make_env(gym_id, seed, env_num, num_envs, chkpt_dir, load_chkpt, store_envs)
         return env
 
     return thunk
+
+
+
+def make_det_env(gym_id, seed):
+    det_env = gym.make(gym_id)
+    det_env.action_space.seed(seed)
+    det_env.observation_space.seed(seed)
+    if gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0" or gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0-alt" or gym_id == "FrozenLake-v0" or gym_id == "FrozenLake-v1":
+        det_env = gym.wrappers.TimeLimit(det_env, max_episode_steps=100)
+    return det_env

@@ -8,13 +8,19 @@ args = parse_args()
 
 def transform_obs_to_one_hot_encodeing(observation, single_observation_space_n):
     one_hot_encodeing_observation = torch.zeros(single_observation_space_n)
-    one_hot_encodeing_observation[int(observation)] = 1.0
+    if type(observation) is tuple:
+        one_hot_encodeing_observation[int(observation[0])] = 1.0
+    else:
+        one_hot_encodeing_observation[int(observation)] = 1.0
     return one_hot_encodeing_observation
 
 
 def transform_obs_to_binary(observation):
     binary_observation = torch.zeros(args.n_qubits)
-    binary = str(bin(int(observation)))
+    if type(observation) is tuple:
+        binary = str(bin(int(observation[0])))
+    else:
+        binary = str(bin(int(observation)))
     binary = binary[2:]
     length = len(binary)
 

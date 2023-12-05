@@ -16,7 +16,7 @@ from agent import Agent
 from args import parse_args, save_args
 from calc_num_params import calc_num_actor_params, calc_num_critic_params
 from circuits import actor_circuit_selection, critic_circuit_selection
-from env_setup import make_env
+from env_setup import make_det_env, make_env
 from envs_storage import Store_envs
 from layer_params import make_actor_layer_params, make_critic_layer_params
 from plot_old import plot_training_results
@@ -75,11 +75,7 @@ if __name__ == "__main__":
     deterministic_tests_for_plotting = args.deterministic_tests_for_plotting and not args.random_baseline
     if deterministic_tests_for_plotting:
         # initiate single env for testing the Deterministic Version of the stochastic policy
-        det_env = gym.make(args.gym_id)
-        det_env.action_space.seed(args.seed + args.num_envs)
-        det_env.observation_space.seed(args.seed + args.num_envs)
-        if args.gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0" or args.gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0-alt" or args.gym_id == "FrozenLake-v0" or args.gym_id == "FrozenLake-v1":
-            det_env = gym.wrappers.TimeLimit(det_env, max_episode_steps=100)
+        det_env = make_det_env(args.gym_id, args.seed + args.num_envs)
     save_results = Save_results(
         args.results_dir, args.load_chkpt, args.record_grads, deterministic_tests_for_plotting
     )
@@ -648,7 +644,7 @@ if __name__ == "__main__":
 
                     # Get action
                     det_action = agent.get_argmax_action(
-                                    det_obs,
+                                    det_obs[0],
                                     actor_circuit,
                                     actor_layer_params,
                                     actor_input_scaleing_params,

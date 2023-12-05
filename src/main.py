@@ -636,7 +636,7 @@ if __name__ == "__main__":
                 det_done = False
                 det_score = 0
                 det_length = 0
-                det_obs=det_env.reset()
+                det_obs=torch.Tensor(det_env.reset())
                 while det_done == False:
                     det_length += 1
 

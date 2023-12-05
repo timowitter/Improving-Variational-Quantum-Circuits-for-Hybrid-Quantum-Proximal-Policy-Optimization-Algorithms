@@ -871,7 +871,7 @@ gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
 exp_names = [
     "FL-ppo-ac-NN(3)-(actor-lr=1.0e-2)-(67-params)-Det-Tests",
     "FL-ppo-ac-NN(4)-(actor-lr=1.0e-2)-(88-params)-Det-Tests",
-    "random-baseline",
+    #"random-baseline",
 ]
 seeds = [10, 20, 30, 40, 50]
 batchsize = 4 * 128

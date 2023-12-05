@@ -68,7 +68,7 @@ class Save_results(nn.Module):
     def append_det_results(
         self, det_score, det_episode_length, global_step, gym_id, exp_name, circuit, seed
     ):
-        episode_results = {
+        det_results = {
             "det_score": det_score,
             "det_episode_length": det_episode_length,
             "global_step": global_step,
@@ -78,13 +78,13 @@ class Save_results(nn.Module):
             "seed": seed,
         }
 
-        df = pd.DataFrame(data=episode_results, index=[0])
+        df = pd.DataFrame(data=det_results, index=[0])
 
         if not self.df_det_exists:
             self.df_det = df
             self.df_det_exists = True
         else:
-            self.df_det = pd.concat([self.df_episode, df], ignore_index=True)
+            self.df_det = pd.concat([self.df_det, df], ignore_index=True)
 
 
     def append_update_results(

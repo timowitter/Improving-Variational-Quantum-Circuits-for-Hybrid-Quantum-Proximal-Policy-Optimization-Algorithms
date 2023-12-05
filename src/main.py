@@ -642,7 +642,7 @@ if __name__ == "__main__":
 
                     # Get action
                     det_action = agent.get_argmax_action(
-                                    det_obs[0],
+                                    det_obs,
                                     actor_circuit,
                                     actor_layer_params,
                                     actor_input_scaleing_params,

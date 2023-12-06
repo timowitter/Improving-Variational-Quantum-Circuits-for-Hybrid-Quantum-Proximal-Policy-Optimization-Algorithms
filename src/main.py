@@ -72,12 +72,12 @@ if __name__ == "__main__":
     assert isinstance(
         envs.single_action_space, gym.spaces.Discrete
     ), "onely discrete action spaces supported"
-    deterministic_tests_for_plotting = args.deterministic_tests_for_plotting and not args.random_baseline
-    if deterministic_tests_for_plotting:
+    #deterministic_tests_for_plotting = args.deterministic_tests_for_plotting and not args.random_baseline
+    if args.deterministic_tests_for_plotting:
         # initiate single env for testing the Deterministic Version of the stochastic policy
         det_env = make_det_env(args.gym_id, args.seed + args.num_envs)
     save_results = Save_results(
-        args.results_dir, args.load_chkpt, args.record_grads, deterministic_tests_for_plotting
+        args.results_dir, args.load_chkpt, args.record_grads, args.deterministic_tests_for_plotting
     )
 
     actor_par_count = calc_num_actor_params(envs)
@@ -632,38 +632,43 @@ if __name__ == "__main__":
             # use deterministic (argmax) version of the policy for the evaluation of the learning succsess
             # per default set as false since it uses a lot of additional resources and our stochastic policy should learn to resemble
             # a (almost) deterministic policy at the end of the learning process anyway
-            if(deterministic_tests_for_plotting):
+            if(args.deterministic_tests_for_plotting):
                 det_done = False
                 det_score = 0
                 det_length = 0
                 det_obs_tmp, _ = det_env.reset()
-                print("det_ob_temp", det_obs_tmp)
+                
                 if (type(det_obs_tmp) is tuple) and (args.gym_id == "FrozenLake-v0" or args.gym_id == "FrozenLake-v1" or args.gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0" or args.gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0-alt"):
                     det_obs_tmp = det_obs_tmp[0]
                 det_obs=torch.tensor(det_obs_tmp)
-                print("det_obs[]", det_obs)
+                
                 while det_done == False:
                     det_length += 1
 
                     # Get action
-                    det_action = agent.get_argmax_action(
-                                    det_obs,
-                                    actor_circuit,
-                                    actor_layer_params,
-                                    actor_input_scaleing_params,
-                                    get_obs_dim(envs.single_observation_space),
-                                    get_act_dim(envs.single_action_space),
-                                )
+                    if args.random_baseline:
+                        det_action, _, _, _ = agent.get_random_action_and_value(
+                            get_act_dim(envs.single_action_space)
+                        )
+                    else:
+                        det_action = agent.get_argmax_action(
+                                        det_obs,
+                                        actor_circuit,
+                                        actor_layer_params,
+                                        actor_input_scaleing_params,
+                                        get_obs_dim(envs.single_observation_space),
+                                        get_act_dim(envs.single_action_space),
+                                    )
 
                     # Env step
                     det_ob, det_reward, terminated, truncated, info = det_env.step(
                         det_action.item()
                     ) 
-                    print("det_ob", det_ob)
+                    
                     if (type(det_obs_tmp) is tuple) and (args.gym_id == "FrozenLake-v0" or args.gym_id == "FrozenLake-v1" or args.gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0" or args.gym_id == "Deterministic-ShortestPath-4x4-FrozenLake-v0-alt"):
                         det_ob = det_ob[0]
                     det_obs=torch.tensor(det_ob)
-                    print("det_obs", det_obs)
+                    
                     det_score += det_reward
                     if (terminated or truncated):   #episode ended
                         det_done = True

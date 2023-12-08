@@ -865,12 +865,13 @@ plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_
 
 
 
-
+"""
 plot_dir = plots_dir + "/FL-actor-Test-3-Ansatz-comparison-by-deterministic-argmax-evaluation"
 gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
 exp_names = [
     "FL-qppo-ac-simple_reuploading-exp_sced-ht25000-10->0.1e-3-output_scaleing-5e-3-(73-params)-Det-Tests",
-    "FL-qppo-ac-simple-exp_sced-output_scaleing-1param-1e-3-(73-params)-Det-Tests",               #lower OutScale lr (1e-3) since it fails for 5e-3
+    "FL-qppo-ac-simple-exp_sced-output_scaleing-1param-1e-3-(73-params)-Det-Tests",               #lower OutScale lr (1e-3) since it fails for 5e-3 (fails too)
+    #"FL-qppo-ac-simple-exp_sced-output_scaleing-1param-5e-4-(73-params)-Det-Tests",               #lower OutScale lr (5e-4) since it fails for 1e-3 (fails too)
     "FL-qppo-ac-simple_reuploading-exp_sced-ht25000-10->0.1e-3-(73-params)-Det-Tests",
     "FL-qppo-ac-simple_reuploading-qlr-2.5e-3-output_scaleing-5e-3-(73-params)-Det-Tests",
     "FL-ppo-ac-NN(3)-(actor-lr=1.0e-2)-(67-params)-Det-Tests",
@@ -888,9 +889,12 @@ plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_
 plot_dir = plots_dir + "/FL-actor-Test-2-alternate-circuit-architecture-by-deterministic-argmax-evaluation"
 gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
 exp_names = [
-    "FL-qppo-ac-simple_reuploading-exp_sced-ht25000-10->0.1e-3-output_scaleing-5e-3-(73-params)-Det-Tests",
-    "FL-qppo-ac-Hgog_reuploading-exp_sced-output_scaleing-1param-5e-3-(73-params)-Det-Tests",
-    "FL-qppo-ac-Jerbi-reuploading-no-input-scaleing-exp_sced-output_scaleing-1param-5e-3-9var_8enc_layers(73-params)-Det-Tests",
+    "FL-qppo-ac-simple_reuploading-exp_sced-ht25000-10->0.1e-3-output_scaleing-2.5e-3-(73-params)-Det-Tests",
+    "FL-qppo-ac-Hgog_reuploading-exp_sced-output_scaleing-1param-2.5e-3-(73-params)-Det-Tests",
+    "FL-qppo-ac-Jerbi-reuploading-no-input-scaleing-exp_sced-output_scaleing-1param-2.5e-3-9var_8enc_layers(73-params)-Det-Tests",
+    #"FL-qppo-ac-simple_reuploading-exp_sced-ht25000-10->0.1e-3-output_scaleing-5e-3-(73-params)-Det-Tests",
+    #"FL-qppo-ac-Hgog_reuploading-exp_sced-output_scaleing-1param-5e-3-(73-params)-Det-Tests",
+    #"FL-qppo-ac-Jerbi-reuploading-no-input-scaleing-exp_sced-output_scaleing-1param-5e-3-9var_8enc_layers(73-params)-Det-Tests",
     "FL-ppo-ac-NN(3)-(actor-lr=1.0e-2)-(67-params)-Det-Tests",
     "FL-ppo-ac-NN(4)-(actor-lr=1.0e-2)-(88-params)-Det-Tests",
 ]
@@ -908,6 +912,7 @@ gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
 exp_names = [
     "FL-qppo-ac-simple_reuploading-exp_sced-ht25000-10->0.1e-3-output_scaleing-5e-3-(73-params)-Det-Tests",
     "FL-qppo-ac-simple_reuploading-exp_sced-ht25000-10->0.1e-3-output_scaleing-4params-2.5e-2-(76-params)-Det-Tests",
+    "FL-qppo-ac-simple_reuploading-exp_sced-ht25000-10->0.1e-3-output_scaleing-4params-5e-3-(76-params)-Det-Tests",
     "FL-ppo-ac-NN(3)-(actor-lr=1.0e-2)-(67-params)-Det-Tests",
     "FL-ppo-ac-NN(4)-(actor-lr=1.0e-2)-(88-params)-Det-Tests",
 ]
@@ -915,16 +920,17 @@ seeds = [10, 20, 30]
 batchsize = 4 * 128
 max_steps = 25000
 alpha = 0.3
-labels=["QPPO-LocalOutScale-(73-Param)", "QPPO-GlobalOutScale-(76-Param)", "PPO(3)-(67-Param)", "PPO(4)-(88-Param)"]
+labels=["QPPO-LocalOutScale(5e-3)-(73-Param)", "QPPO-GlobalOutScale(2.5e-2)-(76-Param)", "QPPO-GlobalOutScale(5e-3)-(76-Param)", "PPO(3)-(67-Param)", "PPO(4)-(88-Param)"]
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels, plot_deterministic_tests=True)
-"""
+
 
 
 plot_dir = plots_dir + "/CP-actor-Test-2-Ansatz-Comparison-by-deterministic-argmax-evaluation"
 gym_id = "CartPole-v1"
 exp_names = [
-    #"CP-qppo-ac-simple_reuploading----------------exp_sced-ht100000-qlr(25-1)e-4-OutScale(2e-4)-allsmallinit-(73-params)-Det-Tests",
+    "CP-qppo-ac-simple_reuploading----------------exp_sced-ht100000-qlr(25-1)e-4-OutScale(2e-4)-allsmallinit-(73-params)-Det-Tests",
+    "CP-qppo-ac-simple_reuploading----------------exp_sced-ht100000-qlr(25-1)e-4----------------allsmallinit-(72-params)-Det-Tests",
     "CP-qppo-ac-simple_reuploading_sharedInpScale-exp_sced-ht100000-qlr(25-1)e-4-OutScale(2e-4)-allsmallinit-(77-params)-Det-Tests",
     "CP-qppo-ac-simple_reuploading_Input_Scaleing-exp_sced-ht100000-qlr(25-1)e-4-OutScale(2e-4)-allsmallinit-(65-params)-4-layers-Det-Tests",
     "CP-qppo-ac-simple_reuploading_Input_Scaleing-exp_sced-ht100000-qlr(25-1)e-4-OutScale(2e-4)-allsmallinit-(81-params)-5-layers-Det-Tests",
@@ -936,7 +942,7 @@ seeds = [10, 20, 30]
 batchsize = 4 * 128
 max_steps = 150000
 alpha = 0.015
-labels=["QPPO-globales-InpScale-(77-Param)", "QPPO(4-Layer)-InpScale-(65-Param)", "QPPO(5-Layer)-InpScale-(81-Param)", "PPO(5,5)-(67-Param)", "PPO(6,5)-(77-Param)"]
+labels=["QPPO-manuelles-Rescale-(73-Param)", "QPPO-manuell,noOutScale-(73-Param)", "QPPO-globales-InpScale-(77-Param)", "QPPO(4-Layer)-InpScale-(65-Param)", "QPPO(5-Layer)-InpScale-(81-Param)", "PPO(5,5)-(67-Param)", "PPO(6,5)-(77-Param)"]
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels, plot_deterministic_tests=True)
 

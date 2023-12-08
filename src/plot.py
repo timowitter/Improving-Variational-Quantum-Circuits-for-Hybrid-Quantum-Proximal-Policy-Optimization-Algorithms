@@ -1,4 +1,3 @@
-import itertools
 import os
 
 import matplotlib as mpl
@@ -6,19 +5,23 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-import seaborn.objects as so
 from matplotlib import rc
 
 mpl.use("Agg")
-sns.set_theme()
 
 # Apply the default theme
+sns.set_theme()
+sns.set_style("whitegrid")
+sns.color_palette("colorblind")
+#plt.rcParams['text.usetex'] = True
+plt.rcParams['font.family'] = 'serif'
+plt.rcParams['font.serif'] = ['Computer Modern Roman']
+sns.set(rc={'figure.figsize':(9.36,6.616)})
+
 #plt.rcParams["text.usetex"] = True
 #rc("font", **{"family": "serif", "serif": ["Computer Modern"]})
 #rc("text", usetex=True)
-sns.color_palette("colorblind")
 
-#palette = itertools.cycle(sns.color_palette("colorblind"))  # type: ignore
 
 # plot final results
 
@@ -293,30 +296,26 @@ def plot_avg_episode_reward_by_seed(episode_results, plot_dir):
     g._legend.set_title("Seed")
     g.set(xlabel ="Zeitschritt", ylabel = "Ergebnis")
     #g.set(xlabel ="Globaler Schritt", ylabel = "Reward", title ='some title')
-    #sns.move_legend(g, "upper left", bbox_to_anchor=(1, 1))
-    #sns.move_legend(g, "upper left")
     plot_dir = os.path.join(plot_dir, "episode_reward_by_seed.png")
     plt.savefig(plot_dir)
     plt.close()
 
 
 def plot_avg_episode_reward_by_exp_name(episode_results, plot_dir, settitle, title):
-    g=sns.relplot(
+    g=sns.lineplot(
         data=episode_results,
-        kind="line",
         x="global_step",
         y="reward",
         errorbar="sd",
         hue="exp_name",
     )
-    g._legend.set_title("Ansatz")
+    # Placing the legend inside the plot
+    plt.legend(title='Ansatz', loc='lower right')
     g.set(xlabel ="Zeitschritt", ylabel = "Ergebnis")
     if(settitle):
         g.set(title=title)
     #for t, l in zip(g._legend.texts, labels):
         #t.set_text(l)
-    #sns.move_legend(g, "upper left", bbox_to_anchor=(1, 1))
-    #sns.move_legend(g, "upper left")
     plot_dir = os.path.join(plot_dir, "episode_reward_by_exp_name.png")
     plt.savefig(plot_dir)
     plt.close()
@@ -340,15 +339,15 @@ def plot_avg_episode_length_by_seed(episode_results, plot_dir):
 
 
 def plot_avg_episode_length_by_exp_name(episode_results, plot_dir, settitle, title):
-    g=sns.relplot(
+    g=sns.lineplot(
         data=episode_results,
-        kind="line",
         x="global_step",
         y="episode_length",
         errorbar="sd",
         hue="exp_name",
     )
-    g._legend.set_title("Ansatz")
+    # Placing the legend inside the plot
+    plt.legend(title='Ansatz', loc='upper right')
     g.set(xlabel ="Zeitschritt", ylabel = "Episodenlänge")
     if(settitle):
         g.set(title=title)
@@ -377,15 +376,15 @@ def plot_learning_rate_by_seed(update_results, plot_dir):
 
 
 def plot_learning_rate_by_exp_name(update_results, plot_dir, settitle, title):
-    g = sns.relplot(
+    g = sns.lineplot(
         data=update_results,
-        kind="line",
         x="global_step",
         y="learning_rate",
         errorbar="sd",
         hue="exp_name",
     )
-    g._legend.set_title("Ansatz")
+    # Placing the legend inside the plot
+    plt.legend(title='Ansatz', loc='upper right')
     g.set(xlabel ="Zeitschritt", ylabel = "Actor NN Lernrate")
     if(settitle):
         g.set(title=title)
@@ -414,15 +413,15 @@ def plot_qlearning_rate_by_seed(update_results, plot_dir):
 
 
 def plot_qlearning_rate_by_exp_name(update_results, plot_dir, settitle, title):
-    g = sns.relplot(
+    g = sns.lineplot(
         data=update_results,
-        kind="line",
         x="global_step",
         y="qlearning_rate",
         errorbar="sd",
         hue="exp_name",
     )
-    g._legend.set_title("Ansatz")
+    # Placing the legend inside the plot
+    plt.legend(title='Ansatz', loc='upper right')
     g.set(xlabel ="Zeitschritt", ylabel = "Actor VQC Lernrate")
     if(settitle):
         g.set(title=title)
@@ -674,15 +673,15 @@ def plot_output_scaleing_by_seed(update_results, plot_dir):
 
 
 def plot_output_scaleing_by_exp_name(update_results, plot_dir, settitle, title):
-    g = sns.relplot(
+    g = sns.lineplot(
         data=update_results,
-        kind="line",
         x="global_step",
         y="output_scaleing",
         errorbar="sd",
         hue="exp_name",
     )
-    g._legend.set_title("Ansatz")
+    # Placing the legend inside the plot
+    plt.legend(title='Ansatz', loc='upper left')#, bbox_to_anchor=(0.5, 0.5)
     g.set(xlabel ="Zeitschritt", ylabel = "Output Scaleing")
     if(settitle):
         g.set(title=title)
@@ -711,32 +710,28 @@ def plot_det_reward_by_seed(episode_results, plot_dir):
         hue="seed",
     )
     g._legend.set_title("Seed")
-    g.set(xlabel ="Zeitschritt", ylabel = "Ergebnis mit Deterministischer Evaluation")
+    g.set(xlabel ="Zeitschritt", ylabel = "Ergebnis mit deterministischer Evaluation")
     #g.set(xlabel ="Globaler Schritt", ylabel = "Reward", title ='some title')
-    #sns.move_legend(g, "upper left", bbox_to_anchor=(1, 1))
-    #sns.move_legend(g, "upper left")
     plot_dir = os.path.join(plot_dir, "det_reward_by_seed.png")
     plt.savefig(plot_dir)
     plt.close()
 
 
 def plot_det_reward_by_exp_name(episode_results, plot_dir, settitle, title):
-    g=sns.relplot(
+    g=sns.lineplot(
         data=episode_results,
-        kind="line",
         x="global_step",
         y="reward",
         errorbar="sd",
         hue="exp_name",
     )
-    g._legend.set_title("Ansatz")
-    g.set(xlabel ="Zeitschritt", ylabel = "Ergebnis mit Deterministischer Evaluation")
+    # Placing the legend inside the plot
+    plt.legend(title='Ansatz', loc='lower right')
+    g.set(xlabel ="Zeitschritt", ylabel = "Ergebnis mit deterministischer Evaluation")
     if(settitle):
         g.set(title=title)
     #for t, l in zip(g._legend.texts, labels):
         #t.set_text(l)
-    #sns.move_legend(g, "upper left", bbox_to_anchor=(1, 1))
-    #sns.move_legend(g, "upper left")
     plot_dir = os.path.join(plot_dir, "det_reward_by_exp_name.png")
     plt.savefig(plot_dir)
     plt.close()
@@ -753,23 +748,23 @@ def plot_det_length_by_seed(episode_results, plot_dir):
         errorbar="sd",
     )
     g._legend.set_title("Seed")
-    g.set(xlabel ="Zeitschritt", ylabel = "Episodenlänge mit Deterministischer Evaluation")
+    g.set(xlabel ="Zeitschritt", ylabel = "Episodenlänge mit deterministischer Evaluation")
     plot_dir = os.path.join(plot_dir, "det_lenght_by_seed.png")
     plt.savefig(plot_dir)
     plt.close()
 
 
 def plot_det_length_by_exp_name(episode_results, plot_dir, settitle, title):
-    g=sns.relplot(
+    g=sns.lineplot(
         data=episode_results,
-        kind="line",
         x="global_step",
         y="episode_length",
         errorbar="sd",
         hue="exp_name",
     )
-    g._legend.set_title("Ansatz")
-    g.set(xlabel ="Zeitschritt", ylabel = "Episodenlänge mit Deterministischer Evaluation")
+    # Placing the legend inside the plot
+    plt.legend(title='Ansatz', loc='upper right')
+    g.set(xlabel ="Zeitschritt", ylabel = "Episodenlänge mit deterministischer Evaluation")
     if(settitle):
         g.set(title=title)
     #for t, l in zip(g._legend.texts, labels):

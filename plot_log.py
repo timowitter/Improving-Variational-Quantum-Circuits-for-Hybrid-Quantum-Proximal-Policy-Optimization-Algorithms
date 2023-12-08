@@ -5,7 +5,7 @@ from src.plot_old import plot_training_results
 results_dir = "qppo-slurm/results"
 plots_dir = "plots"
 
-"""
+
 plot_dir = plots_dir + "/FL-actor-Hyperparameter-Test-0-NN(3)-lr"
 gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
 exp_names = [
@@ -212,7 +212,7 @@ gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
 exp_names = [
     "FL-qppo-ac-simple_reuploading-exp_sced-output_scaleing-1param-1e-3-(73-params)",
     "FL-qppo-ac-simple_reuploading-exp_sced-output_scaleing-1param-1e-2-(73-params)",
-    #"FL-qppo-ac-simple_reuploading-exp_sced-output_scaleing-1param-5e-2-(73-params)", #"QPPO-GlobalOutScale(5e-2)-(73-Param)"
+    #"FL-qppo-ac-simple_reuploading-exp_sced-output_scaleing-1param-5e-2-(73-params)", #"QPPO-globalesOutScale(5e-2)-(73-Param)"
     "FL-qppo-ac-simple_reuploading-exp_sced-output_scaleing-4params-1e-3-(76-params)",
     "FL-qppo-ac-simple_reuploading-exp_sced-output_scaleing-4params-1e-2-(76-params)",
     "FL-qppo-ac-simple_reuploading-exp_sced-output_scaleing-4params-5e-2-(76-params)",
@@ -224,7 +224,7 @@ seeds = [10, 20, 30]
 batchsize = 4 * 128
 max_steps = 100000
 alpha = 0.3
-labels=["GlobalOutScale(1e-3) (73-Param)", "GlobalOutScale(1e-2) (73-Param)", "LocalOutScale(1e-3) (76-Param)", "LocalOutScale(1e-2) (76-Param)", "LocalOutScale(5e-2) (76-Param)", "Zufällige Aktionsauswahl", "keinOutScale (72-Param)"]
+labels=["globalesOutScale(1e-3) (73-Param)", "globalesOutScale(1e-2) (73-Param)", "LokalesOutScale(1e-3) (76-Param)", "LokalesOutScale(1e-2) (76-Param)", "LokalesOutScale(5e-2) (76-Param)", "Zufällige Aktionsauswahl", "keinOutScale (72-Param)"]
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
 
@@ -233,7 +233,7 @@ plot_dir = plots_dir + "/FL-actor-Test-1-output-scaleing-2" #comparison with the
 gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
 exp_names = [
     "FL-qppo-ac-simple_reuploading-exp_sced-output_scaleing-1param-1e-2-(73-params)",
-    #"FL-qppo-ac-simple_reuploading-exp_sced-output_scaleing-1param-5e-2-(73-params)", #"QPPO-GlobalOutScale(5e-2)-(73-Param)"
+    #"FL-qppo-ac-simple_reuploading-exp_sced-output_scaleing-1param-5e-2-(73-params)", #"QPPO-globalesOutScale(5e-2)-(73-Param)"
     "FL-qppo-ac-simple_reuploading-exp_sced-output_scaleing-4params-1e-2-(76-params)",
     "FL-qppo-ac-simple_reuploading-exp_sced-output_scaleing-4params-5e-2-(76-params)",
     "random-baseline",
@@ -244,7 +244,7 @@ seeds = [10, 20, 30]
 batchsize = 4 * 128
 max_steps = 50000
 alpha = 0.3
-labels=["QPPO-GlobalOutScale(1e-2)-(73-Param)", "QPPO-LocalOutScale(1e-2)-(76-Param)", "QPPO-LocalOutScale(5e-2)-(76-Param)", "Zufällige Aktionsauswahl", "PPO(3)-(67-Param)", "PPO(4)-(88-Param)"]
+labels=["QPPO-globalesOutScale(1e-2)-(73-Param)", "QPPO-lokalesOutScale(1e-2)-(76-Param)", "QPPO-lokalesOutScale(5e-2)-(76-Param)", "Zufällige Aktionsauswahl", "PPO(3)-(67-Param)", "PPO(4)-(88-Param)"]
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
 
@@ -264,7 +264,7 @@ seeds = [10, 20, 30]
 batchsize = 4 * 128
 max_steps = 150000
 alpha = 0.3
-labels=["GlobalOutScale(1e-4)", "GlobalOutScale(1e-3)", "GlobalOutScale(1e-2)", "GlobalOutScale(5e-2)", "GlobalOutScale(1e-1)", "Zufällige Aktionsauswahl"]
+labels=["globalesOutScale(1e-4)", "globalesOutScale(1e-3)", "globalesOutScale(1e-2)", "globalesOutScale(5e-2)", "globalesOutScale(1e-1)", "Zufällige Aktionsauswahl"]
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
 
@@ -284,12 +284,14 @@ seeds = [10, 20, 30]
 batchsize = 4 * 128
 max_steps = 150000
 alpha = 0.3
-labels=["LocalOutScale(1e-4)", "LocalOutScale(1e-3)", "LocalOutScale(1e-2)", "LocalOutScale(5e-2)", "LocalOutScale(1e-1)", "Zufällige Aktionsauswahl"]
+labels=["LokalesOutScale(1e-4)", "LokalesOutScale(1e-3)", "LokalesOutScale(1e-2)", "LokalesOutScale(5e-2)", "LokalesOutScale(1e-1)", "Zufällige Aktionsauswahl"]
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
 
 
-""""""
+"""
+#we did some Tests in an alternate version of Frozen Lake, but werent able to produce any meaningful results in the available time
+
 plot_dir = plots_dir + "/FL-actor-Test-1c-output-scaleing-in-alternate-Frozen-Lake-Environment"
 gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0-alt"
 exp_names = [
@@ -302,11 +304,12 @@ seeds = [10, 20, 30, 40, 50]
 batchsize = 4 * 128
 max_steps = 100000
 alpha = 0.3
-labels=["QPPO-GlobalOutScale(1e-2)-(73-Param)", "QPPO-LocalOutScale(1e-2)-(76-Param)", "QPPO-LocalOutScale(5e-2)-(76-Param)", "PPO(4,4)-Lr(1.0e-2)-(108-Param)"]
+labels=["QPPO-globalesOutScale(1e-2)-(73-Param)", "QPPO-lokalesOutScale(1e-2)-(76-Param)", "QPPO-lokalesOutScale(5e-2)-(76-Param)", "PPO(4,4)-Lr(1.0e-2)-(108-Param)"]
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
+
 # Tests in alternate-Frozen-Lake-Environment discontinued
-""""""
+"""
 
 plot_dir = plots_dir + "/FL-actor-Test-2-reuploading"
 gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
@@ -385,7 +388,7 @@ seeds = [10, 20, 30, 40, 50]
 batchsize = 4 * 128
 max_steps = 25000
 alpha = 0.3
-labels=["QPPO-GlobalOutScale-(76-Param)", "Zufällige Aktionsauswahl", "PPO(3)-(67-Param)", "PPO(4)-(88-Param)"]
+labels=["QPPO-globalesOutScale-(76-Param)", "Zufällige Aktionsauswahl", "PPO(3)-(67-Param)", "PPO(4)-(88-Param)"]
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
 
@@ -759,7 +762,9 @@ labels=["pi*tanh(x)-Reskalierung", "pi*tanh(2x)-Reskalierung", "2pi*arctan(x)-Re
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
 
 
-""""""
+"""
+# we also tested 6 layer input scaling, but it performed poorly with the given hyperparameters (and we were out of time for another broad hyperparameter search)
+
 plot_dir = plots_dir + "/CP-actor-Test-1b-input-scaleing"
 gym_id = "CartPole-v1"
 exp_names = [
@@ -779,7 +784,7 @@ alpha = 0.05
 labels=["QPPO(4-Layer)-InpScale-Lr=(2.5->0.1)e-3,HWZ=100000-(65-Param)", "QPPO(5-Layer)-InpScale-Lr=(2.5->0.1)e-3,HWZ=100000-(81-Param)", "QPPO(5-Layer)-InpScale-Lr=(2.5->0.1)e-3,HWZ=_80000-(81-Param)", "QPPO(6-Layer)-InpScale-Lr=(2.5->0.1)e-3,HWZ=100000-(97-Param)", "QPPO(6-Layer)-InpScale-Lr=(1.5->0.1)e-3,HWZ=100000-(97-Param)", "Zufällige Aktionsauswahl", "QPPO-manuelles-Rescale-Lr=(2.5->0.1)e-3,HWZ=100000-(73-Param)", "QPPO-globales-InpScale-Lr=(2.5->0.1)e-3,HWZ=100000-(77-Param)"]
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
-""""""
+"""
 
 plot_dir = plots_dir + "/CP-actor-Test-1c-input-scaleing-500000-Steps"
 gym_id = "CartPole-v1"
@@ -801,7 +806,10 @@ labels=["QPPO-manuelles-Rescale-(73-Param)", "QPPO-globales-InpScale-(77-Param)"
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
 
 
-""""""
+"""
+#(empirical) hyperparameter search:  we test some higher output scaling lrs, onely 2e-4 can archieve a higher Performance
+#most runs werent completed and the results are hard to read and not very informative, therefore the plots are not included in the work
+
 plot_dir = plots_dir + "/CP-actor-Test-2b-Ansatz-Comparison"
 gym_id = "CartPole-v1"
 exp_names = [
@@ -827,12 +835,11 @@ seeds = [10, 20, 30]
 batchsize = 4 * 128
 max_steps = 150000
 alpha = 0.015
-labels=["QPPO-manuelles-Rescale-(73-Param)", "QPPO-globales-InpScale-(77-Param)", "QPPO(4-Layer)-InpScale-(65-Param)", "QPPO(5-Layer)-InpScale-(81-Param)", "QPPO-manuelles-Rescale-(73-Param)", "QPPO-globales-InpScale-(77-Param)", "QPPO(4-Layer)-InpScale-(65-Param)", "QPPO(5-Layer)-InpScale-(81-Param)", "QPPO-manuelles-Rescale-(73-Param)", "QPPO-globales-InpScale-(77-Param)", "QPPO(4-Layer)-InpScale-(65-Param)", "QPPO(5-Layer)-InpScale-(81-Param)", "QPPO(6-Layer)-manuelles-Rescale-Out(1e-4)-(73-Param)", "Zufällige Aktionsauswahl", "PPO(5,5)-(67-Param)", "PPO(6,5)-(77-Param)"]
+labels=["QPPO-manuelles-Rescale-(73-Param)(1e-3)", "QPPO-globales-InpScale-(77-Param)(1e-3)", "QPPO(4-Layer)-InpScale-(65-Param)(1e-3)", "QPPO(5-Layer)-InpScale-(81-Param)(1e-3)", "QPPO-manuelles-Rescale-(73-Param)(5e-4)", "QPPO-globales-InpScale-(77-Param)(5e-4)", "QPPO(4-Layer)-InpScale-(65-Param)(5e-4)", "QPPO(5-Layer)-InpScale-(81-Param)(5e-4)", "QPPO-manuelles-Rescale-(73-Param)(2e-4)", "QPPO-globales-InpScale-(77-Param)(2e-4)", "QPPO(4-Layer)-InpScale-(65-Param)(2e-4)", "QPPO(5-Layer)-InpScale-(81-Param)(2e-4)", "QPPO(6-Layer)-manuelles-Rescale-(73-Param)(1e-4)", "Zufällige Aktionsauswahl", "PPO(5,5)-(67-Param)", "PPO(6,5)-(77-Param)"]
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
 
-#"PPO(6,6)-(86-Param)"
-""""""
+"""
 
 plot_dir = plots_dir + "/CP-actor-Test-2-Ansatz-Comparison"
 gym_id = "CartPole-v1"
@@ -865,7 +872,7 @@ plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_
 
 
 
-"""
+
 plot_dir = plots_dir + "/FL-actor-Test-3-Ansatz-comparison-by-deterministic-argmax-evaluation"
 gym_id = "Deterministic-ShortestPath-4x4-FrozenLake-v0"
 exp_names = [
@@ -920,7 +927,7 @@ seeds = [10, 20, 30]
 batchsize = 4 * 128
 max_steps = 25000
 alpha = 0.3
-labels=["QPPO-LocalOutScale(5e-3)-(73-Param)", "QPPO-GlobalOutScale(2.5e-2)-(76-Param)", "QPPO-GlobalOutScale(5e-3)-(76-Param)", "PPO(3)-(67-Param)", "PPO(4)-(88-Param)"]
+labels=["QPPO-lokalesOutScale(5e-3)-(73-Param)", "QPPO-globalesOutScale(2.5e-2)-(76-Param)", "QPPO-globalesOutScale(5e-3)-(76-Param)", "PPO(3)-(67-Param)", "PPO(4)-(88-Param)"]
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels, plot_deterministic_tests=True)
 

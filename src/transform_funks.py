@@ -44,7 +44,7 @@ def normalize_obs(observation):
         args.gym_id == "CartPole-v0" or args.gym_id == "CartPole-v1"
     ) and args.n_qubits == 4:  # specific normalisation for cartpole      terminates if |position|>2.4 or |angle|>0.2095
         norm_obs = observation
-        if args.alternate_input_rescale:
+        if args.arctan_input_rescale:
             norm_obs = torch.Tensor(
                 [
                     torch.clamp((norm_obs[0] / 4.8), -1.0, 1.0),

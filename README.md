@@ -1,4 +1,4 @@
-**"Parameter Reduktion durch Quantenschaltkreise – Aktuelle Methoden am Beispiel von Quantum Proximal Policy Optimization" von Timo Witter** 
+**"Verbesserung von Variational Quantum Circuits - Parameter Reduktion im Quantum Proximal Policy Optimization Algorithmus" von Timo Witter** 
 =
 **Dieses Git-Repository unfasst die folgenden Dateien und Verzeichnisse:**
 

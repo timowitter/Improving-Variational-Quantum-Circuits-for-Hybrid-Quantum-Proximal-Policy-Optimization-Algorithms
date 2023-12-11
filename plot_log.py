@@ -242,7 +242,7 @@ exp_names = [
 ]
 seeds = [10, 20, 30]
 batchsize = 4 * 128
-max_steps = 50000
+max_steps = 25000
 alpha = 0.3
 labels=["QPPO-globalesOutScale(1e-2)-(73-Param)", "QPPO-lokalesOutScale(1e-2)-(76-Param)", "QPPO-lokalesOutScale(5e-2)-(76-Param)", "Zufällige Aktionsauswahl", "PPO(3)-(67-Param)", "PPO(4)-(88-Param)"]
 
@@ -691,14 +691,14 @@ exp_names = [
     "CP-qppo-ac-simple_reuploading-qlr2.5e-3-output_scaleing-1param-1e-4-(73-params)-fixedlastentanglement",
     "CP-qppo-ac-simple_reuploading-qlr2.5e-3-output_scaleing-1param-1e-4-(73-params)-unclipped_gaussinit",
     "CP-qppo-ac-simple_reuploading-qlr2.5e-3-output_scaleing-1param-1e-4-(73-params)-gaussinit",
-    "CP-qppo-ac-simple_reuploading-qlr2.5e-3-output_scaleing-1param-1e-4-(73-params)-rescaled_gaussinit",
+    #"CP-qppo-ac-simple_reuploading-qlr2.5e-3-output_scaleing-1param-1e-4-(73-params)-rescaled_gaussinit", #"Kleine-Gauß-Init" #shows potential but couldnt be further explored
     "CP-random-baseline-(0-params)",
 ]
 seeds = [10, 20, 30]
 batchsize = 4 * 128
 max_steps = 150000
 alpha = 0.05
-labels=["Standard-Init", "Gauß-Init", "Clipped-Gauß-Init", "Kleine-Gauß-Init", "Zufällige Aktionsauswahl"]
+labels=["Standard-Init", "Gauß-Init", "Clipped-Gauß-Init", "Zufällige Aktionsauswahl"]
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels)
 

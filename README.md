@@ -1,4 +1,4 @@
-**"Evaluation von Verbesserungsstrategien für Variational Quantum Circuits in Hybriden Quantum Proximal Policy Optimization Algorithmen" von Timo Witter** 
+**"Optimierung von Variational Quantum Circuits für Hybride Quantum Proximal Policy Optimization Algorithmen" von Timo Witter** 
 =
 **Dieses Git-Repository unfasst die folgenden Dateien und Verzeichnisse:**
 

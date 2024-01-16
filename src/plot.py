@@ -16,7 +16,12 @@ sns.color_palette("colorblind")
 #plt.rcParams['text.usetex'] = True
 plt.rcParams['font.family'] = 'serif'
 plt.rcParams['font.serif'] = ['Computer Modern Roman']
+<<<<<<< HEAD
 sns.set(rc={'figure.figsize':(9.36,6.616)})
+=======
+#sns.set(rc={'figure.figsize':(8.775,6.2025)})
+sns.set(rc={'figure.figsize':(7.605,5.3755)})
+>>>>>>> ce365b9d098f4449e76462224f327236e25b7995
 
 #plt.rcParams["text.usetex"] = True
 #rc("font", **{"family": "serif", "serif": ["Computer Modern"]})
@@ -692,6 +697,7 @@ def plot_output_scaleing_by_exp_name(update_results, plot_dir, settitle, title):
     plt.close()
 
 
+<<<<<<< HEAD
 
 
 
@@ -772,3 +778,5 @@ def plot_det_length_by_exp_name(episode_results, plot_dir, settitle, title):
     plot_dir = os.path.join(plot_dir, "det_lenght_by_exp_name.png")
     plt.savefig(plot_dir)
     plt.close()
+=======
+>>>>>>> ce365b9d098f4449e76462224f327236e25b7995

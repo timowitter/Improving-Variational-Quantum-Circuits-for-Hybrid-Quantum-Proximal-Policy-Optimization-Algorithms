@@ -16,8 +16,8 @@ sns.color_palette("colorblind")
 #plt.rcParams['text.usetex'] = True
 plt.rcParams['font.family'] = 'serif'
 plt.rcParams['font.serif'] = ['Computer Modern Roman']
-sns.set(rc={'figure.figsize':(8.775,6.2025)})
-#sns.set(rc={'figure.figsize':(7.605,5.3755)})
+#sns.set(rc={'figure.figsize':(8.775,6.2025)})
+sns.set(rc={'figure.figsize':(7.605,5.3755)})
 
 #plt.rcParams["text.usetex"] = True
 #rc("font", **{"family": "serif", "serif": ["Computer Modern"]})

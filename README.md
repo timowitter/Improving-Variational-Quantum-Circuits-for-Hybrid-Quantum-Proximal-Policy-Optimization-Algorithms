@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-**"Verbesserung von Variational Quantum Circuits - Parameter Reduktion im Quantum Proximal Policy Optimization Algorithmus" von Timo Witter** 
-=======
 **"Optimierung von Variational Quantum Circuits für Hybride Quantum Proximal Policy Optimization Algorithmen" von Timo Witter** 
->>>>>>> ce365b9d098f4449e76462224f327236e25b7995
 =
 **Dieses Git-Repository unfasst die folgenden Dateien und Verzeichnisse:**
 

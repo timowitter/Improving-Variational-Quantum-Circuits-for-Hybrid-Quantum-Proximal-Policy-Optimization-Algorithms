@@ -964,6 +964,7 @@ exp_names = [
     "CP-qppo-ac-simple_reuploading_sharedInpScale-exp_sced-ht100000-qlr(5-0.2)e-4-OutScale(2e-4)-allsmallinit-(77-params)-Det-Tests",
     "CP-qppo-ac-simple_reuploading_Input_Scaleing-exp_sced-ht100000-qlr(5-0.2)e-4-OutScale(2e-4)-allsmallinit-(65-params)-4-layers-Det-Tests",
     "CP-qppo-ac-simple_reuploading_Input_Scaleing-exp_sced-ht100000-qlr(5-0.2)e-4-OutScale(2e-4)-allsmallinit-(81-params)-5-layers-Det-Tests",
+    "CP-qppo-ac-simple_reuploading----------------exp_sced-ht100000-qlr(25-1)e-4-OutScale(2e-4)-allsmallinit-(73-params)-Det-Tests",
     #"CP-random-baseline-(0-params)-Det-Tests",
     "CP-ppo-ac-NN(5,5)-(actor-lr=1.0e-4)-(67-params)-Det-Tests",
     "CP-ppo-ac-NN(6,5)-(actor-lr=1.0e-4)-(77-params)-Det-Tests",
@@ -972,6 +973,6 @@ seeds = [10, 20, 30]
 batchsize = 4 * 128
 max_steps = 150000
 alpha = 0.015
-labels=["QPPO-manuelles-Rescale-(73-Param)", "QPPO-manuell,noOutScale-(73-Param)", "QPPO-globales-InpScale-(77-Param)", "QPPO(4-Layer)-InpScale-(65-Param)", "QPPO(5-Layer)-InpScale-(81-Param)", "PPO(5,5)-(67-Param)", "PPO(6,5)-(77-Param)"]
+labels=["QPPO-manuelles-Rescale-(73-Param)", "QPPO-manuell,noOutScale-(73-Param)", "QPPO-globales-InpScale-(77-Param)", "QPPO(4-Layer)-InpScale-(65-Param)", "QPPO(5-Layer)-InpScale-(81-Param)", "QPPO-manuell,hoheLr-(73-Param)", "PPO(5,5)-(67-Param)", "PPO(6,5)-(77-Param)"]
 
 plot_test_avg_final(results_dir, plot_dir, gym_id, exp_names, seeds, alpha, max_steps, labels, plot_deterministic_tests=True)
